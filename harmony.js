@@ -45,7 +45,7 @@ adapter.on('message', function (obj) {
 adapter.on('unload', function (callback) {
     try {
         adapter.log.info('terminating');
-        client.end();
+        if (client) client.end();
     } catch (e) {
         adapter.log.error(e);
     } finally {
@@ -66,14 +66,18 @@ var activities = {};
 
 function main() {
     adapter.subscribeStates('*');
+    connect(adapter.config.hub);
+}
 
-    harmony('192.168.0.58').then(function(harmonyClient) {
+function connect(hub){
+    harmony(hub).timeout(5000).then(function(harmonyClient) {
         adapter.log.info('hub client started');
+        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
         client = harmonyClient;
-        harmonyClient._xmppClient.connection.socket.setTimeout(0);
-        harmonyClient._xmppClient.connection.socket.setKeepAlive(true);
-        harmonyClient._xmppClient.reconnect = true;
-        harmonyClient._xmppClient.connection.reconnect = true;
+        /*
+        harmonyClient._xmppClient.connection.socket.on('connect', function() {
+            adapter.log.info('socket connect');
+        });
         harmonyClient._xmppClient.connection.socket.on('timeout', function() {
             adapter.log.info('socket timeout');
         });
@@ -98,22 +102,135 @@ function main() {
         harmonyClient._xmppClient.on('online', function(jid) {
             adapter.log.info('xmpp online');
         });
+        */
+
+        //listen for messages from hub
         harmonyClient.on('stateDigest', function(digest) {
-            adapter.log.info('stateDigest: ' + JSON.stringify(digest));
+            processDigest(digest);
         });
-        harmonyClient.getActivities().then(function(activities) {
-            adapter.log.info(JSON.stringify(activities));
+
+        //update objects on connect
+        harmonyClient.getAvailableCommands().then(function(config) {
+            processConfig(config);
         });
+
+        !function checkConnection(){
+            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
+                //adapter.log.info('connection up, current activity: ' + JSON.stringify(response));
+                if (response.hasOwnProperty('result') && response.result != '-1'){
+                    setStatusFromActivityID(response.result,2);
+                }
+                adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
+                setTimeout(checkConnection, 10000);
+            }).catch(function(e){
+                adapter.log.warn('connection down: ' + e);
+                client.end();
+                adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
+                client = null;
+                setTimeout(connect,5000,hub);
+                return;
+            });
+        }();
     }).catch(function(e){
-        adapter.log.error('error: ' + JSON.stringify(e));
+        adapter.log.warn('could not connect to '+hub+': ' + e);
+        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
+        client = null;
+        setTimeout(connect,5000,hub);
+        return;
+    });
+}
+
+function processConfig(config) {
+    deleteDevices();
+    // create device
+    adapter.log.info('creating/updating hub device');
+    adapter.setObject(adapter.config.hub.replace(/\./g,'-'), {
+        type: 'device',
+        common: {
+            name: adapter.config.hub.replace(/\./g,'-')
+        },
+        native: {
+            ip: adapter.config.hub
+        }
+    });
+    adapter.setObject(adapter.config.hub.replace(/\./g,'-') + '.connected', {
+        type: 'state',
+        common: {
+            name: adapter.config.hub.replace(/\./g,'-') + '.connected',
+            role: 'indicator.connected',
+            type: 'boolean',
+            write: false,
+            read: true
+        },
+        native: {
+        }
     });
 
-    if (adapter.config.polling && adapter.config.pollingInterval > 0) {
-        setTimeout(poll, 5 * 1000);
+    adapter.log.info('creating/updating activities');
+    config.activity.forEach(function(activity) {
+        if (activity.id == '-1') return;
+        activities[activity.id] = activity.label;
+        //create activities
+        var channelName = adapter.config.hub.replace(/\./g,'-') + '.' + activity.label.replace(/\s/g,'_');
+        //create channel for activity
+        adapter.setObject(channelName , {
+            type: 'channel',
+            common: {
+                name: channelName,
+                role: 'media.activity'
+            },
+            native: {
+                label: activity.label,
+                id: activity.id
+            }
+        });
+        //create states for activity
+        adapter.setObject(channelName + '.status', {
+            type: 'state',
+            common: {
+                name: adapter.config.hub.replace(/\./g,'-') + '.connected',
+                role: 'switch',
+                type: 'number',
+                write: false,
+                read: true,
+                min: 0,
+                max: 3
+            },
+            native: {
+                id: activity.id
+            }
+        });
+        adapter.setState(channelName + '.status', {val: 0, ack: true});
+    });
+    adapter.log.info('init ready');
+}
+
+function setStatusFromActivityID(id,value){
+    if (!activities.hasOwnProperty(id)) return;
+    var channelName = adapter.config.hub.replace(/\./g,'-') + '.' + activities[id].replace(/\s/g,'_') + '.status';
+    adapter.setState(channelName,{val: value, ack: true});
+}
+
+function processDigest(digest){
+    adapter.log.info('stateDigest: ' + JSON.stringify(digest));
+    if (digest.activityId != '-1'){
+        setStatusFromActivityID(digest.activityId,digest.activityStatus);
+        if (digest.activityStatus == '2'){
+            for (var activity in activities){
+                if (activity != digest.activityId){
+                    setStatusFromActivityID(activity,0);
+                }
+            }
+        }
+    }else {
+        for (var activity in activities){
+            setStatusFromActivityID(activity,0);
+        }
     }
 }
 
-function poll() {
-    setTimeout(poll, adapter.config.pollingInterval * 1000);
+function deleteDevices() {
+ //@todo
 }
+
 
