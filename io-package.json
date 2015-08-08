@@ -26,7 +26,7 @@
   "native": {
     "hub": "192.168.0.58",
     "user": "guest",
-    "password": "default",
+    "password": "default"
   },
   "objects": [
   ]
