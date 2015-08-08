@@ -11,9 +11,7 @@ Control your harmony activities from ioBroker.
 
 ## License
 
-Apache 2.0
-
-Copyright (c) 2014 Pmant
+MIT
 
 
 

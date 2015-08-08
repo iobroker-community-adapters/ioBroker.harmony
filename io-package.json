@@ -7,7 +7,7 @@
     "authors": [
       "Pmant <hq@ccu.io>"
     ],
-    "license": "Apache 2.0",
+    "license":    "MIT",
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "messagebox": true,

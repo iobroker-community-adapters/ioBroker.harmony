@@ -1,8 +1,6 @@
 /**
  *
- *      ioBroker Philips Hue Bridge Adapter
- *
- *      (c) 2014-2015 hobbyquaker
+ *      ioBroker Logitech Harmony Adapter
  *
  *      MIT License
  *
