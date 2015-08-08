@@ -1,0 +1,35 @@
+{
+  "common": {
+    "name": "harmony",
+    "version": "0.0.1",
+    "title": "Logitech Harmony Adapter",
+    "desc": "Control your harmony activities from ioBroker.",
+    "authors": [
+      "Pmant <hq@ccu.io>"
+    ],
+    "license": "Apache 2.0",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "messagebox": true,
+    "readme": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/README.md",
+    "loglevel": "info",
+    "keywords": [
+      "ioBroker",
+      "harmony",
+      "hub",
+      "logitech",
+      "home automation"
+    ],
+    "icon": "harmony.jpeg",
+    "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.jpeg"
+  },
+  "native": {
+    "bridge": "192.168.0.58",
+    "user": "guest",
+    "password": "default",
+    "polling": true,
+    "pollingInterval": 30
+  },
+  "objects": [
+  ]
+}

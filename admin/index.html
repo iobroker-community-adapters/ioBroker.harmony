@@ -1,0 +1,142 @@
+<html>
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+<script type="text/javascript">
+    systemDictionary = {
+        "Logitech Harmony adapter settings": {
+            "en": "Logitech Harmony adapter settings",
+            "de": "Logitech Harmony adapter settings",
+            "ru": "Logitech Harmony adapter settings"
+        },
+        "Settings": {"en": "Settings", "de": "Settings", "ru": "Settings"},
+        "Hub Address": {"en": "Hub Address", "de": "Hub Address", "ru": "Hub Address"},
+        "Hub User": {"en": "Hub User", "de": "Hub User", "ru": "Hub User"},
+        "Hub Password": {"en": "Hub Password", "de": "Hub Passwort", "ru": "Hub Password"},
+        "Polling": {"en": "Polling", "de": "Polling", "ru": "Polling"},
+        "Polling interval (sec)": {
+            "en": "Polling interval (sec)",
+            "de": "Polling interval (sec)",
+            "ru": "Polling interval (sec)"
+        },
+        "Find Hub": {"en": "Find Hub", "de": "Suche Hub", "ru": "Find Hub"},
+    };
+
+    function setValue(id, value, onChange) {
+        // example: select elements with id=key and class=value and insert value
+        if ($('#' + id + '.value').attr('type') == 'checkbox') {
+            $('#' + id + '.value').prop('checked', value).change(function() {
+                onChange();
+            });
+        } else {
+            $('#' + id + '.value').val(value).change(function() {
+                onChange();
+            }).keyup(function() {
+                $(this).trigger('change');
+            });
+        }
+    }
+
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+        $("#dialog-hubs").dialog({
+            autoOpen: false,
+            modal: true
+        });
+        for (var key in settings) {
+            setValue(key, settings[key], onChange);
+        }
+        onChange(false);
+    }
+
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') == 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+        $('.check').each(function () {
+            var $this = $(this);
+            obj[$this.attr('id')] = $this.is('checked');
+        });
+        callback(obj);
+    }
+
+    $(document).ready(function () {
+        $('#tabs').tabs();
+        $('#find').button().click(function () {
+            $("#dialog-hubs").html('Please wait, searching for hub.');
+            $("#dialog-hubs").dialog( "open" );
+            sendTo('harmony.' + instance, 'browse', 5000, function (result) {
+                try{
+                    var arr = JSON.parse(result);
+                    if (!arr.length){
+                        var popup = 'Cannot find hub';
+                    }else{
+                        var popup = 'Select a hub: <br />';
+                        arr.forEach(function(element, index, array) {
+                            popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.ipaddress + '\');$(\'#dialog-hubs\').dialog(\'close\')">' + element.ipaddress + '</a><br />';
+                        });
+                    }
+                    $("#dialog-hubs").html(popup);
+                } catch (e) {
+                    alert ("error finding hub");
+                }
+            });
+        });
+    });
+</script>
+<style>
+    #settings tr { line-height: 2.5em; }
+</style>
+
+<!-- you have to put your config page in a div with id adapter-container -->
+<div id="adapter-container">
+    <table><tr><td><img src="harmony.jpeg" width="64" height="64"></td><td><h3 class="translate">Logitech Harmony adapter settings</h3></td></tr></table>
+        <div id="settings">
+            <table>
+                <tr>
+                    <td class="translate">Hub Address</td>
+                    <td><input type="text" id="hub" class="value"></td>
+                    <td><button id="find"><span class="translate">Find Hub</span></button></td>
+                </tr>
+                <tr>
+                    <td class="translate">Hub User</td>
+                    <td><input type="text" id="user" class="value"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="translate">Hub Password</td>
+                    <td><input type="password" id="password" class="value"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="translate">Polling</td>
+                    <td><input type="checkbox" id="polling" class="value"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="translate">Polling interval (sec)</td>
+                    <td><input type="text" id="pollingInterval" class="value"></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <div id="dialog-hubs" title="Select a hub"></div>
+        </div>
+</div>
+
+</html>
