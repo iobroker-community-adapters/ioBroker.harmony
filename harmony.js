@@ -60,9 +60,7 @@ adapter.on('ready', function () {
 });
 
 function browse(timeout, callback) {
-    timeout = parseInt(timeout);
-    if (isNaN(timeout)) timeout = 5000;
-    return;
+
 }
 
 var client;
@@ -107,7 +105,6 @@ function main() {
         });
         harmonyClient.getActivities().then(function(activities) {
             adapter.log.info(JSON.stringify(activities));
-            client.end();
         });
     }).catch(function(e){
         adapter.log.error('error: ' + JSON.stringify(e));
