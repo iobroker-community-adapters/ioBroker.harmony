@@ -116,7 +116,6 @@ function main() {
 }
 
 function poll() {
-    return;
     setTimeout(poll, adapter.config.pollingInterval * 1000);
 }
 
