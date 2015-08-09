@@ -117,8 +117,17 @@ function connect(hub){
 
         !function checkConnection(){
             harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                if (firstRun && response.hasOwnProperty('result') && response.result != '-1'){
-                    setStatusFromActivityID(response.result,2);
+                if (firstRun && response.hasOwnProperty('result')){
+                    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.activity', {val: activities[response.result], ack: true});
+                    if(response.result != '-1'){
+                        setStatusFromActivityID(response.result,2);
+                        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 2, ack: true});
+                    }else {
+                        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 0, ack: true});
+                        for (var activity in activities){
+                            setStatusFromActivityID(activity,0);
+                        }
+                    }
                     firstRun = false;
                 }
                 adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
@@ -231,6 +240,7 @@ function processConfig(config) {
 }
 
 function setStatusFromActivityID(id,value){
+    if (id == '-1') return;
     if (!activities.hasOwnProperty(id)) return;
     var channelName = adapter.config.hub.replace(/\./g,'-') + '.' + activities[id].replace(/\s/g,'_') + '.status';
     adapter.setState(channelName,{val: value, ack: true});
