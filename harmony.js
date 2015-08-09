@@ -113,33 +113,32 @@ function connect(hub){
         //update objects on connect
         harmonyClient.getAvailableCommands().then(function(config) {
             processConfig(config);
-        });
-
-        !function checkConnection(){
-            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                if (firstRun && response.hasOwnProperty('result')){
-                    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.activity', {val: activities[response.result], ack: true});
-                    if(response.result != '-1'){
-                        setStatusFromActivityID(response.result,2);
-                        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 2, ack: true});
-                    }else {
-                        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 0, ack: true});
-                        for (var activity in activities){
-                            setStatusFromActivityID(activity,0);
+            !function checkConnection(){
+                harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
+                    if (firstRun && response.hasOwnProperty('result')){
+                        adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.activity', {val: activities[response.result], ack: true});
+                        if(response.result != '-1'){
+                            setStatusFromActivityID(response.result,2);
+                            adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 2, ack: true});
+                        }else {
+                            adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: 0, ack: true});
+                            for (var activity in activities){
+                                setStatusFromActivityID(activity,0);
+                            }
                         }
+                        firstRun = false;
                     }
-                    firstRun = false;
-                }
-                adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
-                setTimeout(checkConnection, 10000);
-            }).catch(function(e){
-                adapter.log.warn('connection down: ' + e);
-                client.end();
-                adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
-                client = null;
-                setTimeout(connect,5000,hub);
-            });
-        }();
+                    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
+                    setTimeout(checkConnection, 10000);
+                }).catch(function(e){
+                    adapter.log.warn('connection down: ' + e);
+                    client.end();
+                    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
+                    client = null;
+                    setTimeout(connect,5000,hub);
+                });
+            }();
+        });
     }).catch(function(e){
         adapter.log.warn('could not connect to '+hub+': ' + e);
         adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
