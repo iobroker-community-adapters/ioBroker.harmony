@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "title": "Logitech Harmony Adapter",
     "desc": "Control your harmony activities from ioBroker.",
     "authors": [
@@ -24,7 +24,7 @@
     "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.jpeg"
   },
   "native": {
-    "hub": "192.168.0.58",
+    "hub": "0.0.0.0",
     "user": "guest",
     "password": "default"
   },

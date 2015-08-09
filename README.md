@@ -13,6 +13,8 @@ Control your harmony activities from ioBroker.
 3=turning off
 
 ## Changelog
+### 0.1.1
+* (Pmant) fixes
 ### 0.1.0
 * (Pmant) keep alive connection to hub
 * (Pmant) create/update objects and states
