@@ -165,11 +165,37 @@ function processConfig(config) {
         native: {
         }
     });
+    adapter.setObject(adapter.config.hub.replace(/\./g,'-') + '.activity', {
+        type: 'state',
+        common: {
+            name: adapter.config.hub.replace(/\./g,'-') + '.activity',
+            role: 'indicator.activity',
+            type: 'string',
+            write: false,
+            read: true
+        },
+        native: {
+        }
+    });
+    adapter.setObject(adapter.config.hub.replace(/\./g,'-') + '.status', {
+        type: 'state',
+        common: {
+            name: adapter.config.hub.replace(/\./g,'-') + '.status',
+            role: 'indicator.status',
+            type: 'number',
+            write: false,
+            read: true,
+            min: 0,
+            max: 3
+        },
+        native: {
+        }
+    });
 
     adapter.log.info('creating/updating activities');
     config.activity.forEach(function(activity) {
-        if (activity.id == '-1') return;
         activities[activity.id] = activity.label;
+        if (activity.id == '-1') return;
         //create activities
         var channelName = adapter.config.hub.replace(/\./g,'-') + '.' + activity.label.replace(/\s/g,'_');
         //create channel for activity
@@ -213,9 +239,12 @@ function setStatusFromActivityID(id,value){
 
 function processDigest(digest){
     adapter.log.info('stateDigest: ' + JSON.stringify(digest));
+    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.activity', {val: activities[digest.activityId], ack: true});
+    adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.status', {val: digest.activityStatus, ack: true});
     if (digest.activityId != '-1'){
         setStatusFromActivityID(digest.activityId,digest.activityStatus);
         if (digest.activityStatus == '2'){
+            //only one activity can run at once, set all other activities to 0
             for (var activity in activities){
                 if (activity != digest.activityId){
                     setStatusFromActivityID(activity,0);
