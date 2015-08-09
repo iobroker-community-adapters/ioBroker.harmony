@@ -74,6 +74,7 @@ function connect(hub){
         adapter.log.info('hub client started');
         adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
         client = harmonyClient;
+        var firstRun = true;
         /*
         harmonyClient._xmppClient.connection.socket.on('connect', function() {
             adapter.log.info('socket connect');
@@ -116,9 +117,9 @@ function connect(hub){
 
         !function checkConnection(){
             harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                //adapter.log.info('connection up, current activity: ' + JSON.stringify(response));
-                if (response.hasOwnProperty('result') && response.result != '-1'){
+                if (firstRun && response.hasOwnProperty('result') && response.result != '-1'){
                     setStatusFromActivityID(response.result,2);
+                    firstRun = false;
                 }
                 adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: true, ack: true});
                 setTimeout(checkConnection, 10000);
@@ -128,7 +129,6 @@ function connect(hub){
                 adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
                 client = null;
                 setTimeout(connect,5000,hub);
-                return;
             });
         }();
     }).catch(function(e){
@@ -136,7 +136,6 @@ function connect(hub){
         adapter.setState(adapter.config.hub.replace(/\./g,'-') + '.connected', {val: false, ack: true});
         client = null;
         setTimeout(connect,5000,hub);
-        return;
     });
 }
 
@@ -214,7 +213,7 @@ function processConfig(config) {
         adapter.setObject(channelName + '.status', {
             type: 'state',
             common: {
-                name: adapter.config.hub.replace(/\./g,'-') + '.connected',
+                name: channelName + '.status',
                 role: 'switch',
                 type: 'number',
                 write: false,
