@@ -60,7 +60,6 @@ adapter.on('ready', function () {
 });
 
 function browse(timeout, callback) {
-    adapter.log.info('browsing...');
     timeout = parseInt(timeout);
     if (isNaN(timeout)) timeout = 5000;
     if (!discover){
@@ -70,7 +69,6 @@ function browse(timeout, callback) {
             var hubs = Object.keys(discover.knownHubs).map(function(hubUuid) {
                 return discover.knownHubs[hubUuid];
             });
-            adapter.log.info('knownHubs: ' + JSON.stringify(hubs));
             callback({error:0, message: hubs});
         },timeout);
     }
@@ -101,7 +99,7 @@ function discoverStart() {
         discover.on('offline', function(hub) {
             // Triggered when a hub disappeared
             adapter.log.info('lost ' + hub.host_name);
-            adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.connected', {val: false, ack: true});
+            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: false, ack: true});
             if (client) client.end();
             client = null;
         });
@@ -114,7 +112,7 @@ function discoverStart() {
 }
 
 function discoverRestart() {
-    adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.connected', {val: false, ack: true});
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: false, ack: true});
     discoverStop();
     setTimeout('discoverStart',1000);
 }
@@ -142,7 +140,7 @@ function connect(hub){
     try {
         harmony(hub.ip).timeout(5000).then(function(harmonyClient) {
             adapter.log.info('connected to ' + hub.host_name);
-            adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.connected', {val: true, ack: true});
+            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: true, ack: true});
             client = harmonyClient;
 
             /*
@@ -182,13 +180,13 @@ function connect(hub){
                 harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                     if (response.hasOwnProperty('result')){
                         //set hub.activity to activity label
-                        adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.activity', {val: activities[response.result], ack: true});
+                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[response.result], ack: true});
                         //set activity.status and hub.status
                         if(response.result != '-1'){
                             setStatusFromActivityID(response.result,2);
-                            adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.status', {val: 2, ack: true});
+                            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 2, ack: true});
                         }else {
-                            adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.status', {val: 0, ack: true});
+                            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 0, ack: true});
                         }
                         //set all other activities to 'off'
                         for (var activity in activities){
@@ -220,17 +218,17 @@ function connect(hub){
 function processConfig(hub,config) {
     // create device
     adapter.log.info('creating/updating hub device');
-    adapter.setObject(adapter.config.hub.replace(/\./g,'_'), {
+    adapter.setObject(adapter.config.hub.replace(/\s/g,'_'), {
         type: 'device',
         common: {
-            name: adapter.config.hub.replace(/\./g,'_')
+            name: adapter.config.hub.replace(/\s/g,'_')
         },
         native: hub
     });
-    adapter.setObject(adapter.config.hub.replace(/\./g,'_') + '.connected', {
+    adapter.setObject(adapter.config.hub.replace(/\s/g,'_') + '.connected', {
         type: 'state',
         common: {
-            name: adapter.config.hub.replace(/\./g,'_') + '.connected',
+            name: adapter.config.hub.replace(/\s/g,'_') + '.connected',
             role: 'indicator.connected',
             type: 'boolean',
             write: false,
@@ -239,10 +237,10 @@ function processConfig(hub,config) {
         native: {
         }
     });
-    adapter.setObject(adapter.config.hub.replace(/\./g,'_') + '.activity', {
+    adapter.setObject(adapter.config.hub.replace(/\s/g,'_') + '.activity', {
         type: 'state',
         common: {
-            name: adapter.config.hub.replace(/\./g,'_') + '.activity',
+            name: adapter.config.hub.replace(/\s/g,'_') + '.activity',
             role: 'indicator.activity',
             type: 'string',
             write: false,
@@ -251,10 +249,10 @@ function processConfig(hub,config) {
         native: {
         }
     });
-    adapter.setObject(adapter.config.hub.replace(/\./g,'_') + '.status', {
+    adapter.setObject(adapter.config.hub.replace(/\s/g,'_') + '.status', {
         type: 'state',
         common: {
-            name: adapter.config.hub.replace(/\./g,'_') + '.status',
+            name: adapter.config.hub.replace(/\s/g,'_') + '.status',
             role: 'indicator.status',
             type: 'number',
             write: false,
@@ -271,7 +269,7 @@ function processConfig(hub,config) {
         activities[activity.id] = activity.label;
         if (activity.id == '-1') return;
         //create activities
-        var channelName = adapter.config.hub.replace(/\./g,'_') + '.' + activity.label.replace(/\s/g,'_');
+        var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activity.label.replace(/\s/g,'_');
         //create channel for activity
         adapter.setObject(channelName , {
             type: 'channel',
@@ -307,16 +305,16 @@ function processConfig(hub,config) {
 function setStatusFromActivityID(id,value){
     if (id == '-1') return;
     if (!activities.hasOwnProperty(id)) return;
-    var channelName = adapter.config.hub.replace(/\./g,'_') + '.' + activities[id].replace(/\s/g,'_') + '.status';
+    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activities[id].replace(/\s/g,'_') + '.status';
     adapter.setState(channelName,{val: value, ack: true});
 }
 
 function processDigest(digest){
     adapter.log.info('stateDigest: ' + JSON.stringify(digest));
     //set hub.activity to current activity label
-    adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.activity', {val: activities[digest.activityId], ack: true});
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[digest.activityId], ack: true});
     //Set hub.status to current activity status
-    adapter.setState(adapter.config.hub.replace(/\./g,'_') + '.status', {val: digest.activityStatus, ack: true});
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: digest.activityStatus, ack: true});
 
     if (digest.activityId != '-1'){ //if activityId is not powerOff
         //set activityId's status

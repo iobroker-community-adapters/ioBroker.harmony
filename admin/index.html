@@ -16,7 +16,7 @@
             "ru": "Logitech Harmony adapter settings"
         },
         "Settings": {"en": "Settings", "de": "Settings", "ru": "Settings"},
-        "Hub Address": {"en": "Hub Address", "de": "Hub Address", "ru": "Hub Address"},
+        "Hub Name": {"en": "Hub Name", "de": "Hub Name", "ru": "Hub Name"},
         "Hub User": {"en": "Hub User", "de": "Hub User", "ru": "Hub User"},
         "Hub Password": {"en": "Hub Password", "de": "Hub Passwort", "ru": "Hub Password"},
         "Find Hub": {"en": "Find Hub", "de": "Suche Hub", "ru": "Find Hub"},
@@ -87,7 +87,7 @@
                         }else{
                             var popup = 'Select a hub: <br />';
                             result.message.forEach(function(element, index, array) {
-                                popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.host_name + '\');$(\'#dialog-hubs\').dialog(\'close\')">' + element.host_name + '</a><br />';
+                                popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.host_name + '\').change();$(\'#dialog-hubs\').dialog(\'close\');">' + element.host_name + '</a><br />';
                             });
                             $("#dialog-hubs").html(popup);
                         }
@@ -111,7 +111,7 @@
         <div id="settings">
             <table>
                 <tr>
-                    <td class="translate">Hub Address</td>
+                    <td class="translate">Hub Name</td>
                     <td><input type="text" id="hub" class="value"></td>
                     <td><button id="find"><span class="translate">Find Hub</span></button></td>
                 </tr>

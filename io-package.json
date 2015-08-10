@@ -24,7 +24,7 @@
     "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.jpeg"
   },
   "native": {
-    "hub": "0.0.0.0",
+    "hub": "Hub Name",
     "user": "guest",
     "password": "default"
   },
