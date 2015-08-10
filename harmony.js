@@ -172,6 +172,13 @@ function connect(hub){
                 adapter.log.info('xmpp online');
             });
             */
+            ! function keepAlive(){
+                harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
+                    setTimeout(keepAlive, 10000);
+                }).catch(function(e){
+                    adapter.log.warn('keep Alive cannot get current Activity: ' + e);
+                });
+            }();
 
             //update objects on connect
             harmonyClient.getAvailableCommands().then(function(config) {
