@@ -19,6 +19,7 @@ Control your harmony activities from ioBroker.
 * (Pmant) stop current activity on hub status change
 * (Pmant) move activities to activity channel
 * (Pmant) add devices channel
+* (Pmant) add device control
 
 ### 0.1.2
 * (Pmant) hub discovery

@@ -18,40 +18,79 @@ adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
     }
-    adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
     var tmp = id.split('.');
     if (tmp.length == 6){
         var name = tmp.pop();
         var channel = tmp.pop();
         var type = tmp.pop();
         var hub = tmp.pop();
-    }
-    if (tmp.length == 5){
-        var name = tmp.pop();
-        var channel = tmp.pop();
-        var hub = tmp.pop();
+    }else if (tmp.length == 5){
+        adapter.log.warn('unknown state change');
+        return;
     }else if (tmp.length == 4) {
         var name = tmp.pop();
         var channel;
-        var device;
+        var type = 'hub';
         var hub = tmp.pop();
     }else {
+        adapter.log.warn('unknown state change');
         return;
     }
-    switch (name) {
-        case 'activityStatus':
-            switchActivity(channel,state.val);
+    switch (type) {
+        case 'activities':
+            switch (name) {
+                case 'activityStatus':
+                    switchActivity(channel,state.val);
+                    break;
+                case 'status':
+                    switchActivity(undefined,0);
+                    break;
+                default:
+                    adapter.log.info('stateChange not implemented (activities)');
+                    break;
+            }
             break;
-        case 'status':
-            switchActivity(undefined,0);
+        case 'hub':
+            switch (name) {
+                case 'status':
+                    switchActivity(undefined,0);
+                    break;
+                default:
+                    adapter.log.info('stateChange not implemented (hub)');
+                    break;
+            }
+            break;
+        case 'devices':
+            if (state){
+                sendCommand(id);
+            }else{
+                adapter.setState(id,{val: false, ack: true});
+            }
             break;
         default:
             adapter.log.info('stateChange not implemented');
             break;
     }
-
-    adapter.log.info(JSON.stringify(tmp));
 });
+
+function sendCommand(id){
+    adapter.getObject(id,function (err, obj) {
+        if (err) {
+            adapter.log.warn('cannot send command, unknown state');
+            adapter.setState(id,{val: false, ack: true});
+            return;
+        }
+        if (!client){
+            adapter.log.warn('error sending command, client offline');
+            adapter.setState(id,{val: false, ack: true});
+            return;
+        }
+        var encodedAction = obj.native.action.replace(/\:/g, '::');
+        client.send('holdAction', 'action=' + encodedAction + ':status=press');
+        //release after 50ms
+        setTimeout(function(){client.send('holdAction', 'action=' + encodedAction + ':status=release');adapter.setState(id,{val: false, ack: true});},50)
+    });
+}
 
 function switchActivity(activityLabel,value) {
     if (!client){
@@ -127,6 +166,8 @@ var client;
 var discover;
 var activities = {};
 var activities_reverse = {};
+var devices = {};
+var devices_reverse = {};
 var currentActivity;
 
 function main() {
@@ -227,7 +268,7 @@ function connect(hub){
                 harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                     setTimeout(keepAlive, 10000);
                 }).catch(function(e){
-                    adapter.log.warn('keep Alive cannot get current Activity: ' + e);
+                    adapter.log.warn('keep alive cannot get current Activity: ' + e);
                 });
             }();
 
@@ -274,7 +315,7 @@ function connect(hub){
 }
 
 function processConfig(hub,config) {
-    // create device
+    /* create hub */
     adapter.log.info('creating/updating hub device');
     adapter.setObject(adapter.config.hub.replace(/\s/g,'_'), {
         type: 'device',
@@ -322,30 +363,43 @@ function processConfig(hub,config) {
         }
     });
 
+    /* create activities */
     adapter.log.info('creating/updating activities');
+    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.activities';
+    //create channel for activities
+    adapter.setObject(channelName , {
+        type: 'channel',
+        common: {
+            name: 'activities',
+            role: 'channel.activities'
+        },
+        native: {
+        }
+    });
     config.activity.forEach(function(activity) {
         activities[activity.id] = activity.label;
         activities_reverse[activity.label] = activity.id;
         if (activity.id == '-1') return;
         //create activities
-        var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activity.label.replace(/\s/g,'_');
+        var activityChannelName = channelName + '.' + activity.label.replace(/\s/g,'_');
         //create channel for activity
-        adapter.setObject(channelName , {
+        delete activity.sequences;
+        delete activity.controlGroup;
+        delete activity.fixit;
+        delete activity.rules;
+        adapter.setObject(activityChannelName , {
             type: 'channel',
             common: {
-                name: channelName,
+                name: 'activities.' + activity.label,
                 role: 'media.activity'
             },
-            native: {
-                label: activity.label,
-                id: activity.id
-            }
+            native: activity
         });
         //create states for activity
-        adapter.setObject(channelName + '.activityStatus', {
+        adapter.setObject(activityChannelName + '.activityStatus', {
             type: 'state',
             common: {
-                name: channelName + '.activityStatus',
+                name: 'activities.' + activity.label + '.activityStatus',
                 role: 'switch',
                 type: 'number',
                 write: true,
@@ -358,26 +412,58 @@ function processConfig(hub,config) {
             }
         });
     });
+
+    /* create devices */
+    adapter.log.info('creating/updating devices');
+    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.devices';
+    //create channel for activities
+    adapter.setObject(channelName , {
+        type: 'channel',
+        common: {
+            name: 'devices',
+            role: 'channel.devices'
+        },
+        native: {
+        }
+    });
+    config.device.forEach(function(device) {
+        devices[device.id] = device.label;
+        devices_reverse[device.label] = device.id;
+        var deviceChannelName = channelName + '.' + device.label.replace(/\s/g,'_');
+        var controlGroup = device.controlGroup;
+        delete device.controlGroup;
+        //create channel for device
+        adapter.setObject(deviceChannelName , {
+            type: 'channel',
+            common: {
+                name: 'devices.' + device.label,
+                role: 'media.device'
+            },
+            native: device
+        });
+        controlGroup.forEach(function(controlGroup){
+            var groupName = controlGroup.name;
+            controlGroup.function.forEach(function(command) {
+                command['controlGroup'] = groupName;
+                command['deviceId'] = device.id;
+                //create command
+                adapter.setObject(deviceChannelName + '.' + command.name.replace(/\./g,'__'), {
+                    type: 'state',
+                    common: {
+                        name: 'devices.' + device.label + '.' + command.name.replace(/\./g,'__'),
+                        role: 'button',
+                        type: 'boolean',
+                        write: true,
+                        read: true
+                    },
+                    native: command
+                });
+                adapter.setState(deviceChannelName + '.' + command.name.replace(/\./g,'__'), {val: false, ack: true});
+            });
+        });
+    });
+
     adapter.log.info('init ready');
-}
-
-function setCurrentActivity(id){
-    if (!activities.hasOwnProperty(id)){
-        adapter.log.warn('unknown activityId: ' + id);
-        return;
-    }
-    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[id], ack: true});
-    currentActivity = id;
-}
-
-function setStatusFromActivityID(id,value){
-    if (id == '-1') return;
-    if (!activities.hasOwnProperty(id)){
-        adapter.log.warn('unknown activityId: ' + id);
-        return;
-    }
-    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activities[id].replace(/\s/g,'_') + '.activityStatus';
-    adapter.setState(channelName,{val: value, ack: true});
 }
 
 function processDigest(digest){
@@ -406,6 +492,26 @@ function processDigest(digest){
         }
     }
 }
+
+function setCurrentActivity(id){
+    if (!activities.hasOwnProperty(id)){
+        adapter.log.warn('unknown activityId: ' + id);
+        return;
+    }
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[id], ack: true});
+    currentActivity = id;
+}
+
+function setStatusFromActivityID(id,value){
+    if (id == '-1') return;
+    if (!activities.hasOwnProperty(id)){
+        adapter.log.warn('unknown activityId: ' + id);
+        return;
+    }
+    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.activities.' + activities[id].replace(/\s/g,'_') + '.activityStatus';
+    adapter.setState(channelName,{val: value, ack: true});
+}
+
 
 function cleanDevices() {
  //@todo
