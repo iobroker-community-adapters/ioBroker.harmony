@@ -1,6 +1,6 @@
 {
   "name": "iobroker.harmony",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Control your harmony activities from ioBroker.",
   "author": "Pmant <hq@ccu.io>",
   "contributors": [
