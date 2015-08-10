@@ -13,6 +13,8 @@ Control your harmony activities from ioBroker.
 3=turning off
 
 ## Changelog
+### 0.1.2
+* (Pmant) hub discovery
 ### 0.1.1
 * (Pmant) fixes
 ### 0.1.0
@@ -26,7 +28,7 @@ Control your harmony activities from ioBroker.
 
 ## TODO
 * start activties on status change
-* delete unused devices/channels/states
+* delete unused objects
 * list devices 
 * list device commands and activity commands
 * send commands

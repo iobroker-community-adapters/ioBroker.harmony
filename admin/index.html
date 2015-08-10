@@ -74,20 +74,28 @@
         $('#find').button().click(function () {
             $("#dialog-hubs").html('Please wait, searching for hub.');
             $("#dialog-hubs").dialog( "open" );
-            sendTo('harmony.' + instance, 'browse', 5000, function (result) {
+            sendTo('harmony.' + instance, 'browse', 1000, function (result) {
                 try{
-                    var arr = JSON.parse(result);
-                    if (!arr.length){
-                        var popup = 'Cannot find hub';
-                    }else{
-                        var popup = 'Select a hub: <br />';
-                        arr.forEach(function(element, index, array) {
-                            popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.ipaddress + '\');$(\'#dialog-hubs\').dialog(\'close\')">' + element.ipaddress + '</a><br />';
-                        });
+                    var result = JSON.parse(result);
+                    if (result.error > 0) {
+                        alert("error discovering hub: " + result.message);
+                        $("#dialog-hubs").dialog("close");
+                    } else {
+                        if (!$.isArray(result.message) || !result.message.length){
+                            alert("no hub discovered.");
+                            $("#dialog-hubs").dialog("close");
+                        }else{
+                            var popup = 'Select a hub: <br />';
+                            result.message.forEach(function(element, index, array) {
+                                popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.host_name + '\');$(\'#dialog-hubs\').dialog(\'close\')">' + element.host_name + '</a><br />';
+                            });
+                            $("#dialog-hubs").html(popup);
+                        }
                     }
-                    $("#dialog-hubs").html(popup);
                 } catch (e) {
-                    alert ("error finding hub");
+                    alert ("error browsing: " + e);
+                    console.log(e);
+                    $("#dialog-hubs").dialog("close");
                 }
             });
         });
@@ -105,7 +113,7 @@
                 <tr>
                     <td class="translate">Hub Address</td>
                     <td><input type="text" id="hub" class="value"></td>
-                    <td><button id="find"><span class="translate" disabled>Find Hub</span></button></td>
+                    <td><button id="find"><span class="translate">Find Hub</span></button></td>
                 </tr>
                 <tr>
                     <td class="translate">Hub User</td>
