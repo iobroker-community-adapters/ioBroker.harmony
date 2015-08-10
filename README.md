@@ -1,4 +1,4 @@
-![Logo](admin/harmony.jpeg)
+![Logo](admin/harmony.png)
 # ioBroker Logitech Harmony Adapter
 
 Control your harmony activities from ioBroker.
