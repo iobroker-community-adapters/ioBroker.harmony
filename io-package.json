@@ -20,8 +20,8 @@
       "logitech",
       "home automation"
     ],
-    "icon": "harmony.jpeg",
-    "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.jpeg"
+    "icon": "harmony.png",
+    "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
   },
   "native": {
     "hub": "Hub Name",
