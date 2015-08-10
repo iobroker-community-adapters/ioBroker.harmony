@@ -14,6 +14,9 @@ Control your harmony activities from ioBroker.
 
 ## Changelog
 
+### 0.2.1
+* (bluefox) change logo
+
 ### 0.2.0
 * (Pmant) switch activity on state change
 * (Pmant) stop current activity on hub status change
