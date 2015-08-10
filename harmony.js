@@ -377,8 +377,8 @@ function processConfig(hub,config) {
         }
     });
     config.activity.forEach(function(activity) {
-        activities[activity.id] = activity.label;
-        activities_reverse[activity.label] = activity.id;
+        activities[activity.id] = ctivity.label.replace(/\s/g,'_');
+        activities_reverse[activity.label.replace(/\s/g,'_')] = activity.id;
         if (activity.id == '-1') return;
         //create activities
         var activityChannelName = channelName + '.' + activity.label.replace(/\s/g,'_');
@@ -390,7 +390,7 @@ function processConfig(hub,config) {
         adapter.setObject(activityChannelName , {
             type: 'channel',
             common: {
-                name: 'activities.' + activity.label,
+                name: 'activities.' + activity.label.replace(/\s/g,'_'),
                 role: 'media.activity'
             },
             native: activity
@@ -399,7 +399,7 @@ function processConfig(hub,config) {
         adapter.setObject(activityChannelName + '.activityStatus', {
             type: 'state',
             common: {
-                name: 'activities.' + activity.label + '.activityStatus',
+                name: 'activities.' + activity.label.replace(/\s/g,'_') + '.activityStatus',
                 role: 'switch',
                 type: 'number',
                 write: true,
@@ -427,8 +427,8 @@ function processConfig(hub,config) {
         }
     });
     config.device.forEach(function(device) {
-        devices[device.id] = device.label;
-        devices_reverse[device.label] = device.id;
+        devices[device.id] = device.label.replace(/\s/g,'_');
+        devices_reverse[device.label.replace(/\s/g,'_')] = device.id;
         var deviceChannelName = channelName + '.' + device.label.replace(/\s/g,'_');
         var controlGroup = device.controlGroup;
         delete device.controlGroup;
@@ -436,7 +436,7 @@ function processConfig(hub,config) {
         adapter.setObject(deviceChannelName , {
             type: 'channel',
             common: {
-                name: 'devices.' + device.label,
+                name: 'devices.' + device.label.replace(/\s/g,'_'),
                 role: 'media.device'
             },
             native: device
@@ -450,7 +450,7 @@ function processConfig(hub,config) {
                 adapter.setObject(deviceChannelName + '.' + command.name.replace(/\./g,'__'), {
                     type: 'state',
                     common: {
-                        name: 'devices.' + device.label + '.' + command.name.replace(/\./g,'__'),
+                        name: 'devices.' + device.label.replace(/\s/g,'_') + '.' + command.name.replace(/\./g,'__'),
                         role: 'button',
                         type: 'boolean',
                         write: true,
@@ -467,7 +467,6 @@ function processConfig(hub,config) {
 }
 
 function processDigest(digest){
-    adapter.log.info('stateDigest: ' + JSON.stringify(digest));
     //set hub.activity to current activity label
     setCurrentActivity(digest.activityId);
     //Set hub.status to current activity status
