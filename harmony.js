@@ -377,7 +377,7 @@ function processConfig(hub,config) {
         }
     });
     config.activity.forEach(function(activity) {
-        activities[activity.id] = ctivity.label.replace(/\s/g,'_');
+        activities[activity.id] = activity.label.replace(/\s/g,'_');
         activities_reverse[activity.label.replace(/\s/g,'_')] = activity.id;
         if (activity.id == '-1') return;
         //create activities
