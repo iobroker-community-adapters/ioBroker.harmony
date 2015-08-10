@@ -14,6 +14,12 @@ Control your harmony activities from ioBroker.
 
 ## Changelog
 
+### 0.2
+* (Pmant) switch activity on state change
+* (Pmant) stop current activity on hub status change
+* (Pmant) move activities to activity channel
+* (Pmant) add devices channel
+
 ### 0.1.2
 * (Pmant) hub discovery
 
@@ -31,7 +37,6 @@ Control your harmony activities from ioBroker.
 
 
 ### TODO
-* start activties on status change
 * delete unused objects
 * list devices 
 * list device commands and activity commands

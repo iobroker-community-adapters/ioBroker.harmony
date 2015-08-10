@@ -18,8 +18,57 @@ adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
     }
-    adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
+    adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
+    var tmp = id.split('.');
+    if (tmp.length == 6){
+        var name = tmp.pop();
+        var channel = tmp.pop();
+        var type = tmp.pop();
+        var hub = tmp.pop();
+    }
+    if (tmp.length == 5){
+        var name = tmp.pop();
+        var channel = tmp.pop();
+        var hub = tmp.pop();
+    }else if (tmp.length == 4) {
+        var name = tmp.pop();
+        var channel;
+        var device;
+        var hub = tmp.pop();
+    }else {
+        return;
+    }
+    switch (name) {
+        case 'activityStatus':
+            switchActivity(channel,state.val);
+            break;
+        case 'status':
+            switchActivity(undefined,0);
+            break;
+        default:
+            adapter.log.info('stateChange not implemented');
+            break;
+    }
+
+    adapter.log.info(JSON.stringify(tmp));
 });
+
+function switchActivity(activityLabel,value) {
+    if (!client){
+        adapter.log.warn('error changing activity, client offline');
+        return;
+    }
+    //get current Activity
+    value = parseInt(value);
+    if (isNaN(value)) value = 1;
+    if (value == 0){
+        client.turnOff();
+    }else if(activities_reverse.hasOwnProperty(activityLabel)){
+        client.startActivity(activities_reverse[activityLabel]);
+    }else{
+        adapter.log.warn('activityLabel does not exists');
+    }
+}
 
 // New message arrived. obj is array with current messages
 adapter.on('message', function (obj) {
@@ -77,9 +126,11 @@ function browse(timeout, callback) {
 var client;
 var discover;
 var activities = {};
+var activities_reverse = {};
+var currentActivity;
 
 function main() {
-    adapter.subscribeStates('*');
+    adapter.subscribeStates(adapter.config.hub.replace(/\s/g,'_') + '*');
     discoverStart();
 }
 
@@ -187,7 +238,7 @@ function connect(hub){
                 harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                     if (response.hasOwnProperty('result')){
                         //set hub.activity to activity label
-                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[response.result], ack: true});
+                        setCurrentActivity(response.result);
                         //set activity.status and hub.status
                         if(response.result != '-1'){
                             setStatusFromActivityID(response.result,2);
@@ -260,9 +311,9 @@ function processConfig(hub,config) {
         type: 'state',
         common: {
             name: adapter.config.hub.replace(/\s/g,'_') + '.status',
-            role: 'indicator.status',
+            role: 'switch',
             type: 'number',
-            write: false,
+            write: true,
             read: true,
             min: 0,
             max: 3
@@ -274,6 +325,7 @@ function processConfig(hub,config) {
     adapter.log.info('creating/updating activities');
     config.activity.forEach(function(activity) {
         activities[activity.id] = activity.label;
+        activities_reverse[activity.label] = activity.id;
         if (activity.id == '-1') return;
         //create activities
         var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activity.label.replace(/\s/g,'_');
@@ -290,13 +342,13 @@ function processConfig(hub,config) {
             }
         });
         //create states for activity
-        adapter.setObject(channelName + '.status', {
+        adapter.setObject(channelName + '.activityStatus', {
             type: 'state',
             common: {
-                name: channelName + '.status',
+                name: channelName + '.activityStatus',
                 role: 'switch',
                 type: 'number',
-                write: false,
+                write: true,
                 read: true,
                 min: 0,
                 max: 3
@@ -309,17 +361,29 @@ function processConfig(hub,config) {
     adapter.log.info('init ready');
 }
 
+function setCurrentActivity(id){
+    if (!activities.hasOwnProperty(id)){
+        adapter.log.warn('unknown activityId: ' + id);
+        return;
+    }
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[id], ack: true});
+    currentActivity = id;
+}
+
 function setStatusFromActivityID(id,value){
     if (id == '-1') return;
-    if (!activities.hasOwnProperty(id)) return;
-    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activities[id].replace(/\s/g,'_') + '.status';
+    if (!activities.hasOwnProperty(id)){
+        adapter.log.warn('unknown activityId: ' + id);
+        return;
+    }
+    var channelName = adapter.config.hub.replace(/\s/g,'_') + '.' + activities[id].replace(/\s/g,'_') + '.activityStatus';
     adapter.setState(channelName,{val: value, ack: true});
 }
 
 function processDigest(digest){
     adapter.log.info('stateDigest: ' + JSON.stringify(digest));
     //set hub.activity to current activity label
-    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[digest.activityId], ack: true});
+    setCurrentActivity(digest.activityId);
     //Set hub.status to current activity status
     adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: digest.activityStatus, ack: true});
 
