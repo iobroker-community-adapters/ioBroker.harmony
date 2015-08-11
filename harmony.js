@@ -14,6 +14,16 @@ var HarmonyHubDiscover = require('harmonyhubjs-discover');
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('harmony');
 
+//fix discover stop
+HarmonyHubDiscover.prototype.stop = function stop() {
+    this.ping.stop();
+    if(this.responseCollector.server) {
+        this.responseCollector.server.close();
+    }
+    clearInterval(this.cleanUpIntervalToken);
+};
+
+
 adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
@@ -133,14 +143,9 @@ adapter.on('message', function (obj) {
 });
 
 adapter.on('unload', function (callback) {
-    try {
-        adapter.log.info('terminating');
-        discoverStop();
-    } catch (e) {
-        adapter.log.warn(e);
-    } finally {
-        callback();
-    }
+    adapter.log.info('terminating');
+    discoverStop();
+    callback();
 });
 
 adapter.on('ready', function () {
@@ -166,8 +171,6 @@ var client;
 var discover;
 var activities = {};
 var activities_reverse = {};
-var devices = {};
-var devices_reverse = {};
 var currentActivity;
 
 function main() {
@@ -179,146 +182,137 @@ function discoverStart() {
     if (discover){
         return;
     }
-    try {
-        discover = new HarmonyHubDiscover(61991);
-        discover.on('online', function(hub) {
-            // Triggered when a new hub was found
-            adapter.log.info('discovered ' + hub.host_name);
-            if (hub.host_name == adapter.config.hub){
-                connect(hub);
-            }
-        });
-        discover.on('offline', function(hub) {
-            // Triggered when a hub disappeared
-            adapter.log.info('lost ' + hub.host_name);
-            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: false, ack: true});
-            if (client) client.end();
-            client = null;
-        });
-        discover.start();
-    } catch (e) {
-        adapter.log.error('could not start discover: ' + e);
-        discover.stop();
-        adapter.stop();
-    }
+    discover = new HarmonyHubDiscover(61991);
+    discover.on('online', function(hub) {
+        // Triggered when a new hub was found
+        adapter.log.info('discovered ' + hub.host_name);
+        if (hub.host_name == adapter.config.hub){
+            //wait 2 seconds for hub before connecting
+            setTimeout(function(){connect(hub);},5000);
+        }
+    });
+    discover.on('offline', function(hub) {
+        // Triggered when a hub disappeared
+        adapter.log.info('lost ' + hub.host_name);
+        discoverRestart();
+    });
+    discover.on('error', function(er) {
+        adapter.log.warn('discover error: ', er.message);
+    });
+    discover.start();
+    adapter.log.info('discover started');
 }
 
 function discoverRestart() {
     adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: false, ack: true});
     discoverStop();
-    setTimeout('discoverStart',1000);
+    setTimeout(function(){discoverStart();},1000);
 }
 
 function discoverStop() {
+    adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: false, ack: true});
     if (discover){
-        try{
-            discover.stop();
-            adapter.log.info('stopped hub discovery');
-        }catch (e) {
-            adapter.log.warn('could not stop discover: ' + e);
-        }
+        discover.stop();
+        adapter.log.info('discover ended');
     }
     discover = null;
-    try{
-        if (client) client.end();
-    } catch (e) {
-        adapter.log.warn('could not end client: ' + e);
+    if (client){
+        client.end();
+        adapter.log.info('client ended');
     }
     client = null;
 }
 
 function connect(hub){
-    adapter.log.info('connecting to ' + hub.host_name);
-    try {
-        harmony(hub.ip).timeout(5000).then(function(harmonyClient) {
-            adapter.log.info('connected to ' + hub.host_name);
-            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: true, ack: true});
-            client = harmonyClient;
+    harmony(hub.ip).timeout(5000).then(function(harmonyClient) {
+        adapter.log.info('connected to ' + hub.host_name);
+        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.connected', {val: true, ack: true});
+        client = harmonyClient;
 
-            /*
-            harmonyClient._xmppClient.connection.socket.on('connect', function() {
-                adapter.log.info('socket connect');
+        /*
+        harmonyClient._xmppClient.connection.socket.on('connect', function() {
+            adapter.log.info('socket connect');
+        });
+        harmonyClient._xmppClient.connection.socket.on('timeout', function() {
+            adapter.log.info('socket timeout');
+        });
+        harmonyClient._xmppClient.connection.socket.on('close', function(e) {
+            adapter.log.info('socket closed');
+        });
+        harmonyClient._xmppClient.connection.socket.on('end', function(e) {
+            adapter.log.info('socket ended');
+        });
+        harmonyClient._xmppClient.connection.socket.on('error', function(e) {
+            adapter.log.error('socket error: ' + JSON.stringify(e));
+        });
+        harmonyClient._xmppClient.connection.socket.on('connect', function() {
+            adapter.log.info('socket connect');
+        });
+        harmonyClient._xmppClient.on('error', function(e) {
+            adapter.log.error('xmpp error: ' + JSON.stringify(e));
+        });
+        harmonyClient._xmppClient.on('offline', function() {
+            adapter.log.info('xmpp offline');
+        });
+        harmonyClient._xmppClient.on('online', function(jid) {
+            adapter.log.info('xmpp online');
+        });
+        */
+        ! function keepAlive(){
+            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
+                setTimeout(keepAlive, 10000);
+            }).catch(function(e){
+                adapter.log.info('keep alive cannot get current Activity: ' + e);
             });
-            harmonyClient._xmppClient.connection.socket.on('timeout', function() {
-                adapter.log.info('socket timeout');
-            });
-            harmonyClient._xmppClient.connection.socket.on('close', function(e) {
-                adapter.log.info('socket closed');
-            });
-            harmonyClient._xmppClient.connection.socket.on('end', function(e) {
-                adapter.log.info('socket ended');
-            });
-            harmonyClient._xmppClient.connection.socket.on('error', function(e) {
-                adapter.log.error('socket error: ' + JSON.stringify(e));
-            });
-            harmonyClient._xmppClient.connection.socket.on('connect', function() {
-                adapter.log.info('socket connect');
-            });
-            harmonyClient._xmppClient.on('error', function(e) {
-                adapter.log.error('xmpp error: ' + JSON.stringify(e));
-            });
-            harmonyClient._xmppClient.on('offline', function() {
-                adapter.log.info('xmpp offline');
-            });
-            harmonyClient._xmppClient.on('online', function(jid) {
-                adapter.log.info('xmpp online');
-            });
-            */
-            ! function keepAlive(){
-                harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                    setTimeout(keepAlive, 10000);
-                }).catch(function(e){
-                    adapter.log.warn('keep alive cannot get current Activity: ' + e);
-                });
-            }();
+        }();
 
-            //update objects on connect
-            harmonyClient.getAvailableCommands().then(function(config) {
-                try{
-                    processConfig(hub,config);
-                }catch (e){
-                    adapter.log.error(e);
-                    discoverRestart();
-                    return;
-                }
+        //update objects on connect
+        harmonyClient.getAvailableCommands().then(function(config) {
+            try{
+                processConfig(hub,config);
+            }catch (e){
+                adapter.log.error(e);
+                discoverRestart();
+                return;
+            }
 
-                //set current activity
-                harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                    if (response.hasOwnProperty('result')){
-                        //set hub.activity to activity label
-                        setCurrentActivity(response.result);
-                        //set activity.status and hub.status
-                        if(response.result != '-1'){
-                            setStatusFromActivityID(response.result,2);
-                            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 2, ack: true});
-                        }else {
-                            adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 0, ack: true});
-                        }
-                        //set all other activities to 'off'
-                        for (var activity in activities){
-                            if (activity != response.result){
-                                setStatusFromActivityID(activity,0);
-                            }
+            //set current activity
+            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
+                if (response.hasOwnProperty('result')){
+                    //set hub.activity to activity label
+                    setCurrentActivity(response.result);
+                    //set activity.status and hub.status
+                    if(response.result != '-1'){
+                        setStatusFromActivityID(response.result,2);
+                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 2, ack: true});
+                    }else {
+                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 0, ack: true});
+                    }
+                    //set all other activities to 'off'
+                    for (var activity in activities){
+                        if (activity != response.result){
+                            setStatusFromActivityID(activity,0);
                         }
                     }
+                }
 
-                    //start listen for updates from hub
-                    harmonyClient.on('stateDigest', function(digest) {
-                        processDigest(digest);
-                    });
-                }).catch(function(e){
-                    adapter.log.warn('connection down: ' + e);
-                    discoverRestart();
+                //start listen for updates from hub
+                harmonyClient.on('stateDigest', function(digest) {
+                    processDigest(digest);
                 });
+            }).catch(function(e){
+                adapter.log.warn('connection down: ' + e);
+                discoverRestart();
             });
         }).catch(function(e){
-            adapter.log.warn('could not connect to ' + hub.host_name + ': ' + e);
+            adapter.log.warn('could not get config: ' + e);
             discoverRestart();
         });
-    } catch (e) {
+    }).catch(function(e){
         adapter.log.warn('could not connect to ' + hub.host_name + ': ' + e);
         discoverRestart();
-    }
+    });
+
 }
 
 function processConfig(hub,config) {
@@ -337,7 +331,7 @@ function processConfig(hub,config) {
             name: adapter.config.hub.replace(/\s/g,'_') + '.connected',
             role: 'indicator.connected',
             type: 'boolean',
-            write: false,
+            write: true,
             read: true
         },
         native: {
@@ -434,8 +428,6 @@ function processConfig(hub,config) {
         }
     });
     config.device.forEach(function(device) {
-        devices[device.id] = device.label.replace(/\s/g,'_');
-        devices_reverse[device.label.replace(/\s/g,'_')] = device.id;
         var deviceChannelName = channelName + '.' + device.label.replace(/\s/g,'_');
         var controlGroup = device.controlGroup;
         delete device.controlGroup;

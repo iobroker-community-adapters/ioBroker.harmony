@@ -74,8 +74,8 @@
         $('#find').button().click(function () {
             $("#dialog-hubs").html('Please wait, searching for hub.');
             $("#dialog-hubs").dialog( "open" );
-            var timeout = setTimout(function(){
-                alert("Rquest timed out. Adapter needs to be running.");
+            var timeout = setTimeout(function(){
+                alert("Request timed out, adapter needs to be running.");
                 $("#dialog-hubs").dialog("close");
             },2000);
             sendTo('harmony.' + instance, 'browse', 1000, function (result) {
