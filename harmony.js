@@ -171,7 +171,6 @@ var client;
 var discover;
 var activities = {};
 var activities_reverse = {};
-var currentActivity;
 
 function main() {
     adapter.subscribeStates(adapter.config.hub.replace(/\s/g,'_') + '*');
@@ -287,6 +286,7 @@ function connect(hub){
                         adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 2, ack: true});
                     }else {
                         adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 0, ack: true});
+                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: 2, ack: true});
                     }
                     //set all other activities to 'off'
                     for (var activity in activities){
@@ -343,7 +343,7 @@ function processConfig(hub,config) {
             name: adapter.config.hub.replace(/\s/g,'_') + '.activity',
             role: 'indicator.activity',
             type: 'string',
-            write: false,
+            write: true,
             read: true
         },
         native: {
@@ -496,8 +496,8 @@ function setCurrentActivity(id){
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
+    //adapter.log.info('current activity: ' + activities[id]);
     adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[id], ack: true});
-    currentActivity = id;
 }
 
 function setStatusFromActivityID(id,value){
