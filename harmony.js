@@ -286,7 +286,6 @@ function connect(hub){
                         adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 2, ack: true});
                     }else {
                         adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.status', {val: 0, ack: true});
-                        adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: 2, ack: true});
                     }
                     //set all other activities to 'off'
                     for (var activity in activities){
@@ -496,7 +495,7 @@ function setCurrentActivity(id){
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
-    //adapter.log.info('current activity: ' + activities[id]);
+    adapter.log.info('current activity: ' + activities[id]);
     adapter.setState(adapter.config.hub.replace(/\s/g,'_') + '.activity', {val: activities[id], ack: true});
 }
 
