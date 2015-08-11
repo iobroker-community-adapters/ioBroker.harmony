@@ -274,7 +274,14 @@ function connect(hub){
 
             //update objects on connect
             harmonyClient.getAvailableCommands().then(function(config) {
-                processConfig(hub,config);
+                try{
+                    processConfig(hub,config);
+                }catch (e){
+                    adapter.log.error(e);
+                    discoverRestart();
+                    return;
+                }
+
                 //set current activity
                 harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                     if (response.hasOwnProperty('result')){
@@ -294,14 +301,14 @@ function connect(hub){
                             }
                         }
                     }
+
+                    //start listen for updates from hub
+                    harmonyClient.on('stateDigest', function(digest) {
+                        processDigest(digest);
+                    });
                 }).catch(function(e){
                     adapter.log.warn('connection down: ' + e);
                     discoverRestart();
-                });
-
-                //listen for updates from hub
-                harmonyClient.on('stateDigest', function(digest) {
-                    processDigest(digest);
                 });
             });
         }).catch(function(e){
