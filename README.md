@@ -4,8 +4,43 @@
 Control your harmony activities from ioBroker.
 
 ## Install
+Install Harmony via ioBroker Admin.
+
+1. Make sure Instance is running.
+2. Open instance config dialog
+3. Press "Find Hub"
+4. A Popup lists all Harmony Hubs found on your network. Click on a Hub to select it.
+5. Make sure "Sync with Hub" is selected 
+5. Save the configuration, the Hub
+
+You need to select "Sync with Hub" again after adding/updating/deleting devices or activities!
 
 ## Usage
+###Activities
+**Start:**  
+Set the status state 'Instance.Hub_Name.activities.Activity_Name.activityStatus' to a Number greater than 0.
+During the activity's startup sequence the status changes from 1 (startup) to 2(running)
+
+**Stop:**  
+Set the status state 'Instance.Hub_Name.activities.Activity_Name.activityStatus' to 0.
+Alternatively, you can set the hub's status 'Instance.Hub_Name.status' to any number. This will stop the current running activity.
+During the activity's exit sequence the status changes from 3 (stopping) to 0 (stopped)
+
+###Indicators
+There are two indicators 'Instance.Hub_Name.activity' and 'Instance.Hub_Name.connected'. Both are read-only, changing their values has no effect.
+
+**.connected**  
+Tells you whether the adapter is successfully connected to the hub.
+ 
+**.activity**  
+Gives you the name of the running activity.
+
+###Devices
+**Send Command**  
+Set 'Instance.Hub_Name.devices.Device_Name.command' to true.  
+This will send the command for 50 ms.
+
+
 ###Activity status:
 0=off;
 1=starting;
@@ -13,6 +48,10 @@ Control your harmony activities from ioBroker.
 3=turning off
 
 ## Changelog
+
+### 0.2.2 (planned)
+* (Pmant) only synchronize on demand
+* (Pmant) delete unused activities and devices
 
 ### 0.2.1
 * (bluefox) change logo
@@ -41,10 +80,11 @@ Control your harmony activities from ioBroker.
 
 
 ### TODO
-* delete unused objects
+* translations
+* hold/release command
+* send command for given time
 
 ### License
-
 MIT
 
 
