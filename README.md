@@ -40,13 +40,6 @@ Gives you the name of the running activity.
 Set 'Instance.Hub_Name.devices.Device_Name.command' to true.  
 This will send the command for 50 ms.
 
-
-###Activity status:
-0=off;
-1=starting;
-2=on
-3=turning off
-
 ## Changelog
 
 ### 0.2.2 (planned)
