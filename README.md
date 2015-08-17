@@ -22,8 +22,8 @@ Set the status state 'Instance.Hub_Name.activities.Activity_Name' to a Number gr
 During the activity's startup sequence the status changes from 1 (startup) to 2(running)
 
 **Stop:**  
-Set the status state 'Instance.Hub_Name.activities.Activity_Name' to 0.
-Alternatively, you can set the hub's status 'Instance.activities.currentStatus' to any number. This will stop the current running activity.
+Set the state 'Instance.Hub_Name.activities.Activity_Name' to 0.
+Alternatively, you can set the hub's status 'Instance.activities.currentStatus' to any number.
 During the activity's exit sequence the status changes from 3 (stopping) to 0 (stopped)
 
 ###Indicators
