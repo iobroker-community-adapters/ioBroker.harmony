@@ -29,10 +29,10 @@ During the activity's exit sequence the status changes from 3 (stopping) to 0 (s
 ###Indicators
 There are two indicators 'Instance.Hub_Name.activity' and 'Instance.Hub_Name.connected'. Both are read-only, changing their values has no effect.
 
-**.connected**  
+**.hubConnected**  
 Tells you whether the adapter is successfully connected to the hub.
  
-**.blocked**  
+**.hubBlocked**  
 Is set to true if Hub is busy starting/stopping activities or sending commands.
  
 **activities.currentActivity**  

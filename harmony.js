@@ -194,11 +194,22 @@ var devices_reverse = {};
 var hubName;
 var blocked = true;
 var timestamp;
+var statesExist = false;
 
 function main() {
     hubName = adapter.config.hub.replace(/[.\s]+/g,'_');
-    adapter.subscribeStates('*');
-    discoverStart();
+    adapter.getState(hubName + '.hubConnected', function(err,state){
+        if (err || !state) {
+            adapter.log.info('hub not initialized');
+        }else {
+            adapter.log.info('hub initialized');
+            statesExist = true;
+            setBlocked(true);
+            setConnected(false);
+        }
+        adapter.subscribeStates('*');
+        discoverStart();
+    });
 }
 
 function discoverStart() {
@@ -227,13 +238,13 @@ function discoverStart() {
 }
 
 function discoverRestart() {
-    adapter.setState(hubName + '.connected', {val: false, ack: true});
+    setConncted(false);
     discoverStop();
     setTimeout(function(){discoverStart();},1000);
 }
 
 function discoverStop() {
-    adapter.setState(hubName + '.connected', {val: false, ack: true});
+    setConnected(false);
     if (discover){
         discover.stop();
         adapter.log.debug('discover ended');
@@ -251,7 +262,7 @@ function connect(hub){
         timestamp = Date.now();
         setBlocked(true);
         adapter.log.info('connected to ' + hub.host_name);
-        adapter.setState(hubName + '.connected', {val: true, ack: true});
+        setConnected(true);
         client = harmonyClient;
         //fix harmony client startactivity
         client.startActivity = function startActivity(activityId) {
@@ -327,7 +338,7 @@ function connect(hub){
                 if (response.hasOwnProperty('result')){
                     //set hub.activity to activity label
                     setCurrentActivity(response.result);
-                    //set activity.status and hub.status
+
                     if(response.result != '-1'){
                         setStatusFromActivityID(response.result,2);
                         setCurrentStatus(2);
@@ -372,11 +383,11 @@ function processConfig(hub,config) {
         },
         native: hub
     });
-    adapter.setObject(hubName + '.connected', {
+    adapter.setObject(hubName + '.hubConnected', {
         type: 'state',
         common: {
-            name: hubName + ':connected',
-            role: 'indicator.connected',
+            name: hubName + ':hubConnected',
+            role: 'indicator.hubConnected',
             type: 'boolean',
             write: false,
             read: true
@@ -384,11 +395,11 @@ function processConfig(hub,config) {
         native: {
         }
     });
-    adapter.setObject(hubName + '.blocked', {
+    adapter.setObject(hubName + '.hubBlocked', {
         type: 'state',
         common: {
-            name: hubName + ':blocked',
-            role: 'indicator.blocked',
+            name: hubName + ':hubBlocked',
+            role: 'indicator.hubBlocked',
             type: 'boolean',
             write: false,
             read: true
@@ -508,7 +519,8 @@ function processConfig(hub,config) {
     });
 
     setBlocked(false);
-    adapter.log.info('init ready');
+    statesExist = true;
+    adapter.log.info('updated hub config');
 
     //delete old devices
     adapter.getChannelsOf(hubName,function (err, channels) {
@@ -575,7 +587,8 @@ function setCurrentActivity(id){
 }
 
 function setCurrentStatus(status){
-    adapter.setState(hubName + '.activities.currentStatus', {val: status, ack: true});
+    if (statesExist)
+        adapter.setState(hubName + '.activities.currentStatus', {val: status, ack: true});
 }
 
 function setStatusFromActivityID(id,value){
@@ -589,11 +602,18 @@ function setStatusFromActivityID(id,value){
 }
 
 function setBlocked(bool){
-    if (client){
+    if (statesExist){
         if (bool) blocked = true;
         else blocked = false;
-        adapter.setState(hubName + '.blocked', {val: blocked, ack: true});
+        adapter.setState(hubName + '.hubBlocked', {val: blocked, ack: true});
     }
 }
 
+function setConnected(bool){
+    if (statesExist){
+        if (bool) bool = true;
+        else bool = false;
+        adapter.setState(hubName + '.hubConnected', {val: bool, ack: true});
+    }
+}
 
