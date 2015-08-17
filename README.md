@@ -18,12 +18,12 @@ You need to select "Sync with Hub" again after adding/updating/deleting devices 
 ## Usage
 ###Activities
 **Start:**  
-Set the status state 'Instance.Hub_Name.activities.Activity_Name.activityStatus' to a Number greater than 0.
+Set the status state 'Instance.Hub_Name.activities.Activity_Name' to a Number greater than 0.
 During the activity's startup sequence the status changes from 1 (startup) to 2(running)
 
 **Stop:**  
-Set the status state 'Instance.Hub_Name.activities.Activity_Name.activityStatus' to 0.
-Alternatively, you can set the hub's status 'Instance.Hub_Name.status' to any number. This will stop the current running activity.
+Set the status state 'Instance.Hub_Name.activities.Activity_Name' to 0.
+Alternatively, you can set the hub's status 'Instance.activities.currentStatus' to any number. This will stop the current running activity.
 During the activity's exit sequence the status changes from 3 (stopping) to 0 (stopped)
 
 ###Indicators
@@ -32,19 +32,28 @@ There are two indicators 'Instance.Hub_Name.activity' and 'Instance.Hub_Name.con
 **.connected**  
 Tells you whether the adapter is successfully connected to the hub.
  
-**.activity**  
-Gives you the name of the running activity.
+**.blocked**  
+Is set to true if Hub is busy starting/stopping activities or sending commands.
+ 
+**activities.currentActivity**  
+Gives you the name of the currently running activity.
+
+**activities.currentStatus**  
+Gives you the current status of the hub.
 
 ###Devices
 **Send Command**  
-Set 'Instance.Hub_Name.devices.Device_Name.command' to true.  
-This will send the command for 50 ms.
+Set 'Instance.Hub_Name.Device_Name.command' to a number x to send command for x milliseconds.  
+A value smaller than 250 probably will send the command only once.
+After sending the state will be set to 0 again.
 
 ## Changelog
 
-### 0.2.2 (planned)
-* (Pmant) only synchronize on demand
-* (Pmant) delete unused activities and devices
+### 0.5.0
+* (Pmant) change: object structure (delete instance once if had 0.2.1 or lower installed!)
+* (Pmant) add: send commands for x milliseconds
+* (Pmant) add: delete unused activities and devices
+* (Pmant) add: delay commands when hub is busy
 
 ### 0.2.1
 * (bluefox) change logo
@@ -74,8 +83,6 @@ This will send the command for 50 ms.
 
 ### TODO
 * translations
-* hold/release command
-* send command for given time
 
 ### License
 MIT

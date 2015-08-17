@@ -1,18 +1,13 @@
 {
   "name": "iobroker.harmony",
-  "version": "0.2.1",
+  "version": "0.5.0",
   "description": "Control your harmony activities from ioBroker.",
   "author": "Pmant <hq@ccu.io>",
   "contributors": [
     "Pmant <hq@ccu.io>"
   ],
   "homepage": "https://github.com/pmant/ioBroker.harmony",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/pmant/ioBroker.harmony/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "keywords": [
     "ioBroker",
     "harmony", "hub", "logitech",
@@ -24,7 +19,8 @@
   },
   "dependencies": {
     "harmonyhubjs-client": "~1.1.4",
-    "harmonyhubjs-discover": "~1.0.0"
+    "harmonyhubjs-discover": "~1.0.0",
+    "semaphore": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
