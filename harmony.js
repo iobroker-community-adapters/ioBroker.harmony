@@ -198,7 +198,6 @@ var timestamp;
 function main() {
     hubName = adapter.config.hub.replace(/[.\s]+/g,'_');
     adapter.subscribeStates('*');
-    setBlocked(true);
     discoverStart();
 }
 
@@ -250,6 +249,7 @@ function discoverStop() {
 function connect(hub){
     harmony(hub.ip).timeout(5000).then(function(harmonyClient) {
         timestamp = Date.now();
+        setBlocked(true);
         adapter.log.info('connected to ' + hub.host_name);
         adapter.setState(hubName + '.connected', {val: true, ack: true});
         client = harmonyClient;
