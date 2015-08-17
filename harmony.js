@@ -238,7 +238,7 @@ function discoverStart() {
 }
 
 function discoverRestart() {
-    setConncted(false);
+    setConnected(false);
     discoverStop();
     setTimeout(function(){discoverStart();},1000);
 }
@@ -395,7 +395,7 @@ function processConfig(hub,config) {
         native: {
         }
     });
-    adapter.setState(hubname + '.hubConnected', {val: true, ack: true});
+    adapter.setState(hubName + '.hubConnected', {val: true, ack: true});
 
     adapter.setObject(hubName + '.hubBlocked', {
         type: 'state',
