@@ -523,6 +523,7 @@ function processConfig(hub,config) {
 
     statesExist = true;
     setBlocked(false);
+    setConnected(true);
     adapter.log.info('updated hub config');
 
     //delete old devices
