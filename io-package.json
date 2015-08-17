@@ -5,7 +5,7 @@
     "title": "Logitech Harmony Adapter",
     "desc": "Control your harmony activities from ioBroker.",
     "authors": [
-      "Pmant <hq@ccu.io>"
+      "Pmant <patrickmo@gmx.de>"
     ],
     "license":    "MIT",
     "platform": "Javascript/Node.js",

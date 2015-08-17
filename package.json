@@ -2,7 +2,7 @@
   "name": "iobroker.harmony",
   "version": "0.5.0",
   "description": "Control your harmony activities from ioBroker.",
-  "author": "Pmant <hq@ccu.io>",
+  "author": "Pmant <patrickmo@gmx.de>",
   "contributors": [
     "Pmant <hq@ccu.io>"
   ],
