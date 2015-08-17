@@ -589,9 +589,11 @@ function setStatusFromActivityID(id,value){
 }
 
 function setBlocked(bool){
-    if (bool) blocked = true;
-    else blocked = false;
-    adapter.setState(hubName + '.blocked', {val: blocked, ack: true});
+    if (client){
+        if (bool) blocked = true;
+        else blocked = false;
+        adapter.setState(hubName + '.blocked', {val: blocked, ack: true});
+    }
 }
 
 
