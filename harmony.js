@@ -521,8 +521,8 @@ function processConfig(hub,config) {
         });
     });
 
-    setBlocked(false);
     statesExist = true;
+    setBlocked(false);
     adapter.log.info('updated hub config');
 
     //delete old devices
