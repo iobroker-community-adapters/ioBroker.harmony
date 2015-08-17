@@ -49,6 +49,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.5.1
+* (Pmant) fix: bug with wring states
+
 ### 0.5.0
 * (Pmant) change: object structure (delete instance once if had 0.2.1 or lower installed!)
 * (Pmant) add: send commands for x milliseconds
