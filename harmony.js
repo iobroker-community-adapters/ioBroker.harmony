@@ -395,6 +395,8 @@ function processConfig(hub,config) {
         native: {
         }
     });
+    adapter.setState(hubname + '.hubConnected', {val: true, ack: true});
+
     adapter.setObject(hubName + '.hubBlocked', {
         type: 'state',
         common: {
@@ -407,6 +409,7 @@ function processConfig(hub,config) {
         native: {
         }
     });
+    adapter.setState(hubname + '.hubBlocked', {val: true, ack: true});
 
     /* create activities */
     adapter.log.debug('creating/updating activities');
