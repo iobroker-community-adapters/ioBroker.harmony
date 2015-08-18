@@ -16,7 +16,8 @@ Install Harmony via ioBroker Admin.
 You need to select "Sync with Hub" again after adding/updating/deleting devices or activities!
 
 ## Usage
-###Activities
+
+### Activities
 **Start:**  
 Set the status state 'Instance.Hub_Name.activities.Activity_Name' to a Number greater than 0.
 During the activity's startup sequence the status changes from 1 (startup) to 2(running)
@@ -26,7 +27,7 @@ Set the state 'Instance.Hub_Name.activities.Activity_Name' to 0.
 Alternatively, you can set the hub's status 'Instance.activities.currentStatus' to any number.
 During the activity's exit sequence the status changes from 3 (stopping) to 0 (stopped)
 
-###Indicators
+### Indicators
 There are two indicators 'Instance.Hub_Name.activity' and 'Instance.Hub_Name.connected'. Both are read-only, changing their values has no effect.
 
 **.hubConnected**  
@@ -41,7 +42,7 @@ Gives you the name of the currently running activity.
 **activities.currentStatus**  
 Gives you the current status of the hub.
 
-###Devices
+### Devices
 **Send Command**  
 Set 'Instance.Hub_Name.Device_Name.command' to a number x to send command for x milliseconds.  
 A value smaller than 250 probably will send the command only once.
