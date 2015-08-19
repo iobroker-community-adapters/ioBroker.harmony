@@ -1,10 +1,9 @@
 {
   "name": "iobroker.harmony",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Control your harmony activities from ioBroker.",
   "author": "Pmant <patrickmo@gmx.de>",
   "contributors": [
-    "Pmant <hq@ccu.io>"
   ],
   "homepage": "https://github.com/pmant/ioBroker.harmony",
   "license": "MIT",
