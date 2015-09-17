@@ -50,6 +50,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.5.3
+* (Pmant) fix node-xmpp-client version
+
 ### 0.5.2
 * (Pmant) change: add instance after installation
 * (Pmant) fix: deletes history settings
