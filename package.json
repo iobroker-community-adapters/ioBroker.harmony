@@ -18,13 +18,7 @@
   },
   "dependencies": {
     "harmonyhubjs-discover": "~1.0.0",
-    "semaphore": "~1.0.3",
-    "harmonyhubjs-client": {
-      "version": "~1.1.4",
-      "dependencies": {
-        "node-xmpp-client": {  "version": "1.0.0-alpha23" }
-      }
-    }
+    "semaphore": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
