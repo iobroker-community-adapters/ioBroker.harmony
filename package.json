@@ -16,16 +16,6 @@
     "type": "git",
     "url": "https://github.com/pmant/ioBroker.harmony"
   },
-  "dependencies": {
-    "harmonyhubjs-discover": "~1.0.0",
-    "semaphore": "~1.0.3",
-    "harmonyhubjs-client": {
-      "version": "~1.1.4",
-      "dependencies": {
-        "node-xmpp-client": {  "version": "1.0.0-alpha23" }
-      }
-    }
-  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-replace": "~0.7.6",
