@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "harmonyhubjs-client": "git+https://github.com/Pmant/harmonyhubjs-client.git",
-    "harmonyhubjs-discover": "~1.0.1"
+    "harmonyhubjs-discover": "~1.0.1",
+    "semaphore": "~1.0.3" 
   },
   "devDependencies": {
     "grunt": "~0.4.4",
