@@ -19,7 +19,7 @@
   "dependencies": {
     "harmonyhubjs-client": "git+https://github.com/Pmant/harmonyhubjs-client.git#7b002104ca57fc471aa380ffeb792634f6f253f1",
     "harmonyhubjs-discover": "~1.0.1"
-  }
+  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-replace": "~0.7.6",
