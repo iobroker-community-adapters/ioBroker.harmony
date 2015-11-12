@@ -17,7 +17,7 @@
     "url": "https://github.com/pmant/ioBroker.harmony"
   },
   "dependencies": {
-    "harmonyhubjs-client": "git+https://github.com/Pmant/harmonyhubjs-client.git#7b002104ca57fc471aa380ffeb792634f6f253f1",
+    "harmonyhubjs-client": "git+https://github.com/Pmant/harmonyhubjs-client.git",
     "harmonyhubjs-discover": "~1.0.1"
   },
   "devDependencies": {
