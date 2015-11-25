@@ -330,11 +330,13 @@ function connect(hub){
             adapter.log.info('xmpp online');
         });
         */
+        //prevents unsubscribe by the hub and reconnects if necessary
         ! function keepAlive(){
             harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                 setTimeout(keepAlive, 10000);
             }).catch(function(e){
                 adapter.log.warn('keep alive cannot get current Activity: ' + e);
+                connect(hub);
             });
         }();
 
