@@ -15,15 +15,6 @@ var semaphore = require('semaphore')(1);
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('harmony');
 
-//fix discover stop
-HarmonyHubDiscover.prototype.stop = function stop() {
-    this.ping.stop();
-    if(this.responseCollector.server) {
-        this.responseCollector.server.close();
-    }
-    clearInterval(this.cleanUpIntervalToken);
-};
-
 adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
