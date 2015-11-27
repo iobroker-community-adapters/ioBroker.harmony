@@ -15,15 +15,6 @@ var semaphore = require('semaphore')(1);
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('harmony');
 
-//fix discover stop
-HarmonyHubDiscover.prototype.stop = function stop() {
-    this.ping.stop();
-    if(this.responseCollector.server) {
-        this.responseCollector.server.close();
-    }
-    clearInterval(this.cleanUpIntervalToken);
-};
-
 adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
@@ -339,11 +330,13 @@ function connect(hub){
             adapter.log.info('xmpp online');
         });
         */
+        //prevents unsubscribe by the hub and reconnects if necessary
         ! function keepAlive(){
             harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
                 setTimeout(keepAlive, 10000);
             }).catch(function(e){
                 adapter.log.warn('keep alive cannot get current Activity: ' + e);
+                connect(hub);
             });
         }();
 
