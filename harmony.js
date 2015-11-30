@@ -9,32 +9,24 @@
 /*jslint node: true */
 "use strict";
 
-var harmony   = require('harmonyhubjs-client');
+var harmony = require('harmonyhubjs-client');
 var HarmonyHubDiscover = require('harmonyhubjs-discover');
 var semaphore = require('semaphore')(1);
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('harmony');
 
-//fix discover stop
-HarmonyHubDiscover.prototype.stop = function stop() {
-    this.ping.stop();
-    if(this.responseCollector.server) {
-        this.responseCollector.server.close();
-    }
-    clearInterval(this.cleanUpIntervalToken);
-};
 
 adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
     }
-    if (semaphore.current > 0){
+    if (semaphore.current > 0) {
         adapter.log.info('hub busy, stateChange delayed: ' + id + '=' + state.val);
     }
-    semaphore.take(function() {
+    semaphore.take(function () {
         setBlocked(true);
-        processStateChange(id,state,function(){
-            if (semaphore.current == 1){
+        processStateChange(id, state, function () {
+            if (semaphore.current == 1) {
                 setBlocked(false);
             }
             semaphore.leave();
@@ -42,83 +34,86 @@ adapter.on('stateChange', function (id, state) {
     });
 });
 
-function processStateChange(id,state,callback){
+function processStateChange(id, state, callback) {
     var tmp = id.split('.');
-    if (tmp.length == 5){
-        var name = tmp.pop();
-        var channel = tmp.pop();
-    }else {
+    var channel = "";
+    var name = "";
+    if (tmp.length == 5) {
+        name = tmp.pop();
+        channel = tmp.pop();
+    } else {
         adapter.log.warn('unknown state change');
         return;
     }
-    switch (channel){
+    switch (channel) {
         case 'activities':
-            switch (name){
+            switch (name) {
                 case 'currentStatus':
-                    switchActivity(undefined,0,callback);
+                    switchActivity(undefined, 0, callback);
                     break;
                 case 'currentActivity':
                     adapter.log.warn('stateChange not implemented (currentActivity)');
+                    callback();
                     break;
                 default:
-                    switchActivity(name,state.val,callback);
+                    switchActivity(name, state.val, callback);
                     break;
             }
             break;
         default:
             adapter.log.debug('sending command: ' + channel + ':' + name);
-            if (state.val){
+            if (state.val) {
                 var ms = parseInt(state.val);
-                if (isNaN(ms) || ms < 100){
+                if (isNaN(ms) || ms < 100) {
                     ms = 100;
                 }
-                sendCommand(id,ms,callback);
-            }else{
-                adapter.setState(id,{val: 0, ack: true});
+                sendCommand(id, ms, callback);
+            } else {
+                adapter.setState(id, {val: 0, ack: true});
                 callback();
             }
             break;
     }
 }
 
-function sendCommand(id,ms,callback){
-    adapter.getObject(id,function (err, obj) {
+function sendCommand(id, ms, callback) {
+    adapter.getObject(id, function (err, obj) {
         if (err) {
             adapter.log.warn('cannot send command, unknown state');
-            adapter.setState(id,{val: 0, ack: true});
+            adapter.setState(id, {val: 0, ack: true});
             callback();
             return;
         }
-        if (!client){
+        if (!client) {
             adapter.log.warn('error sending command, client offline');
-            adapter.setState(id,{val: 0, ack: true});
+            adapter.setState(id, {val: 0, ack: true});
             callback();
             return;
         }
         adapter.log.debug('sending command: ' + obj.name);
-        var encodedAction = obj.native.action.replace(/\:/g, '::');
+        var encodedAction = obj.native.action.replace(/:/g, '::');
 
         var tsStart = Date.now();
         var first = true;
-        ! function repeat(){
+        (function repeat() {
             var tsNow = Date.now();
-            if (tsNow - tsStart + 250 <= ms || first){
-                client.send('holdAction', 'status=press:timestamp=' + (tsNow-timestamp) + ':action=' + encodedAction);
+            if (tsNow - tsStart + 250 <= ms || first) {
+                client.send('holdAction', 'status=press:timestamp=' + (tsNow - timestamp) + ':action=' + encodedAction);
                 first = false;
-                setTimeout(repeat,200);
-            }else{
-                setTimeout(function(){
-                    client.send('holdAction', ':status=release:timestamp=' + (tsNow-timestamp) + ':action=' + encodedAction);
-                    adapter.setState(id,{val: 0, ack: true});
+                setTimeout(repeat, 200);
+            } else {
+                setTimeout(function () {
+                    client.send('holdAction', ':status=release:timestamp=' + (tsNow - timestamp) + ':action=' + encodedAction);
+                    adapter.setState(id, {val: 0, ack: true});
                     callback();
-                },Math.max(0,ms-tsNow+tsStart));
+                }, Math.max(0, ms - tsNow + tsStart));
             }
-        }();
+        }());
     });
 }
 
-function switchActivity(activityLabel,value,callback) {
-    if (!client){
+function switchActivity(activityLabel, value, callback) {
+    if (!client) {
         adapter.log.warn('error changing activity, client offline');
         callback();
         return;
@@ -126,13 +121,13 @@ function switchActivity(activityLabel,value,callback) {
     //get current Activity
     value = parseInt(value);
     if (isNaN(value)) value = 1;
-    if (value == 0){
+    if (value === 0) {
         adapter.log.debug('turning activity off');
         client.turnOff().finally(callback);
-    }else if(activities_reverse.hasOwnProperty(activityLabel)){
+    } else if (activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('switching activity to: ' + activityLabel);
-        client.startActivity(activities_reverse[activityLabel]).finally(callback)
-    }else{
+        client.startActivity(activities_reverse[activityLabel]).finally(callback);
+    } else {
         adapter.log.warn('activity does not exists');
         callback();
     }
@@ -144,7 +139,7 @@ adapter.on('message', function (obj) {
     if (obj) {
         switch (obj.command) {
             case 'browse':
-                browse(obj.message,function(res) {
+                browse(obj.message, function (res) {
                     if (obj.callback) adapter.sendTo(obj.from, obj.command, JSON.stringify(res), obj.callback);
                 });
                 wait = true;
@@ -162,7 +157,11 @@ adapter.on('message', function (obj) {
 
 adapter.on('unload', function (callback) {
     adapter.log.info('terminating');
-    discoverStop();
+    if (discover) {
+        discover.stop();
+    }
+    discover = null;
+    clientStop();
     callback();
 });
 
@@ -173,19 +172,19 @@ adapter.on('ready', function () {
 function browse(timeout, callback) {
     timeout = parseInt(timeout);
     if (isNaN(timeout)) timeout = 5000;
-    if (!discover){
-        callback({error:1,message:'discover not active, see logs.'})
-    }else {
-        setTimeout(function(){
-            var hubs = Object.keys(discover.knownHubs).map(function(hubUuid) {
+    if (!discover) {
+        callback({error: 1, message: 'discover not active, see logs.'});
+    } else {
+        setTimeout(function () {
+            var hubs = Object.keys(discover.knownHubs).map(function (hubUuid) {
                 return discover.knownHubs[hubUuid];
             });
-            callback({error:0, message: hubs});
-        },timeout);
+            callback({error: 0, message: hubs});
+        }, timeout);
     }
 }
 
-var client;
+var client = null;
 var discover;
 var activities = {};
 var activities_reverse = {};
@@ -197,21 +196,23 @@ var timestamp;
 var statesExist = false;
 var ioChannels = {};
 var ioStates = {};
+var isSync = false;
 
 function main() {
     adapter.subscribeStates('*');
-    hubName = adapter.config.hub.replace(/[.\s]+/g,'_');
+    hubName = adapter.config.hub.replace(/[.\s]+/g, '_');
 
-    adapter.getState(hubName + '.hubConnected', function(err,state){
+    adapter.getState(hubName + '.hubConnected', function (err, state) {
         if (err || !state) {
             adapter.log.info('hub not initialized');
             discoverStart();
-        }else {
-            adapter.getChannelsOf(hubName,function (err, channels) {
-                if (err || !channels){
+        } else {
+            adapter.getChannelsOf(hubName, function (err, channels) {
+                if (err || !channels) {
+                    return;
                 }
-                channels.forEach(function(channel){
-                    if (channel.common.name == 'activities'){
+                channels.forEach(function (channel) {
+                    if (channel.common.name == 'activities') {
                         statesExist = true;
                         setBlocked(true);
                         setConnected(false);
@@ -220,14 +221,17 @@ function main() {
                     }
                     ioChannels[channel.common.name] = true;
                 });
-                adapter.getStates(hubName + '.activities.*',function (err, states) {
-                    if (err || !states){
+                adapter.getStates(hubName + '.activities.*', function (err, states) {
+                    if (err || !states) {
+                        return;
                     }
-                    for (var state in states){
-                        var tmp = state.split('.');
-                        var name = tmp.pop();
-                        if (name != 'currentStatus' && name != 'currentActivity'){
-                            ioStates[name] = true;
+                    for (var state in states) {
+                        if (states.hasOwnProperty(state)) {
+                            var tmp = state.split('.');
+                            var name = tmp.pop();
+                            if (name != 'currentStatus' && name != 'currentActivity') {
+                                ioStates[name] = true;
+                            }
                         }
                     }
                     adapter.log.info('discover start');
@@ -239,52 +243,49 @@ function main() {
 }
 
 function discoverStart() {
-    if (discover){
+    if (discover) {
         return;
     }
     discover = new HarmonyHubDiscover(61991);
-    discover.on('online', function(hub) {
+    discover.on('online', function (hub) {
         // Triggered when a new hub was found
         adapter.log.info('discovered ' + hub.host_name);
-        if (hub.host_name == adapter.config.hub){
+        if (hub.host_name == adapter.config.hub) {
             //wait 1 second for hub before connecting
-            setTimeout(function(){connect(hub);},1000);
+            adapter.log.info('connecting to ' + hub.host_name);
+            setTimeout(function () {
+                connect(hub);
+            }, 1000);
         }
     });
-    discover.on('offline', function(hub) {
+    discover.on('offline', function (hub) {
         // Triggered when a hub disappeared
         adapter.log.warn('lost ' + hub.host_name);
-        discoverRestart();
+        clientStop();
     });
-    discover.on('error', function(er) {
+    discover.on('error', function (er) {
         adapter.log.warn('discover error: ', er.message);
     });
     discover.start();
     adapter.log.debug('discover started');
 }
 
-function discoverRestart() {
+function clientStop() {
     setConnected(false);
-    discoverStop();
-    setTimeout(function(){discoverStart();},1000);
-}
-
-function discoverStop() {
-    setConnected(false);
-    if (discover){
-        discover.stop();
-        adapter.log.debug('discover ended');
-    }
-    discover = null;
-    if (client){
+    if (client !== null) {
+        client._xmppClient.on('error', function (e) {
+            adapter.log.debug('xmpp error: ' + e);
+        });
+        client._xmppClient.on('offline', function () {
+            adapter.log.debug('xmpp offline');
+        });
         client.end();
-        adapter.log.debug('client ended');
+        adapter.log.warn('client ended');
     }
-    client = null;
 }
 
-function connect(hub){
-    harmony(hub.ip).timeout(5000).then(function(harmonyClient) {
+function connect(hub) {
+    harmony(hub.ip).timeout(5000).then(function (harmonyClient) {
         timestamp = Date.now();
         setBlocked(true);
         adapter.log.info('connected to ' + hub.host_name);
@@ -295,14 +296,14 @@ function connect(hub){
             var timestamp_temp = Date.now() - timestamp;
             var body = 'activityId=' + activityId + ':timestamp=' + timestamp_temp;
 
-            return this.request('startactivity', body, 'encoded', function(stanza) {
-                var event = stanza.getChild('event')
-                    , canHandleStanza = false;
-                if(event && event.attr('type') === 'connect.stateDigest?notify') {
+            return this.request('startactivity', body, 'encoded', function (stanza) {
+                var event = stanza.getChild('event');
+                var canHandleStanza = false;
+                if (event && event.attr('type') === 'connect.stateDigest?notify') {
                     var digest = JSON.parse(event.getText());
-                    if (activityId === '-1' && digest.activityId === activityId && digest.activityStatus == 0){
+                    if (activityId === '-1' && digest.activityId === activityId && digest.activityStatus === 0) {
                         canHandleStanza = true;
-                    }else if(activityId !== '-1' && digest.activityId === activityId && digest.activityStatus == 2) {
+                    } else if (activityId !== '-1' && digest.activityId === activityId && digest.activityStatus === 2) {
                         canHandleStanza = true;
                     }
                 }
@@ -311,92 +312,96 @@ function connect(hub){
         };
 
         /*
-        harmonyClient._xmppClient.connection.socket.on('connect', function() {
-            adapter.log.info('socket connect');
-        });
-        harmonyClient._xmppClient.connection.socket.on('timeout', function() {
-            adapter.log.info('socket timeout');
-        });
-        harmonyClient._xmppClient.connection.socket.on('close', function(e) {
-            adapter.log.info('socket closed');
-        });
-        harmonyClient._xmppClient.connection.socket.on('end', function(e) {
-            adapter.log.info('socket ended');
-        });
-        harmonyClient._xmppClient.connection.socket.on('error', function(e) {
-            adapter.log.error('socket error: ' + JSON.stringify(e));
-        });
-        harmonyClient._xmppClient.connection.socket.on('connect', function() {
-            adapter.log.info('socket connect');
-        });
-        harmonyClient._xmppClient.on('error', function(e) {
-            adapter.log.error('xmpp error: ' + JSON.stringify(e));
-        });
-        harmonyClient._xmppClient.on('offline', function() {
-            adapter.log.info('xmpp offline');
-        });
-        harmonyClient._xmppClient.on('online', function(jid) {
-            adapter.log.info('xmpp online');
-        });
-        */
-        ! function keepAlive(){
-            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                setTimeout(keepAlive, 10000);
-            }).catch(function(e){
-                adapter.log.warn('keep alive cannot get current Activity: ' + e);
-            });
-        }();
+         harmonyClient._xmppClient.connection.socket.on('connect', function() {
+         adapter.log.info('socket connect');
+         });
+         harmonyClient._xmppClient.connection.socket.on('timeout', function() {
+         adapter.log.info('socket timeout');
+         });
+         harmonyClient._xmppClient.connection.socket.on('close', function(e) {
+         adapter.log.info('socket closed');
+         });
+         harmonyClient._xmppClient.connection.socket.on('end', function(e) {
+         adapter.log.info('socket ended');
+         });
+         harmonyClient._xmppClient.connection.socket.on('error', function(e) {
+         adapter.log.error('socket error: ' + JSON.stringify(e));
+         });
+         harmonyClient._xmppClient.connection.socket.on('connect', function() {
+         adapter.log.info('socket connect');
+         });
+         harmonyClient._xmppClient.on('error', function(e) {
+         adapter.log.error('xmpp error: ' + JSON.stringify(e));
+         });
+         harmonyClient._xmppClient.on('offline', function() {
+         adapter.log.info('xmpp offline');
+         });
+         harmonyClient._xmppClient.on('online', function(jid) {
+         adapter.log.info('xmpp online');
+         });
+         */
+        (function keepAlive() {
+            if (client !== null) {
+                adapter.log.debug('send keepAlive');
+                client.request('getCurrentActivity').timeout(5000).then(function () {
+                    setTimeout(keepAlive, 5000);
+                }).catch(function (e) {
+                    adapter.log.debug('keep alive cannot get current Activity: ' + e);
+                });
+            }
+        }());
 
         //update objects on connect
-        harmonyClient.getAvailableCommands().then(function(config) {
-            try{
-                processConfig(hub,config);
-            }catch (e){
+        harmonyClient.getAvailableCommands().then(function (config) {
+            try {
+                processConfig(hub, config);
+            } catch (e) {
                 adapter.log.error(e);
-                discoverRestart();
+                clientStop();
                 return;
             }
 
             //set current activity
-            harmonyClient.request('getCurrentActivity').timeout(5000).then(function(response) {
-                if (response.hasOwnProperty('result')){
+            harmonyClient.request('getCurrentActivity').timeout(5000).then(function (response) {
+                if (response.hasOwnProperty('result')) {
                     //set hub.activity to activity label
                     setCurrentActivity(response.result);
 
-                    if(response.result != '-1'){
-                        setStatusFromActivityID(response.result,2);
+                    if (response.result != '-1') {
+                        setStatusFromActivityID(response.result, 2);
                         setCurrentStatus(2);
-                    }else {
+                    } else {
                         setCurrentStatus(0);
                     }
                     //set all other activities to 'off'
-                    for (var activity in activities){
-                        if (activity != response.result){
-                            setStatusFromActivityID(activity,0);
+                    for (var activity in activities) {
+                        if (activity != response.result && activities.hasOwnProperty(activity)) {
+                            setStatusFromActivityID(activity, 0);
                         }
                     }
                 }
 
                 //start listen for updates from hub
-                harmonyClient.on('stateDigest', function(digest) {
+                harmonyClient.on('stateDigest', function (digest) {
                     processDigest(digest);
                 });
-            }).catch(function(e){
+            }).catch(function (e) {
                 adapter.log.warn('connection down: ' + e);
-                discoverRestart();
+                clientStop();
             });
-        }).catch(function(e){
+        }).catch(function (e) {
             adapter.log.warn('could not get config: ' + e);
-            discoverRestart();
+            clientStop();
         });
-    }).catch(function(e){
+    }).catch(function (e) {
         adapter.log.warn('could not connect to ' + hub.host_name + ': ' + e);
-        discoverRestart();
+        clientStop();
     });
 
 }
 
-function processConfig(hub,config) {
+function processConfig(hub, config) {
+    if (isSync) return;
     /* create hub */
     adapter.log.info('creating activities and devices');
 
@@ -409,7 +414,7 @@ function processConfig(hub,config) {
         native: hub
     });
 
-    if (!statesExist){
+    if (!statesExist) {
         adapter.setObject(hubName + '.hubConnected', {
             type: 'state',
             common: {
@@ -419,8 +424,7 @@ function processConfig(hub,config) {
                 write: false,
                 read: true
             },
-            native: {
-            }
+            native: {}
         });
     }
     adapter.setState(hubName + '.hubConnected', {val: true, ack: true});
@@ -444,14 +448,13 @@ function processConfig(hub,config) {
     adapter.log.debug('creating activities');
     var channelName = hubName + '.activities';
     //create channel for activities
-    adapter.setObject(channelName , {
+    adapter.setObject(channelName, {
         type: 'channel',
         common: {
             name: 'activities',
             role: 'media.activities'
         },
-        native: {
-        }
+        native: {}
     });
 
     if (!statesExist) {
@@ -481,8 +484,8 @@ function processConfig(hub,config) {
         });
     }
 
-    config.activity.forEach(function(activity) {
-        var activityLabel = activity.label.replace(/[.\s]+/g,'_')
+    config.activity.forEach(function (activity) {
+        var activityLabel = activity.label.replace(/[.\s]+/g, '_');
         activities[activity.id] = activityLabel;
         activities_reverse[activityLabel] = activity.id;
         if (activity.id == '-1') return;
@@ -515,9 +518,9 @@ function processConfig(hub,config) {
 
     /* create devices */
     adapter.log.debug('creating devices');
-    var channelName = hubName;
-    config.device.forEach(function(device) {
-        var deviceLabel = device.label.replace(/[.\s]+/g,'_');
+    channelName = hubName;
+    config.device.forEach(function (device) {
+        var deviceLabel = device.label.replace(/[.\s]+/g, '_');
         var deviceChannelName = channelName + '.' + deviceLabel;
         var controlGroup = device.controlGroup;
         devices[device.id] = deviceLabel;
@@ -537,8 +540,8 @@ function processConfig(hub,config) {
             controlGroup.forEach(function (controlGroup) {
                 var groupName = controlGroup.name;
                 controlGroup.function.forEach(function (command) {
-                    command['controlGroup'] = groupName;
-                    command['deviceId'] = device.id;
+                    command.controlGroup = groupName;
+                    command.deviceId = device.id;
                     var commandName = command.name.replace(/[.\s]+/g, '_');
                     //create command
                     adapter.setObject(deviceChannelName + '.' + commandName, {
@@ -563,49 +566,52 @@ function processConfig(hub,config) {
     adapter.log.debug('deleting activities');
     Object.keys(ioStates).forEach(function (activityLabel) {
         adapter.log.info('deleting old activity: ' + activityLabel);
-        adapter.deleteState(hubName,'activities',activityLabel);
+        adapter.deleteState(hubName, 'activities', activityLabel);
     });
 
     adapter.log.debug('deleting devices');
     Object.keys(ioChannels).forEach(function (deviceLabel) {
         adapter.log.info('deleting old device: ' + deviceLabel);
-        adapter.deleteChannel(hubName,deviceLabel);
+        adapter.deleteChannel(hubName, deviceLabel);
     });
 
     statesExist = true;
     setBlocked(false);
     setConnected(true);
+    isSync = true;
     adapter.log.info('synced hub config');
 }
 
-function processDigest(digest){
+function processDigest(digest) {
     //set hub activity to current activity label
     setCurrentActivity(digest.activityId);
     //Set hub status to current activity status
-    setCurrentStatus(digest.activityStatus)
+    setCurrentStatus(digest.activityStatus);
 
-    if (digest.activityId != '-1'){ //if activityId is not powerOff
+    if (digest.activityId != '-1') { //if activityId is not powerOff
         //set activityId's status
-        setStatusFromActivityID(digest.activityId,digest.activityStatus);
+        setStatusFromActivityID(digest.activityId, digest.activityStatus);
 
         //if status is 'running' set all other activities to 'off'
-        if (digest.activityStatus == '2'){
+        if (digest.activityStatus == '2') {
             //only one activity can run at once, set all other activities to off
-            for (var activity in activities){
-                if (activity != digest.activityId){
-                    setStatusFromActivityID(activity,0);
+            for (var activity in activities) {
+                if (activities.hasOwnProperty(activity) && activity != digest.activityId) {
+                    setStatusFromActivityID(activity, 0);
                 }
             }
         }
-    }else { //set all activities to 'off' since powerOff activity is active
-        for (var activity in activities){
-            setStatusFromActivityID(activity,0);
+    } else { //set all activities to 'off' since powerOff activity is active
+        for (var oActivity in activities) {
+            if (activities.hasOwnProperty(oActivity)) {
+                setStatusFromActivityID(oActivity, 0);
+            }
         }
     }
 }
 
-function setCurrentActivity(id){
-    if (!activities.hasOwnProperty(id)){
+function setCurrentActivity(id) {
+    if (!activities.hasOwnProperty(id)) {
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
@@ -613,33 +619,31 @@ function setCurrentActivity(id){
     adapter.setState(hubName + '.activities.currentActivity', {val: activities[id], ack: true});
 }
 
-function setCurrentStatus(status){
+function setCurrentStatus(status) {
     if (statesExist)
         adapter.setState(hubName + '.activities.currentStatus', {val: status, ack: true});
 }
 
-function setStatusFromActivityID(id,value){
+function setStatusFromActivityID(id, value) {
     if (id == '-1') return;
-    if (!activities.hasOwnProperty(id)){
+    if (!activities.hasOwnProperty(id)) {
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
-    var channelName = hubName + '.activities.' + activities[id].replace(/[.\s]+/g,'_');
-    adapter.setState(channelName,{val: value, ack: true});
+    var channelName = hubName + '.activities.' + activities[id].replace(/[.\s]+/g, '_');
+    adapter.setState(channelName, {val: value, ack: true});
 }
 
-function setBlocked(bool){
-    if (statesExist){
-        if (bool) blocked = true;
-        else blocked = false;
-        adapter.setState(hubName + '.hubBlocked', {val: blocked, ack: true});
+function setBlocked(bool) {
+    if (statesExist) {
+        bool = Boolean(bool);
+        adapter.setState(hubName + '.hubBlocked', {val: bool, ack: true});
     }
 }
 
-function setConnected(bool){
-    if (statesExist){
-        if (bool) bool = true;
-        else bool = false;
+function setConnected(bool) {
+    if (statesExist) {
+        bool = Boolean(bool);
         adapter.setState(hubName + '.hubConnected', {val: bool, ack: true});
     }
 }

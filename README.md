@@ -50,6 +50,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.5.5
+* (Pmant) fix hub lifecycle
+
 ### 0.5.4
 * (Pmant) fix node 5.0.0
 
