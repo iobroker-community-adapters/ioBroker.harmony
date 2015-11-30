@@ -277,7 +277,7 @@ function clientStop() {
             adapter.log.debug('xmpp error: ' + e);
         });
         client._xmppClient.on('offline', function () {
-            adapter.log.info('xmpp offline');
+            adapter.log.debug('xmpp offline');
         });
         client.end();
         adapter.log.warn('client ended');
