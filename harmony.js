@@ -261,7 +261,9 @@ function discoverStart() {
     discover.on('offline', function (hub) {
         // Triggered when a hub disappeared
         adapter.log.warn('lost ' + hub.host_name);
-        clientStop();
+        if (hub.host_name == adapter.config.hub) {
+            clientStop();
+        }
     });
     discover.on('error', function (er) {
         adapter.log.warn('discover error: ', er.message);
