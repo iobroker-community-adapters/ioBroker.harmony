@@ -205,7 +205,6 @@ function main() {
     adapter.getState(hubName + '.hubConnected', function (err, state) {
         if (err || !state) {
             adapter.log.info('hub not initialized');
-            discoverStart();
         } else {
             adapter.getChannelsOf(hubName, function (err, channels) {
                 if (err || !channels) {
@@ -274,6 +273,7 @@ function discoverStart() {
 
 function clientStop() {
     setConnected(false);
+    setBlocked(false);
     if (client !== null) {
         client._xmppClient.on('error', function (e) {
             adapter.log.debug('xmpp error: ' + e);
@@ -290,8 +290,8 @@ function connect(hub) {
     harmony(hub.ip).timeout(5000).then(function (harmonyClient) {
         timestamp = Date.now();
         setBlocked(true);
-        adapter.log.info('connected to ' + hub.host_name);
         setConnected(true);
+        adapter.log.info('connected to ' + hub.host_name);
         client = harmonyClient;
 
         (function keepAlive() {
@@ -354,7 +354,11 @@ function connect(hub) {
 }
 
 function processConfig(hub, config) {
-    if (isSync) return;
+    if (isSync) {
+        setBlocked(false);
+        setConnected(true);
+        return;
+    } 
     /* create hub */
     adapter.log.info('creating activities and devices');
 
@@ -591,6 +595,7 @@ function setBlocked(bool) {
     if (statesExist) {
         bool = Boolean(bool);
         adapter.setState(hubName + '.hubBlocked', {val: bool, ack: true});
+        blocked = bool;
     }
 }
 
