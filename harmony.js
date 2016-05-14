@@ -204,7 +204,8 @@ function main() {
 
     adapter.getState(hubName + '.hubConnected', function (err, state) {
         if (err || !state) {
-            adapter.log.info('hub not initialized');
+            adapter.log.info('hub not initialized, discover mode started');
+            discoverStart();
         } else {
             adapter.getChannelsOf(hubName, function (err, channels) {
                 if (err || !channels) {
@@ -222,6 +223,7 @@ function main() {
                 });
                 adapter.getStates(hubName + '.activities.*', function (err, states) {
                     if (err || !states) {
+                        adapter.log.error("error with states");
                         return;
                     }
                     for (var state in states) {
@@ -233,7 +235,7 @@ function main() {
                             }
                         }
                     }
-                    adapter.log.info('discover start');
+                    adapter.log.info('discover started');
                     discoverStart();
                 });
             });
@@ -243,6 +245,7 @@ function main() {
 
 function discoverStart() {
     if (discover) {
+        adapter.log.warn("discover already started");
         return;
     }
     discover = new HarmonyHubDiscover(61991);
