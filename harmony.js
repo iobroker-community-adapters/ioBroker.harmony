@@ -293,62 +293,13 @@ function connect(hub) {
         adapter.log.info('connected to ' + hub.host_name);
         setConnected(true);
         client = harmonyClient;
-        //fix harmony client startactivity
-        client.startActivity = function startActivity(activityId) {
-            var timestamp_temp = Date.now() - timestamp;
-            var body = 'activityId=' + activityId + ':timestamp=' + timestamp_temp;
 
-            return this.request('startactivity', body, 'encoded', function (stanza) {
-                var event = stanza.getChild('event');
-                var canHandleStanza = false;
-                if (event && event.attr('type') === 'connect.stateDigest?notify') {
-                    var digest = JSON.parse(event.getText());
-                    if (activityId === '-1' && digest.activityId === activityId && digest.activityStatus === 0) {
-                        canHandleStanza = true;
-                    } else if (activityId !== '-1' && digest.activityId === activityId && digest.activityStatus === 2) {
-                        canHandleStanza = true;
-                    }
-                }
-                return canHandleStanza;
-            });
-        };
-
-        /*
-         harmonyClient._xmppClient.connection.socket.on('connect', function() {
-         adapter.log.info('socket connect');
-         });
-         harmonyClient._xmppClient.connection.socket.on('timeout', function() {
-         adapter.log.info('socket timeout');
-         });
-         harmonyClient._xmppClient.connection.socket.on('close', function(e) {
-         adapter.log.info('socket closed');
-         });
-         harmonyClient._xmppClient.connection.socket.on('end', function(e) {
-         adapter.log.info('socket ended');
-         });
-         harmonyClient._xmppClient.connection.socket.on('error', function(e) {
-         adapter.log.error('socket error: ' + JSON.stringify(e));
-         });
-         harmonyClient._xmppClient.connection.socket.on('connect', function() {
-         adapter.log.info('socket connect');
-         });
-         harmonyClient._xmppClient.on('error', function(e) {
-         adapter.log.error('xmpp error: ' + JSON.stringify(e));
-         });
-         harmonyClient._xmppClient.on('offline', function() {
-         adapter.log.info('xmpp offline');
-         });
-         harmonyClient._xmppClient.on('online', function(jid) {
-         adapter.log.info('xmpp online');
-         });
-         */
         (function keepAlive() {
             if (client !== null) {
-                adapter.log.debug('send keepAlive');
                 client.request('getCurrentActivity').timeout(5000).then(function () {
                     setTimeout(keepAlive, 5000);
                 }).catch(function (e) {
-                    adapter.log.debug('keep alive cannot get current Activity: ' + e);
+                    adapter.log.info('keep alive cannot get current Activity: ' + e);
                 });
             }
         }());
@@ -649,4 +600,3 @@ function setConnected(bool) {
         adapter.setState(hubName + '.hubConnected', {val: bool, ack: true});
     }
 }
-

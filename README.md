@@ -50,6 +50,10 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.5.6
+* (PArns) update harmony lib to prevent connection loss
+* (PArns) removed unneeded functions due to lib update
+
 ### 0.5.5
 * (Pmant) fix hub lifecycle
 
