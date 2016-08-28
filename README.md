@@ -10,10 +10,8 @@ Install Harmony via ioBroker Admin.
 2. Open instance config dialog
 3. Press "Find Hub"
 4. A Popup lists all Harmony Hubs found on your network. Click on a Hub to select it.
-5. Make sure "Sync with Hub" is selected 
-5. Save the configuration, the Hub
+5. Save the configuration
 
-You need to select "Sync with Hub" again after adding/updating/deleting devices or activities!
 
 ## Usage
 
