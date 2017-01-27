@@ -286,10 +286,12 @@ function clientStop() {
         });
         client.end();
         adapter.log.warn('client ended');
+        client = null;
     }
 }
 
 function connect(hub) {
+    if (client !== null) return;
     harmony(hub.ip).timeout(5000).then(function (harmonyClient) {
         timestamp = Date.now();
         setBlocked(true);
@@ -303,6 +305,10 @@ function connect(hub) {
                     setTimeout(keepAlive, 5000);
                 }).catch(function (e) {
                     adapter.log.info('keep alive cannot get current Activity: ' + e);
+                    clientStop();
+                    setTimeout(function () {
+                        connect(hub);
+                    }, 5000);
                 });
             }
         }());
