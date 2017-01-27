@@ -92,7 +92,7 @@
                         }else{
                             var popup = 'Select a hub: <br />';
                             result.message.forEach(function(element, index, array) {
-                                popup = popup + '<a href="javascript:$(\'#hub.value\').val(\'' + element.host_name + '\').change();$(\'#dialog-hubs\').dialog(\'close\');">' + element.host_name + '</a><br />';
+                                popup = popup + '<a href="#" onclick="javascript:$(\'#hub.value\').val(\'' + element.host_name + '\').change();$(\'#dialog-hubs\').dialog(\'close\');">' + element.host_name + '</a><br />';
                             });
                             $("#dialog-hubs").html(popup);
                         }
