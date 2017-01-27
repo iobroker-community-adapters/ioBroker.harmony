@@ -197,6 +197,7 @@ var statesExist = false;
 var ioChannels = {};
 var ioStates = {};
 var isSync = false;
+var reconnectTimer;
 
 function main() {
     adapter.subscribeStates('*');
@@ -292,6 +293,7 @@ function clientStop() {
 
 function connect(hub) {
     if (client !== null) return;
+    clearTimeout(reconnectTimer);
     harmony(hub.ip).timeout(5000).then(function (harmonyClient) {
         timestamp = Date.now();
         setBlocked(true);
@@ -306,7 +308,7 @@ function connect(hub) {
                 }).catch(function (e) {
                     adapter.log.info('keep alive cannot get current Activity: ' + e);
                     clientStop();
-                    setTimeout(function () {
+                    reconnectTimer = setTimeout(function () {
                         connect(hub);
                     }, 5000);
                 });
