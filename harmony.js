@@ -249,7 +249,7 @@ function discoverStart() {
         adapter.log.warn("discover already started");
         return;
     }
-    discover = new HarmonyHubDiscover(61991);
+    discover = new HarmonyHubDiscover(61991+1+adapter.instance);
     discover.on('online', function (hub) {
         // Triggered when a new hub was found
         adapter.log.info('discovered ' + hub.host_name);
@@ -300,7 +300,6 @@ function connect(hub) {
         setConnected(true);
         adapter.log.info('connected to ' + hub.host_name);
         client = harmonyClient;
-
         (function keepAlive() {
             if (client !== null) {
                 client.request('getCurrentActivity').timeout(5000).then(function () {
@@ -361,7 +360,6 @@ function connect(hub) {
         adapter.log.warn('could not connect to ' + hub.host_name + ': ' + e);
         clientStop();
     });
-
 }
 
 function processConfig(hub, config) {
