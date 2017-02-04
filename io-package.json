@@ -11,6 +11,7 @@
     "platform": "Javascript/Node.js",
     "enabled" : true,
     "mode": "daemon",
+    "singletonHost": true,
     "messagebox": true,
     "readme": "https://github.com/pmant/ioBroker.harmony/blob/master/README.md",
     "loglevel": "info",
