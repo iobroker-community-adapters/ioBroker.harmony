@@ -246,14 +246,14 @@ function main() {
 
 function discoverStart() {
     if (discover) {
-        adapter.log.warn("discover already started");
+        adapter.log.debug("discover already started");
         return;
     }
     discover = new HarmonyHubDiscover(61991+1+adapter.instance);
     discover.on('online', function (hub) {
         // Triggered when a new hub was found
-        adapter.log.info('discovered ' + hub.host_name);
         if (hub.host_name == adapter.config.hub) {
+            adapter.log.info('discovered ' + hub.host_name);
             //wait 1 second for hub before connecting
             adapter.log.info('connecting to ' + hub.host_name);
             setTimeout(function () {
@@ -263,8 +263,8 @@ function discoverStart() {
     });
     discover.on('offline', function (hub) {
         // Triggered when a hub disappeared
-        adapter.log.warn('lost ' + hub.host_name);
         if (hub.host_name == adapter.config.hub) {
+            adapter.log.warn('lost ' + hub.host_name);
             clientStop();
         }
     });
