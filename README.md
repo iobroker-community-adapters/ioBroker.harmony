@@ -47,6 +47,9 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
+### 0.6.1
+* (Pmant) reduce logging
+
 ### 0.6.0
 * (Pmant) fix admin in firefox
 * (Pmant) improve connection stability (needs testing)
