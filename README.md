@@ -1,17 +1,12 @@
 ![Logo](admin/harmony.png)
 # ioBroker Logitech Harmony Adapter
 
+
 Control your harmony activities from ioBroker.
 
 ## Install
 Install Harmony via ioBroker Admin.
-
-1. Make sure Instance is running.
-2. Open instance config dialog
-3. Press "Find Hub"
-4. A Popup lists all Harmony Hubs found on your network. Click on a Hub to select it.
-5. Save the configuration
-
+Adapter should automatically find your Hubs.
 
 ## Usage
 
@@ -47,6 +42,14 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
+
+### 0.7.0
+* (Pmant) support multiple hubs
+* (Pmant) removed hub config from admin
+
+### 0.6.2
+* (Pmant) fix wrong port
+
 ### 0.6.1
 * (Pmant) reduce logging
 

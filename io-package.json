@@ -1,12 +1,24 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.6.2",
+    "version": "0.7.0",
     "title": "Logitech Harmony Adapter",
     "desc": "Control your harmony activities from ioBroker.",
     "authors": [
       "Pmant <patrickmo@gmx.de>"
     ],
+    "news": {
+      "0.7.0": {
+        "en": "support multiple hubs",
+        "de": "support multiple hubs",
+        "ru": "support multiple hubs"
+      },
+      "0.6.2": {
+        "en": "fix wrong port",
+        "de": "fix wrong port",
+        "ru": "fix wrong port"
+      }
+    },
     "license":    "MIT",
     "platform": "Javascript/Node.js",
     "enabled" : true,
@@ -27,7 +39,6 @@
     "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
   },
   "native": {
-    "hub": "Hub Name",
     "user": "guest",
     "password": "default"
   },

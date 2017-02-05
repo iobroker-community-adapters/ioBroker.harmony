@@ -8,29 +8,63 @@
 module.exports = function (grunt) {
 
     var srcDir    = __dirname + '/';
-    var dstDir    = srcDir + '.build/';
     var pkg       = grunt.file.readJSON('package.json');
+    var adaptName = pkg.name.substring('iobroker.'.length);
     var iopackage = grunt.file.readJSON('io-package.json');
     var version   = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
+    var newname   = grunt.option('name');
+    var author    = grunt.option('author') || 'Pmant';
+    var email     = grunt.option('email')  || 'patrickmo@gmx.de';
+    var fs        = require('fs');
+
+    // check arguments
+    if (process.argv[2] == 'rename') {
+		console.log('Try to rename to "' + newname + '"');
+        if (!newname) {
+            console.log('Please write the new harmony name, like: "grunt rename --name=mywidgetset" --author="Author Name"');
+            process.exit();
+        }
+        if (newname.indexOf(' ') != -1) {
+            console.log('Name may not have space in it.');
+            process.exit();
+        }
+        if (newname.toLowerCase() != newname) {
+            console.log('Name must be lower case.');
+            process.exit();
+        }
+        if (fs.existsSync(__dirname + '/admin/harmony.png')) {
+            fs.renameSync(__dirname + '/admin/harmony.png',              __dirname + '/admin/' + newname + '.png');
+        }
+        if (fs.existsSync(__dirname + '/widgets/harmony.html')) {
+            fs.renameSync(__dirname + '/widgets/harmony.html',           __dirname + '/widgets/' + newname + '.html');
+        }
+        if (fs.existsSync(__dirname + '/widgets/harmony/js/harmony.js')) {
+            fs.renameSync(__dirname + '/widgets/harmony/js/harmony.js', __dirname + '/widgets/harmony/js/' + newname + '.js');
+        }
+        if (fs.existsSync(__dirname + '/widgets/harmony')) {
+            fs.renameSync(__dirname + '/widgets/harmony',                __dirname + '/widgets/' + newname);
+        }
+    }
 
     // Project configuration.
     grunt.initConfig({
         pkg: pkg,
-        clean: {
-            all: ['tmp/*.json', 'tmp/*.zip', 'tmp/*.jpg', 'tmp/*.jpeg', 'tmp/*.png',
-                  dstDir + '*.json', dstDir + '*.zip', dstDir + '*.jpg', dstDir + '*.jpeg', dstDir + '*.png']
-        },
+
         replace: {
-            core: {
+            version: {
                 options: {
                     patterns: [
                         {
-                            match: /var version = *'[\.0-9]*';/g,
-                            replacement: "var version = '" + version + "';"
+                            match: /version: *"[\.0-9]*"/,
+                            replacement: 'version: "' + version + '"'
                         },
                         {
-                            match: /"version"\: *"[\.0-9]*",/g,
+                            match: /"version": *"[\.0-9]*",/g,
                             replacement: '"version": "' + version + '",'
+                        },
+                        {
+                            match: /version: *"[\.0-9]*",/g,
+                            replacement: 'version: "' + version + '",'
                         }
                     ]
                 },
@@ -39,11 +73,95 @@ module.exports = function (grunt) {
                         expand:  true,
                         flatten: true,
                         src:     [
-                                srcDir + 'controller.js',
                                 srcDir + 'package.json',
                                 srcDir + 'io-package.json'
                         ],
                         dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'widgets/' + adaptName + '.html'
+                        ],
+                        dest:    srcDir + 'widgets'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'widgets/' + adaptName + '/js/' + adaptName + '.js'
+                        ],
+                        dest:    srcDir + 'widgets/' + adaptName + '/js/'
+                    }
+                ]
+            },
+            name: {
+                options: {
+                    patterns: [
+                        {
+                            match: /harmony/g,
+                            replacement: newname
+                        },
+                        {
+                            match: /Harmony/g,
+                            replacement: newname ? (newname[0].toUpperCase() + newname.substring(1)) : 'Harmony'
+                        },
+                        {
+                            match: /Pmant/g,
+                            replacement: author
+                        },
+                        {
+                            match: /patrickmo@gmx.de/g,
+                            replacement: email
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'io-package.json',
+                                 srcDir + 'LICENSE',
+                                 srcDir + 'package.json',
+                                 srcDir + 'README.md',
+                                 srcDir + 'main.js',
+                                 srcDir + 'Gruntfile.js'
+                        ],
+                        dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'widgets/' + newname + '.html'
+                        ],
+                        dest:    srcDir + 'widgets'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'admin/index.html'
+                        ],
+                        dest:    srcDir + 'admin'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'widgets/' + newname + '/js/' + newname + '.js'
+                        ],
+                        dest:    srcDir + 'widgets/' + newname + '/js'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                 srcDir + 'widgets/' + newname + '/css/*.css'
+                        ],
+                        dest:    srcDir + 'widgets/' + newname + '/css'
                     }
                 ]
             }
@@ -52,6 +170,7 @@ module.exports = function (grunt) {
         jscs:   require(__dirname + '/tasks/jscs.js'),
         // Lint
         jshint: require(__dirname + '/tasks/jshint.js'),
+
         http: {
             get_hjscs: {
                 options: {
@@ -65,131 +184,11 @@ module.exports = function (grunt) {
                 },
                 dest: 'tasks/jshint.js'
             },
-            get_gruntfile: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/Gruntfile.js'
-                },
-                dest: 'Gruntfile.js'
-            },
-            get_utilsfile: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/utils.js'
-                },
-                dest: 'lib/utils.js'
-            },
             get_jscsRules: {
                 options: {
                     url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/tasks/jscsRules.js'
                 },
                 dest: 'tasks/jscsRules.js'
-            },
-            get_iconOnline: {
-                options: {
-                    encoding: null,
-                    url: iopackage.common.extIcon || 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/adapter/example/admin/example.png'
-                },
-                dest: dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.png'
-
-            },
-            get_iconOffline: {
-                options: {
-                    encoding: null,
-                    url: iopackage.common.extIcon || 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/adapter/example/admin/example.png'
-                },
-                dest: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.png'
-
-            }
-        },
-        compress: {
-            adapter: {
-                options: {
-                    archive: dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.zip'
-                },
-                files: [
-                    {
-                        expand: true,
-                        src: ['**', '!tasks/*', '!Gruntfile.js', '!node_modules/**/*', '!build/**/*'],
-                        dest: '/',
-                        cwd: srcDir
-                    }
-                ]
-            },
-            adapterOffline: {
-                options: {
-                    archive: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.zip'
-                },
-                files: [
-                    {
-                        expand: true,
-                        src: ['**',
-                            '!tasks/*',
-                            '!Gruntfile.js',
-                            '!build/**/*',
-                            '!node_modules/grunt/**/*',
-                            '!node_modules/grunt*/**/*'
-                        ],
-                        dest: '/',
-                        cwd: srcDir
-                    }
-                ]
-            }
-        },
-        exec: {
-            npm: {
-                cmd: 'npm install'
-            }
-        },
-        copy: {
-            json: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: srcDir,
-                        src: ['io-package.json'],
-                        dest: dstDir,
-                        rename: function (dest, src) {
-                            return dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.json';
-                        }
-                    },
-                    {
-                        expand: true,
-                        cwd: srcDir,
-                        src: ['io-package.json'],
-                        dest: dstDir,
-                        rename: function (dest, src) {
-                            return dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.json';
-                        }
-                    }
-                ]
-            }
-        }
-    });
-
-    grunt.registerTask('updateReadme', function () {
-        var readme = grunt.file.read('README.md');
-        var pos = readme.indexOf('## Changelog\r\n');
-        if (pos != -1) {
-            var readmeStart = readme.substring(0, pos + '## Changelog\r\n'.length);
-            var readmeEnd   = readme.substring(pos + '## Changelog\r\n'.length);
-
-            if (iopackage.common && readme.indexOf(iopackage.common.version) == -1) {
-                var timestamp = new Date();
-                var date = timestamp.getFullYear() + '-' +
-                    ("0" + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                    ("0" + (timestamp.getDate()).toString(10)).slice(-2);
-
-                var news = "";
-                if (iopackage.common.whatsNew) {
-                    for (var i = 0; i < iopackage.common.whatsNew.length; i++) {
-                        if (typeof iopackage.common.whatsNew[i] == 'string') {
-                            news += '* ' + iopackage.common.whatsNew[i] + '\r\n';
-                        } else {
-                            news += '* ' + iopackage.common.whatsNew[i].en + '\r\n';
-                        }
-                    }
-                }
-
-                grunt.file.write('README.md', readmeStart + '### ' + iopackage.common.version + ' (' + date + ')\r\n' + (news ? news + '\r\n\r\n' : '\r\n') + readmeEnd);
             }
         }
     });
@@ -198,20 +197,25 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jscs');
     grunt.loadNpmTasks('grunt-http');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', [
-        'exec',
         'http',
-        'clean',
-        'replace',
-        'updateReadme',
-        'compress',
-        'copy',
+        'replace:version',
         'jshint',
         'jscs'
+    ]);
+
+    grunt.registerTask('prepublish', [
+        'http',
+        'replace:version'
+    ]);
+
+    grunt.registerTask('p', [
+        'http',
+        'replace:version'
+    ]);
+
+    grunt.registerTask('rename', [
+        'replace:name'
     ]);
 };
