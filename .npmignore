@@ -5,4 +5,6 @@ node_modules
 .gitignore
 .git
 .DS_Store
-test.js
+test
+.travis.yml
+appveyor.yml
