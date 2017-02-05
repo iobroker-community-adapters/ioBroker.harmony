@@ -249,7 +249,7 @@ function discoverStart() {
         adapter.log.debug("discover already started");
         return;
     }
-    discover = new HarmonyHubDiscover(61991+1+adapter.instance);
+    discover = new HarmonyHubDiscover(61991);
     discover.on('online', function (hub) {
         // Triggered when a new hub was found
         if (hub.host_name == adapter.config.hub) {
