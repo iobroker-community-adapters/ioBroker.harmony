@@ -173,7 +173,7 @@ function discoverStart() {
         if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
             adapter.log.info('discovered ' + hub.host_name);
             var hubName = hub.host_name.replace(/[.\s]+/g, '_');
-            if (hubs[hubName]) delete hubs[hubName];
+            //if (hubs[hubName]) delete hubs[hubName];
             initHub(hubName, function () {
                 //wait 2 seconds for hub before connecting
                 adapter.log.info('connecting to ' + hub.host_name);
@@ -215,6 +215,7 @@ function initHub(hub, callback) {
         reconnectTimer: 0,
         semaphore: require('semaphore')(1)
     };
+
     adapter.getState(hub + '.hubConnected', function (err, state) {
         if (err || !state) {
             adapter.log.debug('hub not initialized');
