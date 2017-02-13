@@ -264,7 +264,7 @@ function initHub(hub, callback) {
 function clientStop(hub) {
     setConnected(hub, false);
     setBlocked(hub, false);
-    if (hubs[hub].client !== null) {
+    if (hubs[hub] && hubs[hub].client !== null) {
         hubs[hub].client._xmppClient.on('error', function (e) {
             adapter.log.debug('xmpp error: ' + e);
         });
@@ -278,7 +278,7 @@ function clientStop(hub) {
 }
 
 function connect(hub, hubObj) {
-    if (hubs[hub].client !== null) return;
+    if (!hubs[hub] || hubs[hub].client !== null) return;
     clearTimeout(hubs[hub].reconnectTimer);
     harmony(hubObj.ip).timeout(5000).then(function (harmonyClient) {
         hubs[hub].timestamp = Date.now();
