@@ -595,7 +595,7 @@ function setBlocked(hub, bool) {
 }
 
 function setConnected(hub, bool) {
-    if (hubs[hub].statesExist) {
+    if (hubs[hub] && hubs[hub].statesExist) {
         bool = Boolean(bool);
         adapter.setState(hub + '.hubConnected', {val: bool, ack: true});
     }
