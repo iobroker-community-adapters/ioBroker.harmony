@@ -188,8 +188,8 @@ function discoverStart() {
             adapter.log.warn('lost ' + hub.host_name);
             var hubName = hub.host_name.replace(/[.\s]+/g, '_');
             //stop reconnect timer
-            if (hubs[hub]) {
-                clearTimeout(hubs[hub].reconnectTimer);
+            if (hubs[hubName]) {
+                clearTimeout(hubs[hubName].reconnectTimer);
             }
             clientStop(hubName);
 
