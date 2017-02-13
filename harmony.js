@@ -587,7 +587,7 @@ function setStatusFromActivityID(hub, id, value) {
 }
 
 function setBlocked(hub, bool) {
-    if (hubs[hub].statesExist) {
+    if (hubs[hub] && hubs[hub].statesExist) {
         bool = Boolean(bool);
         adapter.setState(hub + '.hubBlocked', {val: bool, ack: true});
         hubs[hub].blocked = bool;
