@@ -173,7 +173,6 @@ function discoverStart() {
         if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
             adapter.log.info('discovered ' + hub.host_name);
             var hubName = hub.host_name.replace(/[.\s]+/g, '_');
-            //if (hubs[hubName]) delete hubs[hubName];
             initHub(hubName, function () {
                 //wait 2 seconds for hub before connecting
                 adapter.log.info('connecting to ' + hub.host_name);
@@ -189,7 +188,8 @@ function discoverStart() {
             adapter.log.warn('lost ' + hub.host_name);
             var hubName = hub.host_name.replace(/[.\s]+/g, '_');
             clientStop(hubName);
-            delete hubs[hubName];
+            //stop reconnect timer
+            clearTimeout(hubs[hub].reconnectTimer);
         }
     });
     discover.on('error', function (er) {
