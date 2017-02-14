@@ -297,7 +297,7 @@ function connect(hub, hubObj) {
                     adapter.log.info('keep alive failed: ' + e);
                     clientStop(hub);
                     hubs[hub].reconnectTimer = setTimeout(function () {
-                        connect(hubObj);
+                        connect(hub, hubObj);
                     }, 5000);
                 });
             }
