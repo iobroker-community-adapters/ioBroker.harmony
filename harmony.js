@@ -167,39 +167,41 @@ function discoverStart() {
         adapter.log.debug("discover already started");
         return;
     }
-    discover = new HarmonyHubDiscover(61991);
-    discover.on('online', function (hub) {
-        // Triggered when a new hub was found
-        if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
-            adapter.log.info('discovered ' + hub.host_name);
-            var hubName = hub.host_name.replace(/[.\s]+/g, '_');
-            initHub(hubName, function () {
-                //wait 2 seconds for hub before connecting
-                adapter.log.info('connecting to ' + hub.host_name);
-                hubs[hubName].reconnectTimer = setTimeout(function () {
-                    connect(hubName, hub);
-                }, 2000);
-            });
-        }
-    });
-    discover.on('offline', function (hub) {
-        // Triggered when a hub disappeared
-        if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
-            adapter.log.warn('lost ' + hub.host_name);
-            var hubName = hub.host_name.replace(/[.\s]+/g, '_');
-            //stop reconnect timer
-            if (hubs[hubName]) {
-                clearTimeout(hubs[hubName].reconnectTimer);
+    adapter.getPort(61991, function (port) {
+        discover = new HarmonyHubDiscover(port);
+        discover.on('online', function (hub) {
+            // Triggered when a new hub was found
+            if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
+                adapter.log.info('discovered ' + hub.host_name);
+                var hubName = hub.host_name.replace(/[.\s]+/g, '_');
+                initHub(hubName, function () {
+                    //wait 2 seconds for hub before connecting
+                    adapter.log.info('connecting to ' + hub.host_name);
+                    hubs[hubName].reconnectTimer = setTimeout(function () {
+                        connect(hubName, hub);
+                    }, 2000);
+                });
             }
-            clientStop(hubName);
+        });
+        discover.on('offline', function (hub) {
+            // Triggered when a hub disappeared
+            if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
+                adapter.log.warn('lost ' + hub.host_name);
+                var hubName = hub.host_name.replace(/[.\s]+/g, '_');
+                //stop reconnect timer
+                if (hubs[hubName]) {
+                    clearTimeout(hubs[hubName].reconnectTimer);
+                }
+                clientStop(hubName);
 
-        }
+            }
+        });
+        discover.on('error', function (er) {
+            adapter.log.warn('discover error: ', er.message);
+        });
+        discover.start();
+        adapter.log.info('searching for Harmony Hubs...');
     });
-    discover.on('error', function (er) {
-        adapter.log.warn('discover error: ', er.message);
-    });
-    discover.start();
-    adapter.log.info('searching for Harmony Hubs...');
 }
 
 function initHub(hub, callback) {
