@@ -46,6 +46,7 @@ After sending the state will be set to 0 again.
 ### 0.7.0
 * (Pmant) support multiple hubs
 * (Pmant) removed hub config from admin
+* (Pmant) find free Port for Hub-Discovery
 
 ### 0.6.2
 * (Pmant) fix wrong port
