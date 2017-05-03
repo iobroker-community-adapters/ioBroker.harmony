@@ -34,7 +34,7 @@ adapter.on('stateChange', function (id, state) {
     semaphore.take(function () {
         setBlocked(hub, true);
         processStateChange(hub, id, state, function () {
-            if (semaphore.current == 1) {
+            if (semaphore.current === 1) {
                 setBlocked(hub, false);
             }
             semaphore.leave();
@@ -46,7 +46,7 @@ function processStateChange(hub, id, state, callback) {
     var tmp = id.split('.');
     var channel = "";
     var name = "";
-    if (tmp.length == 5) {
+    if (tmp.length === 5) {
         name = tmp.pop();
         channel = tmp.pop();
     } else {
@@ -134,7 +134,7 @@ function switchActivity(hub, activityLabel, value, callback) {
         hubs[hub].client.turnOff().finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('switching activity to: ' + activityLabel);
-        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).finally(callback());
+        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).finally(callback);
     } else {
         adapter.log.warn('activity does not exists');
         callback();
@@ -234,7 +234,7 @@ function initHub(hub, callback) {
                 }
                 for (var i = 0; i < channels.length; i++) {
                     var channel = channels[i];
-                    if (channel.common.name == 'activities') {
+                    if (channel.common.name === 'activities') {
                         hubs[hub].statesExist = true;
                         setBlocked(hub, true);
                         setConnected(hub, false);
@@ -254,7 +254,7 @@ function initHub(hub, callback) {
                         if (states.hasOwnProperty(state)) {
                             var tmp = state.split('.');
                             var name = tmp.pop();
-                            if (name != 'currentStatus' && name != 'currentActivity') {
+                            if (name !== 'currentStatus' && name !== 'currentActivity') {
                                 hubs[hub].ioStates[name] = true;
                             }
                         }

@@ -1,13 +1,18 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "title": "Logitech Harmony Adapter",
     "desc": "Control your harmony activities from ioBroker.",
     "authors": [
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
+      "0.7.1": {
+        "en": "bug fixes",
+        "de": "bug fixes",
+        "ru": "bug fixes"
+      },
       "0.7.0": {
         "en": "support multiple hubs",
         "de": "support multiple hubs",
