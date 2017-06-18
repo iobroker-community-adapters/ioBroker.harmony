@@ -33,7 +33,11 @@ Is set to true if Hub is busy starting/stopping activities or sending commands.
 Gives you the name of the currently running activity.
 
 **activities.currentStatus**  
-Gives you the current status of the hub.
+Gives you the current status of the hub. 
+- 0 = inactive
+- 1 = starting
+- 2 = active
+- 3 = stopping
 
 ### Devices
 **Send Command**  
