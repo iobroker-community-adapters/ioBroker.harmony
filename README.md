@@ -39,6 +39,10 @@ Gives you the current status of the hub.
 - 2 = active
 - 3 = stopping
 
+**activities.<activity name\>** 
+Status of this activity. Values are the same as above.
+
+
 ### Devices
 **Send Command**  
 Set 'Instance.Hub_Name.Device_Name.command' to a number x to send command for x milliseconds.  
