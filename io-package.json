@@ -39,7 +39,7 @@
       "logitech",
       "home automation"
     ],
-    "type": "hardware",
+    "type": "multimedia",
     "icon": "harmony.png",
     "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
   },
