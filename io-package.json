@@ -3,7 +3,11 @@
     "name": "harmony",
     "version": "0.9.0",
     "title": "Logitech Harmony Adapter",
-    "desc": "Control your harmony activities from ioBroker.",
+    "desc":                     {
+            "en": "Control your harmony activities from ioBroker",
+            "de": "Geräte und Activities mit dem Logitech Harmony-Hub steuern",
+            "ru": "Control your harmony activities from ioBroker"
+        },
     "authors": [
       "Pmant <patrickmo@gmx.de>"
     ],
@@ -15,12 +19,12 @@
       },
       "0.7.0": {
         "en": "support multiple hubs",
-        "de": "support multiple hubs",
+        "de": "Unterstützung für mehrere Hubs hinzugefügt",
         "ru": "support multiple hubs"
       },
       "0.6.2": {
         "en": "fix wrong port",
-        "de": "fix wrong port",
+        "de": "falscher Port korrigiert",
         "ru": "fix wrong port"
       }
     },
