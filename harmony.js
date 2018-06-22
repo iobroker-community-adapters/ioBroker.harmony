@@ -103,7 +103,12 @@ function sendCommand(hub, id, ms, callback) {
             return;
         }
         adapter.log.debug('sending command: ' + obj.name);
-        var encodedAction = obj.native.action.replace(/:/g, '::');
+        try {
+            var encodedAction = obj.native.action.replace(/:/g, '::');
+        } catch (e) {
+            callback();
+            return;
+        }
 
         var tsStart = Date.now();
         var first = true;
