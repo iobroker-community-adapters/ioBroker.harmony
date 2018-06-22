@@ -15,6 +15,10 @@ var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('harmony');
 var hubs = {};
 var discover;
+const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
+const fixId = function(id) {
+    return id.replace(FORBIDDEN_CHARS, '_');
+}
 
 
 adapter.on('stateChange', function (id, state) {
@@ -173,7 +177,7 @@ function discoverStart() {
             // Triggered when a new hub was found
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.info('discovered ' + hub.host_name);
-                var hubName = hub.host_name.replace(/[.\s]+/g, '_');
+                var hubName = fixId(hub.host_name);
                 initHub(hubName, function () {
                     //wait 2 seconds for hub before connecting
                     adapter.log.info('connecting to ' + hub.host_name);
@@ -187,7 +191,7 @@ function discoverStart() {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.warn('lost ' + hub.host_name);
-                var hubName = hub.host_name.replace(/[.\s]+/g, '_');
+                var hubName = fixId(hub.host_name.replace);
                 //stop reconnect timer
                 if (hubs[hubName]) {
                     clearTimeout(hubs[hubName].reconnectTimer);
@@ -442,7 +446,7 @@ function processConfig(hub, hubObj, config) {
     }
 
     config.activity.forEach(function (activity) {
-        var activityLabel = activity.label.replace(/[.\s]+/g, '_');
+        var activityLabel = fixId(activity.label);
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
         if (activity.id == '-1') return;
@@ -477,7 +481,7 @@ function processConfig(hub, hubObj, config) {
     adapter.log.debug('creating devices');
     channelName = hub;
     config.device.forEach(function (device) {
-        var deviceLabel = device.label.replace(/[.\s]+/g, '_');
+        var deviceLabel = fixId(device.label);
         var deviceChannelName = channelName + '.' + deviceLabel;
         var controlGroup = device.controlGroup;
         hubs[hub].devices[device.id] = deviceLabel;
@@ -499,7 +503,7 @@ function processConfig(hub, hubObj, config) {
                 controlGroup.function.forEach(function (command) {
                     command.controlGroup = groupName;
                     command.deviceId = device.id;
-                    var commandName = command.name.replace(/[.\s]+/g, '_');
+                    var commandName = fixId(command.name);
                     //create command
                     adapter.setObject(deviceChannelName + '.' + commandName, {
                         type: 'state',
@@ -587,7 +591,7 @@ function setStatusFromActivityID(hub, id, value) {
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
-    var channelName = hub + '.activities.' + hubs[hub].activities[id].replace(/[.\s]+/g, '_');
+    var channelName = fixId(hub + '.activities.' + hubs[hub].activities[id]);
     adapter.setState(channelName, {val: value, ack: true});
 }
 

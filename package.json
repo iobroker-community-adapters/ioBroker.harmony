@@ -1,15 +1,16 @@
 {
   "name": "iobroker.harmony",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Control your harmony activities from ioBroker.",
   "author": "Pmant <patrickmo@gmx.de>",
-  "contributors": [
-  ],
+  "contributors": [],
   "homepage": "https://github.com/pmant/ioBroker.harmony",
   "license": "MIT",
   "keywords": [
     "ioBroker",
-    "harmony", "hub", "logitech",
+    "harmony",
+    "hub",
+    "logitech",
     "home automation"
   ],
   "repository": {
@@ -18,8 +19,8 @@
   },
   "dependencies": {
     "harmonyhubjs-client": "^1.1.10",
-    "harmonyhubjs-discover": "^1.0.2",
-    "semaphore": "~1.0.3" 
+    "harmonyhubjs-discover": "^1.1.1",
+    "semaphore": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

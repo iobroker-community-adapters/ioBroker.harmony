@@ -51,6 +51,11 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.9.1
+please delete all harmony.x objects once
+* (Pmant) fix problematic chars
+
+
 ### 0.7.0
 * (Pmant) support multiple hubs
 * (Pmant) removed hub config from admin

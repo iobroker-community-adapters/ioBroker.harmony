@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "title": "Logitech Harmony Adapter",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,11 @@
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
+      "0.9.1": {
+        "en": "fix problematic chars",
+        "de": "Fix für problemantische Zeichen",
+        "ru": "fix problematic chars"
+      },   
       "0.7.1": {
         "en": "bug fixes",
         "de": "bug fixes",
