@@ -177,7 +177,7 @@ function discoverStart() {
             // Triggered when a new hub was found
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.info('discovered ' + hub.host_name);
-                var hubName = fixId(hub.host_name);
+                var hubName = fixId(hub.host_name).replace('.','_');
                 initHub(hubName, function () {
                     //wait 2 seconds for hub before connecting
                     adapter.log.info('connecting to ' + hub.host_name);
@@ -191,7 +191,7 @@ function discoverStart() {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.warn('lost ' + hub.host_name);
-                var hubName = fixId(hub.host_name.replace);
+                var hubName = fixId(hub.host_name.replace).replace('.','_');
                 //stop reconnect timer
                 if (hubs[hubName]) {
                     clearTimeout(hubs[hubName].reconnectTimer);
@@ -446,7 +446,7 @@ function processConfig(hub, hubObj, config) {
     }
 
     config.activity.forEach(function (activity) {
-        var activityLabel = fixId(activity.label);
+        var activityLabel = fixId(activity.label).replace('.','_');
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
         if (activity.id == '-1') return;
@@ -481,7 +481,7 @@ function processConfig(hub, hubObj, config) {
     adapter.log.debug('creating devices');
     channelName = hub;
     config.device.forEach(function (device) {
-        var deviceLabel = fixId(device.label);
+        var deviceLabel = fixId(device.label).replace('.','_');
         var deviceChannelName = channelName + '.' + deviceLabel;
         var controlGroup = device.controlGroup;
         hubs[hub].devices[device.id] = deviceLabel;
@@ -503,7 +503,7 @@ function processConfig(hub, hubObj, config) {
                 controlGroup.function.forEach(function (command) {
                     command.controlGroup = groupName;
                     command.deviceId = device.id;
-                    var commandName = fixId(command.name);
+                    var commandName = fixId(command.name).replace('.','_');
                     //create command
                     adapter.setObject(deviceChannelName + '.' + commandName, {
                         type: 'state',
