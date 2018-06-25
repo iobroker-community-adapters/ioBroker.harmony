@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "title": "Logitech Harmony Adapter",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
