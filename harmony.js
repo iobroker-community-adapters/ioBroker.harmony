@@ -196,7 +196,7 @@ function discoverStart() {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.warn('lost ' + hub.host_name);
-                var hubName = fixId(hub.host_name.replace).replace('.','_');
+                var hubName = fixId(hub.host_name).replace('.','_');
                 //stop reconnect timer
                 if (hubs[hubName]) {
                     clearTimeout(hubs[hubName].reconnectTimer);
