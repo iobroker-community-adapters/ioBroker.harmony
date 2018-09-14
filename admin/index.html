@@ -1,27 +1,38 @@
 <html>
+<head>
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
-<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
 
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 
-<script type="text/javascript">
-    systemDictionary = {
-        "Logitech Harmony adapter settings": {
-            "en": "Logitech Harmony adapter settings",
-            "de": "Logitech Harmony adapter settings",
-            "ru": "Logitech Harmony adapter settings"
-        },
-        "Settings": {"en": "Settings", "de": "Settings", "ru": "Settings"},
-        "Hub Name": {"en": "Hub Name", "de": "Hub Name", "ru": "Hub Name"},
-        "Hub User": {"en": "Hub User", "de": "Hub User", "ru": "Hub User"},
-        "Hub Password": {"en": "Hub Password", "de": "Hub Passwort", "ru": "Hub Password"},
-        "Find Hub": {"en": "Find Hub", "de": "Suche Hub", "ru": "Find Hub"},
-    };
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+<!-- these files always have to be included -->
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
+
+<style>
+    .m .col .select-wrapper + label {
+        top: -26px;
+    }
+    .m span {
+        font-size: 0.9em;
+    }
     
+    #settings tr { 
+    	line-height: 2.5em; 
+    }
+</style>
+
+<script type="text/javascript">
     let devices = [];
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
@@ -94,10 +105,9 @@
     });
  
 </script>
-<style>
-    #settings tr { line-height: 2.5em; }
-</style>
+</head>
 
+<body>
 <!-- you have to put your config page in a div with id adapter-container -->
 <div id="adapter-container">
     <table><tr><td><img src="harmony.png" width="64" height="64"></td><td><h3 class="translate">Logitech Harmony adapter settings</h3></td></tr></table>
@@ -134,4 +144,5 @@
 				</div>
 		</div>
 </div>
+</body>
 </html>
