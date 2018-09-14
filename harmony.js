@@ -12,16 +12,16 @@
 const harmony = require('harmonyhubjs-client');
 const HarmonyHubDiscover = require('harmonyhubjs-discover');
 const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
-const adapter = utils.adapter('harmony');
+const adapter = new utils.Adapter('harmony');;
 let hubs = {};
 let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
 const fixId = (id) => {
     return id.replace(FORBIDDEN_CHARS, '_');
 }
+let manualDiscoverHubs;
 
-
-adapter.on('stateChange', function (id, state) {
+adapter.on('stateChange', (id, state) => {
     if (!id || !state || state.ack) {
         return;
     }
@@ -37,7 +37,7 @@ adapter.on('stateChange', function (id, state) {
     }
     semaphore.take(() => {
         setBlocked(hub, true);
-        processStateChange(hub, id, state, function () {
+        processStateChange(hub, id, state, () => {
             if (semaphore.current === 1) {
                 setBlocked(hub, false);
             }
@@ -167,6 +167,7 @@ adapter.on('ready', () => {
 });
 
 function main() {
+	manualDiscoverHubs = adapter.config.devices;
     adapter.subscribeStates('*');
     discoverStart();
 }
@@ -176,22 +177,37 @@ function discoverStart() {
         adapter.log.debug("discover already started");
         return;
     }
-    adapter.getPort(61991, function (port) {
+    adapter.getPort(61991, port => {
         discover = new HarmonyHubDiscover(port);
-        discover.on('online', function (hub) {
+        discover.on('online', hub => {
             // Triggered when a new hub was found
+            let addHub = false;
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.info('discovered ' + hub.host_name);
+            	if (manualDiscoverHubs.length) {
+            		for(let i = 0; i < manualDiscoverHubs.length; i++) {
+            			if(manualDiscoverHubs[i].ip === hub.ip) {
+            				adapter.log.debug(hub.host_name + ' (' + hub.ip + ')' + ' will be added');
+            				addHub = true;
+            			} else {
+            				adapter.log.info(hub.host_name + ' (' + hub.ip + ')' + ' won\'t be added, because ' +
+            						' manual search is configured and hub\'s ip not listed');
+            			}
+            		} // endFor
+            	} else addHub = true; // if no manual discovery --> add all hubs
                 let hubName = fixId(hub.host_name).replace('.','_');
-                initHub(hubName, function () {
-                    //wait 2 seconds for hub before connecting
-                    adapter.log.info('connecting to ' + hub.host_name);
-                    hubs[hubName].reconnectTimer = setTimeout(function () {
-                        connect(hubName, hub);
-                    }, 2000);
-                });
-            }
+                if (addHub) {
+                	initHub(hubName, () => {
+	                    //wait 2 seconds for hub before connecting
+	                    adapter.log.info('connecting to ' + hub.host_name);
+	                    hubs[hubName].reconnectTimer = setTimeout(function () {
+	                        connect(hubName, hub);
+	                    }, 2000);
+                	});
+                } // endIf
+            } // endIf
         });
+        
         discover.on('offline', hub => {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
@@ -205,13 +221,15 @@ function discoverStart() {
 
             }
         });
+        
         discover.on('error', err => {
             adapter.log.warn('discover error: ', err.message);
         });
+        
         discover.start();
         adapter.log.info('searching for Harmony Hubs...');
     });
-}
+} // endDiscoverStart
 
 function initHub(hub, callback) {
     hubs[hub] = {
