@@ -190,14 +190,13 @@ function discoverStart() {
             // Triggered when a new hub was found
             let addHub = false;
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
-                adapter.log.info('discovered ' + hub.host_name);
             	if (manualDiscoverHubs.length) {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
-            				adapter.log.debug(hub.host_name + ' (' + hub.ip + ')' + ' will be added');
+            				adapter.log.info('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
             				addHub = true;
             			} else {
-            				adapter.log.info(hub.host_name + ' (' + hub.ip + ')' + ' won\'t be added, because ' +
+            				adapter.log.debug('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
             						' manual search is configured and hub\'s ip not listed');
             			}
             		} // endFor
@@ -206,7 +205,7 @@ function discoverStart() {
                 if (addHub) {
                 	initHub(hubName, () => {
 	                    //wait 2 seconds for hub before connecting
-	                    adapter.log.info('connecting to ' + hub.host_name);
+	                    adapter.log.info('connecting to ' + hub.host_name + ' (' + hub.ip +')');
 	                    hubs[hubName].reconnectTimer = setTimeout(function () {
 	                        connect(hubName, hub);
 	                    }, 2000);
@@ -218,15 +217,21 @@ function discoverStart() {
         discover.on('offline', hub => {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
-                adapter.log.warn('lost ' + hub.host_name);
-                let hubName = fixId(hub.host_name).replace('.','_');
-                //stop reconnect timer
-                if (hubs[hubName]) {
-                    clearTimeout(hubs[hubName].reconnectTimer);
-                }
-                clientStop(hubName);
+            	if (manualDiscoverHubs.length) {
+            		for(let i = 0; i < manualDiscoverHubs.length; i++) {
+            			if(manualDiscoverHubs[i].ip === hub.ip) {
+                            adapter.log.warn('lost ' + hub.host_name + ' (' + hub.ip + ')'); 
+            			} else adapter.log.debug('lost ' + hub.host_name); // if hub is blacklisted only log on debug
+            		} // endFor
+            	} else adapter.log.warn('lost ' + hub.host_name);
 
-            }
+	            let hubName = fixId(hub.host_name).replace('.','_');
+	            //stop reconnect timer
+	            if (hubs[hubName]) {
+	                clearTimeout(hubs[hubName].reconnectTimer);
+	            } // endIf
+	            clientStop(hubName);
+            } // endIf
         });
         
         discover.on('error', err => {
@@ -323,7 +328,7 @@ function connect(hub, hubObj) {
         hubs[hub].timestamp = Date.now();
         setBlocked(hub, true);
         setConnected(hub, true);
-        adapter.log.info('connected to ' + hubObj.host_name);
+        adapter.log.info('connected to ' + hubObj.host_name + ' (' + hubObj.ip +')');
         hubs[hub].client = harmonyClient;
         (function keepAlive() {
             if (hubs[hub].client !== null) {
