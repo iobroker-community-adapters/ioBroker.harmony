@@ -9,14 +9,14 @@
 /*jslint node: true */
 "use strict";
 
-var harmony = require('harmonyhubjs-client');
-var HarmonyHubDiscover = require('harmonyhubjs-discover');
-var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter = utils.adapter('harmony');
-var hubs = {};
-var discover;
+const harmony = require('harmonyhubjs-client');
+const HarmonyHubDiscover = require('harmonyhubjs-discover');
+const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
+const adapter = utils.adapter('harmony');
+let hubs = {};
+let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
-const fixId = function(id) {
+const fixId = (id) => {
     return id.replace(FORBIDDEN_CHARS, '_');
 }
 
@@ -25,9 +25,9 @@ adapter.on('stateChange', function (id, state) {
     if (!id || !state || state.ack) {
         return;
     }
-    var hub = id.split(".")[2];
+    let hub = id.split(".")[2];
     if (!hubs[hub]) return;
-    var semaphore = hubs[hub].semaphore;
+    let semaphore = hubs[hub].semaphore;
     if (semaphore === undefined) {
         adapter.log.warn("state changed in offline hub");
         return;
@@ -35,7 +35,7 @@ adapter.on('stateChange', function (id, state) {
     if (semaphore.current > 0) {
         adapter.log.info('hub busy, stateChange delayed: ' + id + '=' + state.val);
     }
-    semaphore.take(function () {
+    semaphore.take(() => {
         setBlocked(hub, true);
         processStateChange(hub, id, state, function () {
             if (semaphore.current === 1) {
@@ -47,9 +47,9 @@ adapter.on('stateChange', function (id, state) {
 });
 
 function processStateChange(hub, id, state, callback) {
-    var tmp = id.split('.');
-    var channel = "";
-    var name = "";
+    let tmp = id.split('.');
+    let channel = "";
+    let name = "";
     if (tmp.length === 5) {
         name = tmp.pop();
         channel = tmp.pop();
@@ -75,7 +75,7 @@ function processStateChange(hub, id, state, callback) {
         default:
             adapter.log.debug('sending command: ' + channel + ':' + name);
             if (state.val) {
-                var ms = parseInt(state.val);
+                let ms = parseInt(state.val);
                 if (isNaN(ms) || ms < 100) {
                     ms = 100;
                 }
@@ -110,10 +110,10 @@ function sendCommand(hub, id, ms, callback) {
             return;
         }
 
-        var tsStart = Date.now();
-        var first = true;
+        let tsStart = Date.now();
+        let first = true;
         (function repeat() {
-            var tsNow = Date.now();
+            let tsNow = Date.now();
             if (tsNow - tsStart + 250 <= ms || first) {
                 hubs[hub].client.send('holdAction', 'status=press:timestamp=' + (tsNow - hubs[hub].timestamp) + ':action=' + encodedAction);
                 first = false;
@@ -150,19 +150,19 @@ function switchActivity(hub, activityLabel, value, callback) {
     }
 }
 
-adapter.on('unload', function (callback) {
+adapter.on('unload', callback => {
     adapter.log.info('terminating');
     if (discover) {
         discover.stop();
     }
     discover = null;
-    for (var hub in Object.keys(hubs)) {
+    for (let hub in Object.keys(hubs)) {
         clientStop(hub);
     }
     callback();
 });
 
-adapter.on('ready', function () {
+adapter.on('ready', () => {
     main();
 });
 
@@ -182,7 +182,7 @@ function discoverStart() {
             // Triggered when a new hub was found
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.info('discovered ' + hub.host_name);
-                var hubName = fixId(hub.host_name).replace('.','_');
+                let hubName = fixId(hub.host_name).replace('.','_');
                 initHub(hubName, function () {
                     //wait 2 seconds for hub before connecting
                     adapter.log.info('connecting to ' + hub.host_name);
@@ -192,11 +192,11 @@ function discoverStart() {
                 });
             }
         });
-        discover.on('offline', function (hub) {
+        discover.on('offline', hub => {
             // Triggered when a hub disappeared
             if (hub.host_name !== 'undefined' && hub.host_name !== undefined) {
                 adapter.log.warn('lost ' + hub.host_name);
-                var hubName = fixId(hub.host_name).replace('.','_');
+                let hubName = fixId(hub.host_name).replace('.','_');
                 //stop reconnect timer
                 if (hubs[hubName]) {
                     clearTimeout(hubs[hubName].reconnectTimer);
@@ -205,8 +205,8 @@ function discoverStart() {
 
             }
         });
-        discover.on('error', function (er) {
-            adapter.log.warn('discover error: ', er.message);
+        discover.on('error', err => {
+            adapter.log.warn('discover error: ', err.message);
         });
         discover.start();
         adapter.log.info('searching for Harmony Hubs...');
@@ -230,19 +230,19 @@ function initHub(hub, callback) {
         semaphore: require('semaphore')(1)
     };
 
-    adapter.getState(hub + '.hubConnected', function (err, state) {
+    adapter.getState(hub + '.hubConnected', (err, state) => {
         if (err || !state) {
             adapter.log.debug('hub not initialized');
             callback();
         } else {
-            adapter.getChannelsOf(hub, function (err, channels) {
+            adapter.getChannelsOf(hub, (err, channels) => {
                 if (err || !channels) {
                     adapter.log.debug('hub not initialized correctly');
                     callback();
                     return;
                 }
-                for (var i = 0; i < channels.length; i++) {
-                    var channel = channels[i];
+                for (let i = 0; i < channels.length; i++) {
+                    let channel = channels[i];
                     if (channel.common.name === 'activities') {
                         hubs[hub].statesExist = true;
                         setBlocked(hub, true);
@@ -259,10 +259,10 @@ function initHub(hub, callback) {
                         callback();
                         return;
                     }
-                    for (var state in states) {
+                    for (let state in states) {
                         if (states.hasOwnProperty(state)) {
-                            var tmp = state.split('.');
-                            var name = tmp.pop();
+                            let tmp = state.split('.');
+                            let name = tmp.pop();
                             if (name !== 'currentStatus' && name !== 'currentActivity') {
                                 hubs[hub].ioStates[name] = true;
                             }
@@ -315,7 +315,7 @@ function connect(hub, hubObj) {
         }());
 
         //update objects on connect
-        harmonyClient.getAvailableCommands().then(function (config) {
+        harmonyClient.getAvailableCommands().then(config => {
             try {
                 processConfig(hub, hubObj, config);
             } catch (e) {
@@ -337,7 +337,7 @@ function connect(hub, hubObj) {
                         setCurrentStatus(hub, 0);
                     }
                     //set all other activities to 'off'
-                    for (var activity in hubs[hub].activities) {
+                    for (let activity in hubs[hub].activities) {
                         if (activity != response.result && hubs[hub].activities.hasOwnProperty(activity)) {
                             setStatusFromActivityID(hub, activity, 0);
                         }
@@ -345,18 +345,18 @@ function connect(hub, hubObj) {
                 }
 
                 //start listen for updates from hub
-                harmonyClient.on('stateDigest', function (digest) {
+                harmonyClient.on('stateDigest', digest => {
                     processDigest(hub, digest);
                 });
-            }).catch(function (e) {
+            }).catch(e => {
                 adapter.log.warn('connection down: ' + e);
                 clientStop(hub);
             });
-        }).catch(function (e) {
+        }).catch(e => {
             adapter.log.warn('could not get config: ' + e);
             clientStop(hub);
         });
-    }).catch(function (e) {
+    }).catch(e => {
         adapter.log.warn('could not connect to ' + hubObj.host_name + ': ' + e);
         clientStop(hub);
     });
@@ -412,7 +412,7 @@ function processConfig(hub, hubObj, config) {
 
     /* create activities */
     adapter.log.debug('creating activities');
-    var channelName = hub + '.activities';
+    let channelName = hub + '.activities';
     //create channel for activities
     adapter.setObject(channelName, {
         type: 'channel',
@@ -451,12 +451,12 @@ function processConfig(hub, hubObj, config) {
     }
 
     config.activity.forEach(function (activity) {
-        var activityLabel = fixId(activity.label).replace('.','_');
+        let activityLabel = fixId(activity.label).replace('.','_');
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
         if (activity.id == '-1') return;
         //create activities
-        var activityChannelName = channelName + '.' + activityLabel;
+        let activityChannelName = channelName + '.' + activityLabel;
         //create channel for activity
         delete activity.sequences;
         delete activity.controlGroup;
@@ -486,9 +486,9 @@ function processConfig(hub, hubObj, config) {
     adapter.log.debug('creating devices');
     channelName = hub;
     config.device.forEach(function (device) {
-        var deviceLabel = fixId(device.label).replace('.','_');
-        var deviceChannelName = channelName + '.' + deviceLabel;
-        var controlGroup = device.controlGroup;
+        let deviceLabel = fixId(device.label).replace('.','_');
+        let deviceChannelName = channelName + '.' + deviceLabel;
+        let controlGroup = device.controlGroup;
         hubs[hub].devices[device.id] = deviceLabel;
         hubs[hub].devices_reverse[deviceLabel] = device.id;
         delete device.controlGroup;
@@ -504,11 +504,11 @@ function processConfig(hub, hubObj, config) {
                 native: device
             });
             controlGroup.forEach(function (controlGroup) {
-                var groupName = controlGroup.name;
+                let groupName = controlGroup.name;
                 controlGroup.function.forEach(function (command) {
                     command.controlGroup = groupName;
                     command.deviceId = device.id;
-                    var commandName = fixId(command.name).replace('.','_');
+                    let commandName = fixId(command.name).replace('.','_');
                     //create command
                     adapter.setObject(deviceChannelName + '.' + commandName, {
                         type: 'state',
@@ -561,14 +561,14 @@ function processDigest(hub, digest) {
         //if status is 'running' set all other activities to 'off'
         if (digest.activityStatus == '2') {
             //only one activity can run at once, set all other activities to off
-            for (var activity in hubs[hub].activities) {
+            for (let activity in hubs[hub].activities) {
                 if (hubs[hub].activities.hasOwnProperty(activity) && activity != digest.activityId) {
                     setStatusFromActivityID(hub, activity, 0);
                 }
             }
         }
     } else { //set all activities to 'off' since powerOff activity is active
-        for (var oActivity in hubs[hub].activities) {
+        for (let oActivity in hubs[hub].activities) {
             if (hubs[hub].activities.hasOwnProperty(oActivity)) {
                 setStatusFromActivityID(hub, oActivity, 0);
             }
@@ -596,7 +596,7 @@ function setStatusFromActivityID(hub, id, value) {
         adapter.log.warn('unknown activityId: ' + id);
         return;
     }
-    var channelName = fixId(hub + '.activities.' + hubs[hub].activities[id]);
+    let channelName = fixId(hub + '.activities.' + hubs[hub].activities[id]);
     adapter.setState(channelName, {val: value, ack: true});
 }
 
