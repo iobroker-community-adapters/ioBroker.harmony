@@ -9,10 +9,17 @@
 /*jslint node: true */
 "use strict";
 
-const harmony = require('harmonyhubjs-client');
-const HarmonyHubDiscover = require('harmonyhubjs-discover');
+//const harmony = require('harmonyhubjs-client');
+//const HarmonyHubDiscover = require('harmonyhubjs-discover');
+/*	require:
+ * 	"harmonyhubjs-client": "^1.1.10",
+ *  "harmonyhubjs-discover": "^1.1.1"
+ */
+
+const harmony = require('@harmonyhub/client').getHarmonyClient;
+const HarmonyHubDiscover = require('@harmonyhub/discover').Explorer;
 const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
-const adapter = new utils.Adapter('harmony');;
+const adapter = new utils.Adapter('harmony');
 let hubs = {};
 let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
@@ -140,10 +147,12 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('turning activity off');
-        hubs[hub].client.turnOff().finally(callback);
+        hubs[hub].client.turnOff(); //.finally(callback);
+        callback();
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('switching activity to: ' + activityLabel);
-        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).finally(callback);
+        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]); //.finally(callback);
+        callback();
     } else {
         adapter.log.warn('activity does not exists');
         callback();
@@ -312,7 +321,7 @@ function clientStop(hub) {
 function connect(hub, hubObj) {
     if (!hubs[hub] || hubs[hub].client !== null) return;
     clearTimeout(hubs[hub].reconnectTimer);
-    harmony(hubObj.ip).timeout(5000).then(function (harmonyClient) {
+    harmony(hubObj.ip).then(harmonyClient => { // .timeout(5000).then
         hubs[hub].timestamp = Date.now();
         setBlocked(hub, true);
         setConnected(hub, true);
@@ -320,9 +329,9 @@ function connect(hub, hubObj) {
         hubs[hub].client = harmonyClient;
         (function keepAlive() {
             if (hubs[hub].client !== null) {
-                hubs[hub].client.request('getCurrentActivity').timeout(5000).then(function () {
+                hubs[hub].client.request('getCurrentActivity').then(() => { // .timeout(5000).then
                     setTimeout(keepAlive, 5000);
-                }).catch(function (e) {
+                }).catch(e => {
                     adapter.log.info('keep alive failed: ' + e);
                     clientStop(hub);
                     hubs[hub].reconnectTimer = setTimeout(function () {
@@ -343,7 +352,7 @@ function connect(hub, hubObj) {
             }
 
             //set current activity
-            harmonyClient.request('getCurrentActivity').timeout(5000).then(function (response) {
+            harmonyClient.request('getCurrentActivity').then(response => { // .timeout(5000).then
                 if (response.hasOwnProperty('result')) {
                     //set hub.activity to activity label
                     setCurrentActivity(hub, response.result);
