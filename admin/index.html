@@ -1,38 +1,15 @@
 <html>
-<head>
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
-<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
-
-<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 
-<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
-
-<!-- these files always have to be included -->
-<script type="text/javascript" src="../../js/translate.js"></script>
-<script type="text/javascript" src="../../lib/js/materialize.js"></script>
-<script type="text/javascript" src="../../js/adapter-settings.js"></script>
-<script type="text/javascript" src="words.js"></script>
-
-<style>
-    .m .col .select-wrapper + label {
-        top: -26px;
-    }
-    .m span {
-        font-size: 0.9em;
-    }
-    
-    #settings tr { 
-    	line-height: 2.5em; 
-    }
-</style>
-
 <script type="text/javascript">
+    
     let devices = [];
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
@@ -51,7 +28,6 @@
         }
         onChange(false);
     }
-
     function setValue(id, value, onChange) {
         // example: select elements with id=key and class=value and insert value
         $('#' + id + '.value').val(value).change(function() {
@@ -99,15 +75,15 @@
         }
         callback(obj);
     }
-
     $(document).ready(function () {
         $('#tabs').tabs();
     });
  
 </script>
-</head>
+<style>
+    #settings tr { line-height: 2.5em; }
+</style>
 
-<body>
 <!-- you have to put your config page in a div with id adapter-container -->
 <div id="adapter-container">
     <table><tr><td><img src="harmony.png" width="64" height="64"></td><td><h3 class="translate">Logitech Harmony adapter settings</h3></td></tr></table>
@@ -144,5 +120,4 @@
 				</div>
 		</div>
 </div>
-</body>
 </html>
