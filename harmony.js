@@ -147,12 +147,10 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('turning activity off');
-        hubs[hub].client.turnOff(); //.finally(callback);
-        callback();
+        hubs[hub].client.turnOff().then(callback); //.finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('switching activity to: ' + activityLabel);
-        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]); //.finally(callback);
-        callback();
+        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
     } else {
         adapter.log.warn('activity does not exists');
         callback();
