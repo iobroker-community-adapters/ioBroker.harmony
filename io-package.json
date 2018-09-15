@@ -58,7 +58,8 @@
   },
   "native": {
     "user": "guest",
-    "password": "default"
+    "password": "default",
+    "devices": []
   },
   "objects": [
   ]
