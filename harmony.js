@@ -286,7 +286,7 @@ function initHub(hub, callback) {
                     }
                     hubs[hub].ioChannels[channel.common.name] = true;
                 }
-                adapter.getStates(hub + '.activities.*', function (err, states) {
+                adapter.getStates(hub + '.activities.*', (err, states) => {
                     if (err || !states) {
                         adapter.log.debug('no activities found');
                         callback();
@@ -312,10 +312,10 @@ function clientStop(hub) {
     setConnected(hub, false);
     setBlocked(hub, false);
     if (hubs[hub] && hubs[hub].client !== null) {
-        hubs[hub].client._xmppClient.on('error', function (e) {
+        hubs[hub].client._xmppClient.on('error', e => {
             adapter.log.debug('xmpp error: ' + e);
         });
-        hubs[hub].client._xmppClient.on('offline', function () {
+        hubs[hub].client._xmppClient.on('offline', () => {
             adapter.log.debug('xmpp offline');
         });
         hubs[hub].client.end();
@@ -340,7 +340,7 @@ function connect(hub, hubObj) {
                 }).catch(e => {
                     adapter.log.info('keep alive failed: ' + e);
                     clientStop(hub);
-                    hubs[hub].reconnectTimer = setTimeout(function () {
+                    hubs[hub].reconnectTimer = setTimeout(() => {
                         connect(hub, hubObj);
                     }, 5000);
                 });
@@ -483,7 +483,7 @@ function processConfig(hub, hubObj, config) {
         });
     }
 
-    config.activity.forEach(function (activity) {
+    config.activity.forEach(activity => {
         let activityLabel = fixId(activity.label).replace('.','_');
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
@@ -518,7 +518,7 @@ function processConfig(hub, hubObj, config) {
     /* create devices */
     adapter.log.debug('creating devices');
     channelName = hub;
-    config.device.forEach(function (device) {
+    config.device.forEach(device => {
         let deviceLabel = fixId(device.label).replace('.','_');
         let deviceChannelName = channelName + '.' + deviceLabel;
         let controlGroup = device.controlGroup;
@@ -536,9 +536,9 @@ function processConfig(hub, hubObj, config) {
                 },
                 native: device
             });
-            controlGroup.forEach(function (controlGroup) {
+            controlGroup.forEach(controlGroup => {
                 let groupName = controlGroup.name;
-                controlGroup.function.forEach(function (command) {
+                controlGroup.function.forEach(command => {
                     command.controlGroup = groupName;
                     command.deviceId = device.id;
                     let commandName = fixId(command.name).replace('.','_');
@@ -563,13 +563,13 @@ function processConfig(hub, hubObj, config) {
     });
 
     adapter.log.debug('deleting activities');
-    Object.keys(hubs[hub].ioStates).forEach(function (activityLabel) {
+    Object.keys(hubs[hub].ioStates).forEach(activityLabel => {
         adapter.log.info('removed old activity: ' + activityLabel);
         adapter.deleteState(hub, 'activities', activityLabel);
     });
 
     adapter.log.debug('deleting devices');
-    Object.keys(hubs[hub].ioChannels).forEach(function (deviceLabel) {
+    Object.keys(hubs[hub].ioChannels).forEach(deviceLabel => {
         adapter.log.info('removed old device: ' + deviceLabel);
         adapter.deleteChannel(hub, deviceLabel);
     });
