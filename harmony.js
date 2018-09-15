@@ -200,7 +200,10 @@ function discoverStart() {
             						' manual search is configured and hub\'s ip not listed');
             			}
             		} // endFor
-            	} else addHub = true; // if no manual discovery --> add all hubs
+            	} else {
+    				adapter.log.info('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
+            		addHub = true; // if no manual discovery --> add all hubs
+            	}
                 let hubName = fixId(hub.host_name).replace('.','_');
                 if (addHub) {
                 	initHub(hubName, () => {
