@@ -193,22 +193,22 @@ function discoverStart() {
             	if (manualDiscoverHubs.length) {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
-            				adapter.log.info('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
+            				adapter.log.info('[DISCOVER] discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
             				addHub = true;
             			} else {
-            				adapter.log.debug('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
+            				adapter.log.debug('[DISCVOER] discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
             						' manual search is configured and hub\'s ip not listed');
             			}
             		} // endFor
             	} else {
-    				adapter.log.info('discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
+    				adapter.log.info('[DISCOVER] discovered ' + hub.host_name + ' (' + hub.ip + ')' + ' and will try to connect');
             		addHub = true; // if no manual discovery --> add all hubs
             	}
                 let hubName = fixId(hub.host_name).replace('.','_');
                 if (addHub) {
                 	initHub(hubName, () => {
 	                    //wait 2 seconds for hub before connecting
-	                    adapter.log.info('connecting to ' + hub.host_name + ' (' + hub.ip +')');
+	                    adapter.log.info('[CONNECT] connecting to ' + hub.host_name + ' (' + hub.ip +')');
 	                    hubs[hubName].reconnectTimer = setTimeout(function () {
 	                        connect(hubName, hub);
 	                    }, 2000);
@@ -223,8 +223,8 @@ function discoverStart() {
             	if (manualDiscoverHubs.length) {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
-                            adapter.log.warn('lost ' + hub.host_name + ' (' + hub.ip + ')'); 
-            			} else adapter.log.debug('lost ' + hub.host_name); // if hub is blacklisted only log on debug
+                            adapter.log.warn('[DISCONNECT] lost ' + hub.host_name + ' (' + hub.ip + ')');
+            			} else adapter.log.debug('[DISCONNECT] lost ' + hub.host_name); // if hub is blacklisted only log on debug
             		} // endFor
             	} else adapter.log.warn('lost ' + hub.host_name);
 
@@ -238,11 +238,11 @@ function discoverStart() {
         });
         
         discover.on('error', err => {
-            adapter.log.warn('discover error: ', err.message);
+            adapter.log.warn('[DISCOVER] discover error: ', err.message);
         });
         
         discover.start();
-        adapter.log.info('searching for Harmony Hubs...');
+        adapter.log.info('[DISCOVER] searching for Harmony Hubs...');
     });
 } // endDiscoverStart
 
