@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.9.5",
+    "version": "0.9.6",
     "title": "Logitech Harmony Adapter",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,11 @@
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
+      "0.9.6": {
+        "en": "Bumped dependencies version",
+        "de": "Aktualisierung der Abhängigkeiten"
+      },
+      "news": {
        "0.9.5": {
         "en": "Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
         "de": "Aktualisierung, ES6-Nutzung, manuelle Discovery Funktion, kleine Änderungen"
