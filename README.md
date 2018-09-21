@@ -51,12 +51,13 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
-### 0.9.5
+### 0.9.6
 * (foxriver76) updating code to es6
 * (foxriver76) using maintained harmony libs for discover and client
 * (foxriver76) possibility to only add whitelisted hubs
 * (foxriver76) MAX_CLIENTS = 6 error fixed
 * (foxriver76) enhanced logging
+* (foxriver76) changes for new libs
 
 ### 0.9.3
 * (justr1) fix error with hubname
