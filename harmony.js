@@ -344,7 +344,7 @@ function connect(hub, hubObj) {
                         connect(hub, hubObj);
                     }, 5000);
                 });
-            }
+            } // endIf
         }());
 
         //update objects on connect
@@ -391,7 +391,8 @@ function connect(hub, hubObj) {
         });
     }).catch(e => {
         adapter.log.warn('could not connect to ' + hubObj.friendlyName + ': ' + e);
-        clientStop(hub);
+        // clientStop(hub);
+        setTimeout()
     });
 }
 

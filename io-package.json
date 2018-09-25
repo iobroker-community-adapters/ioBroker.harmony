@@ -2,7 +2,7 @@
   "common": {
     "name": "harmony",
     "version": "0.9.6",
-    "title": "Logitech Harmony Adapter",
+    "title": "Logitech Harmony",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
             "de": "Geräte und Activities mit dem Logitech Harmony-Hub steuern",
