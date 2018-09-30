@@ -515,14 +515,14 @@ function processConfig(hub, hubObj, config) {
                         common: {
                             name: deviceLabel + ':' + commandName,
                             role: 'button',
-                            type: 'number',
+                            type: 'boolean',
                             write: true,
                             read: true,
                             min: 0
                         },
                         native: command
                     });
-                    adapter.setState(deviceChannelName + '.' + commandName, {val: '0', ack: true});
+                    adapter.setState(deviceChannelName + '.' + commandName, {val: false, ack: true});
                 });
             });
         }
