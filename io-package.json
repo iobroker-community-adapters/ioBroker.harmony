@@ -1,8 +1,8 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.9.3",
-    "title": "Logitech Harmony Adapter",
+    "version": "0.9.6",
+    "title": "Logitech Harmony",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
             "de": "Geräte und Activities mit dem Logitech Harmony-Hub steuern",
@@ -12,6 +12,14 @@
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
+      "0.9.6": {
+        "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
+        "de": "Aktualisierung der Abhängigkeiten, Aktualisierung, ES6-Nutzung, manuelle Discovery Funktion, kleine Änderungen"
+      },
+       "0.9.3": {
+        "en": "fix error with hubname",
+        "de": "Fehler mit Hub Namen behoben"
+      }, 
       "0.9.1": {
         "en": "fix problematic chars",
         "de": "Fix für problemantische Zeichen",
@@ -54,7 +62,8 @@
   },
   "native": {
     "user": "guest",
-    "password": "default"
+    "password": "default",
+    "devices": []
   },
   "objects": [
   ]
