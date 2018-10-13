@@ -51,7 +51,7 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
-### 0.9.7
+### 0.10.0
 * (foxriver76) added possibility to specify subnet for discovery
 
 ### 0.9.6

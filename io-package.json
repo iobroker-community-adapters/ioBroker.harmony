@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "harmony",
-    "version": "0.9.6",
+    "version": "0.10.0",
     "title": "Logitech Harmony",
     "desc":                     {
             "en": "Control your harmony activities from ioBroker",
@@ -12,7 +12,7 @@
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
-      "0.9.7": {
+      "0.10.0": {
         "en": "Added possibility to specify subnet for discovery",
         "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren"
       },
