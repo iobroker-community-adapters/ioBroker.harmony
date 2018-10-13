@@ -16,5 +16,9 @@ systemDictionary = {
         "Only change if you know, what you are doing.": {
 	        "en": "Only change if you know, what you are doing.",
             "de": "Nur ändern, falls benötigt."
-	    }
+	    },
+        "If no IP address given, all Hubs in the network will be added.": {
+	        "en": "If no IP address given, all Hubs in the network will be added.",
+            "de": "Wenn keine IP Adresse angegeben wird, werden alle Hubs hinzugefügt."
+        }
 };
