@@ -23,10 +23,9 @@ const adapter = new utils.Adapter('harmony');
 let hubs = {};
 let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
-const fixId = (id) => {
-    return id.replace(FORBIDDEN_CHARS, '_');
-}
+const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 let manualDiscoverHubs;
+let subnet;
 
 adapter.on('stateChange', (id, state) => {
     if (!id || !state || state.ack) {
@@ -175,18 +174,20 @@ adapter.on('ready', () => {
 
 function main() {
 	manualDiscoverHubs = adapter.config.devices;
+    subnet = adapter.config.subnet || '255.255.255.255';
+    adapter.log.debug('[CONFIG] Discover on subnet ' + subnet);
     adapter.subscribeStates('*');
     discoverStart();
 }
 
 function discoverStart() {
     if (discover) {
-        adapter.log.debug("discover already started");
+        adapter.log.debug("[DISCOVER] Discover already started");
         return;
     } // endIf
 
     adapter.getPort(61991, port => {
-        discover = new HarmonyHubDiscover(port);
+        discover = new HarmonyHubDiscover(port, {address: subnet});
         discover.on(HarmonyHubDiscover.Events.ONLINE, hub => {
 
             // Triggered when a new hub was found
@@ -331,7 +332,7 @@ function connect(hub, hubObj) {
         hubs[hub].timestamp = Date.now();
         setBlocked(hub, true);
         setConnected(hub, true);
-        adapter.log.info('connected to ' + hubObj.friendlyName + ' (' + hubObj.ip +')');
+        adapter.log.info('[CONNECT] Connected to ' + hubObj.friendlyName + ' (' + hubObj.ip +')');
         hubs[hub].client = harmonyClient;
         (function keepAlive() {
             if (hubs[hub].client !== null) {

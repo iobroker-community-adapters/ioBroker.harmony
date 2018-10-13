@@ -51,6 +51,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.9.7
+* (foxriver76) added possibility to specify subnet for discovery
+
 ### 0.9.6
 * (foxriver76) updating code to es6
 * (foxriver76) using maintained harmony libs for discover and client

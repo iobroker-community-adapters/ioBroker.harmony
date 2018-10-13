@@ -12,6 +12,10 @@
       "Pmant <patrickmo@gmx.de>"
     ],
     "news": {
+      "0.9.7": {
+        "en": "Added possibility to specify subnet for discovery",
+        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren"
+      },
       "0.9.6": {
         "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
         "de": "Aktualisierung der Abhängigkeiten, Aktualisierung, ES6-Nutzung, manuelle Discovery Funktion, kleine Änderungen"
@@ -63,6 +67,7 @@
   "native": {
     "user": "guest",
     "password": "default",
+    "subnet": "255.255.255.255",
     "devices": []
   },
   "objects": [
