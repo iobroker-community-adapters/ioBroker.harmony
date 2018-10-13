@@ -54,6 +54,7 @@ After sending the state will be set to 0 again.
 ### 0.10.0
 * (foxriver76) added possibility to specify subnet for discovery
 * (foxriver76) fix translations
+* (foxriver76) Logging improved
 
 ### 0.9.6
 * (foxriver76) updating code to es6

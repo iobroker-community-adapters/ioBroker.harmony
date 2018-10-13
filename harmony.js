@@ -137,7 +137,7 @@ function sendCommand(hub, id, ms, callback) {
 
 function switchActivity(hub, activityLabel, value, callback) {
     if (!hubs[hub].client) {
-        adapter.log.warn('error changing activity, client offline');
+        adapter.log.warn('[ACTIVITY] Error changing activity, client offline');
         callback();
         return;
     }
@@ -145,13 +145,13 @@ function switchActivity(hub, activityLabel, value, callback) {
     value = parseInt(value);
     if (isNaN(value)) value = 1;
     if (value === 0) {
-        adapter.log.debug('turning activity off');
+        adapter.log.debug('[ACTIVITY] Turning activity off');
         hubs[hub].client.turnOff().then(callback); //.finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
-        adapter.log.debug('switching activity to: ' + activityLabel);
+        adapter.log.debug('[ACTIVITY] Switching activity to: ' + activityLabel);
         hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
     } else {
-        adapter.log.warn('activity does not exists');
+        adapter.log.warn('[ACTIVITY] Activity does not exists');
         callback();
     }
 }
@@ -175,7 +175,6 @@ adapter.on('ready', () => {
 function main() {
 	manualDiscoverHubs = adapter.config.devices;
     subnet = adapter.config.subnet || '255.255.255.255';
-    adapter.log.debug('[CONFIG] Discover on subnet ' + subnet);
     adapter.subscribeStates('*');
     discoverStart();
 }
@@ -196,22 +195,22 @@ function discoverStart() {
             	if (manualDiscoverHubs.length) {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
-            				adapter.log.info('[DISCOVER] discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
+            				adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
             				addHub = true;
             			} else {
-            				adapter.log.debug('[DISCVOER] discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
+            				adapter.log.debug('[DISCVOER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
             						' manual search is configured and hub\'s ip not listed');
             			}
             		} // endFor
             	} else {
-    				adapter.log.info('[DISCOVER] discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
+    				adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
             		addHub = true; // if no manual discovery --> add all hubs
             	}
                 let hubName = fixId(hub.friendlyName).replace('.','_');
                 if (addHub) {
                 	initHub(hubName, () => {
 	                    //wait 2 seconds for hub before connecting
-	                    adapter.log.info('[CONNECT] connecting to ' + hub.friendlyName + ' (' + hub.ip +')');
+	                    adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip +')');
 	                    hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
                 	});
                 } // endIf
@@ -224,8 +223,8 @@ function discoverStart() {
             	if (manualDiscoverHubs.length) {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
-                            adapter.log.warn('[DISCONNECT] lost ' + hub.friendlyName + ' (' + hub.ip + ')');
-            			} else adapter.log.debug('[DISCONNECT] lost ' + hub.friendlyName); // if hub is blacklisted only log on debug
+                            adapter.log.warn('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
+            			} else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName); // if hub is blacklisted only log on debug
             		} // endFor
             	} else adapter.log.warn('lost ' + hub.friendlyName);
 
@@ -239,11 +238,11 @@ function discoverStart() {
         });
         
         discover.on('error', err => {
-            adapter.log.warn('[DISCOVER] discover error: ', err.message);
+            adapter.log.warn('[DISCOVER] Discover error: ', err.message);
         });
         
         discover.start();
-        adapter.log.info('[DISCOVER] searching for Harmony Hubs...');
+        adapter.log.info('[DISCOVER] Searching for Harmony Hubs on ' + subnet);
     });
 } // endDiscoverStart
 
@@ -383,15 +382,15 @@ function connect(hub, hubObj) {
                     processDigest(hub, digest);
                 });
             }).catch(e => {
-                adapter.log.warn('connection down: ' + e);
+                adapter.log.warn('[CONNECT] Connection down: ' + e);
                 clientStop(hub);
             });
         }).catch(e => {
-            adapter.log.warn('could not get config: ' + e);
+            adapter.log.warn('[CONNECT] Could not get config: ' + e);
             clientStop(hub);
         });
     }).catch(e => {
-        adapter.log.warn('could not connect to ' + hubObj.friendlyName + ': ' + e);
+        adapter.log.warn('[CONNECT] Could not connect to ' + hubObj.friendlyName + ': ' + e);
         // clientStop(hub);
         setTimeout()
     });
@@ -404,9 +403,9 @@ function processConfig(hub, hubObj, config) {
         return;
     } 
     /* create hub */
-    adapter.log.debug('creating activities and devices');
+    adapter.log.debug('[PROCESS] Creating activities and devices');
 
-    adapter.log.debug('creating hub device');
+    adapter.log.debug('[PROCESS] Creating hub device');
     adapter.setObject(hub, {
         type: 'device',
         common: {
@@ -518,7 +517,7 @@ function processConfig(hub, hubObj, config) {
     });
 
     /* create devices */
-    adapter.log.debug('creating devices');
+    adapter.log.debug('[PROCESS] Creating devices');
     channelName = hub;
     config.device.forEach(device => {
         let deviceLabel = fixId(device.label).replace('.','_');
@@ -529,7 +528,7 @@ function processConfig(hub, hubObj, config) {
         delete device.controlGroup;
         //create channel for device
         if (!hubs[hub].ioChannels.hasOwnProperty(deviceLabel)) {
-            adapter.log.info('added new device: ' + deviceLabel);
+            adapter.log.info('[PROCESS] Added new device: ' + deviceLabel);
             adapter.setObject(deviceChannelName, {
                 type: 'channel',
                 common: {
@@ -564,15 +563,15 @@ function processConfig(hub, hubObj, config) {
         delete hubs[hub].ioChannels[deviceLabel];
     });
 
-    adapter.log.debug('deleting activities');
+    adapter.log.debug('[PROCESS] Deleting activities');
     Object.keys(hubs[hub].ioStates).forEach(activityLabel => {
-        adapter.log.info('removed old activity: ' + activityLabel);
+        adapter.log.info('[PROCESS] Removed old activity: ' + activityLabel);
         adapter.deleteState(hub, 'activities', activityLabel);
     });
 
-    adapter.log.debug('deleting devices');
+    adapter.log.debug('[PROCESS] Deleting devices');
     Object.keys(hubs[hub].ioChannels).forEach(deviceLabel => {
-        adapter.log.info('removed old device: ' + deviceLabel);
+        adapter.log.info('[PROCESS] Removed old device: ' + deviceLabel);
         adapter.deleteChannel(hub, deviceLabel);
     });
 
@@ -580,7 +579,7 @@ function processConfig(hub, hubObj, config) {
     setBlocked(hub, false);
     setConnected(hub, true);
     hubs[hub].isSync = true;
-    adapter.log.info('synced hub config');
+    adapter.log.info('[PROCESS] Synced hub config');
 }
 
 function processDigest(hub, digest) {
@@ -613,7 +612,7 @@ function processDigest(hub, digest) {
 
 function setCurrentActivity(hub, id) {
     if (!hubs[hub].activities.hasOwnProperty(id)) {
-        adapter.log.warn('unknown activityId: ' + id);
+        adapter.log.warn('[SETACTIVITY] Unknown activityId: ' + id);
         return;
     }
     adapter.log.debug('current activity: ' + hubs[hub].activities[id]);
@@ -628,7 +627,7 @@ function setCurrentStatus(hub, status) {
 function setStatusFromActivityID(hub, id, value) {
     if (id == '-1') return;
     if (!hubs[hub].activities.hasOwnProperty(id)) {
-        adapter.log.warn('unknown activityId: ' + id);
+        adapter.log.warn('[SETSTATE] Unknown activityId: ' + id);
         return;
     }
     let channelName = fixId(hub + '.activities.' + hubs[hub].activities[id]);

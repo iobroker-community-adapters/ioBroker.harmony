@@ -13,8 +13,8 @@
     ],
     "news": {
       "0.10.0": {
-        "en": "Added possibility to specify subnet for discovery",
-        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren"
+        "en": "Added possibility to specify subnet for discovery, added translations, more verbose logging",
+        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren, mehr Übersetzungen, informativeres Logging"
       },
       "0.9.6": {
         "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
