@@ -13,8 +13,8 @@
     ],
     "news": {
       "0.10.0": {
-        "en": "Added possibility to specify subnet for discovery, added translations, more verbose logging",
-        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren, mehr Übersetzungen, informativeres Logging"
+        "en": "Added possibility to specify subnet for discovery, added translations, more verbose logging, materialized settings",
+        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren, mehr Übersetzungen, informativeres Logging, Einstellungen für admin v3"
       },
       "0.9.6": {
         "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
@@ -52,6 +52,7 @@
     "singletonHost": true,
     "messagebox": true,
     "readme": "https://github.com/pmant/ioBroker.harmony/blob/master/README.md",
+    "materialize": true,
     "loglevel": "info",
     "keywords": [
       "ioBroker",

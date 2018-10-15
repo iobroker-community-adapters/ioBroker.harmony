@@ -173,7 +173,7 @@ adapter.on('ready', () => {
 });
 
 function main() {
-	manualDiscoverHubs = adapter.config.devices;
+	manualDiscoverHubs = adapter.config.devices || [];
     subnet = adapter.config.subnet || '255.255.255.255';
     adapter.subscribeStates('*');
     discoverStart();
@@ -226,7 +226,7 @@ function discoverStart() {
                             adapter.log.warn('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
             			} else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName); // if hub is blacklisted only log on debug
             		} // endFor
-            	} else adapter.log.warn('lost ' + hub.friendlyName);
+            	} else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName);
 
 	            let hubName = fixId(hub.friendlyName).replace('.','_');
 	            //stop reconnect timer
@@ -313,13 +313,13 @@ function clientStop(hub) {
     setBlocked(hub, false);
     if (hubs[hub] && hubs[hub].client !== null) {
         hubs[hub].client._xmppClient.on('error', e => {
-            adapter.log.debug('xmpp error: ' + e);
+            adapter.log.debug('[STOP] XMPP error: ' + e);
         });
         hubs[hub].client._xmppClient.on('offline', () => {
-            adapter.log.debug('xmpp offline');
+            adapter.log.debug('[STOP] XMPP offline');
         });
         hubs[hub].client.end();
-        adapter.log.info('client ended: ' + hub);
+        adapter.log.info('[STOP] Client ended: ' + hub);
         hubs[hub].client = null;
     }
 }
@@ -338,7 +338,7 @@ function connect(hub, hubObj) {
                 hubs[hub].client.request('getCurrentActivity').then(() => { // .timeout(5000).then
                     setTimeout(keepAlive, 5000);
                 }).catch(e => {
-                    adapter.log.info('keep alive failed: ' + e);
+                    adapter.log.info('[CONNECT] Keep alive failed: ' + e);
                     clientStop(hub);
                     hubs[hub].reconnectTimer = setTimeout(() => {
                         connect(hub, hubObj);

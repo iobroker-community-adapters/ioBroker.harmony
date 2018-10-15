@@ -55,6 +55,7 @@ After sending the state will be set to 0 again.
 * (foxriver76) added possibility to specify subnet for discovery
 * (foxriver76) fix translations
 * (foxriver76) Logging improved
+* (foxriver76) materialized index.html for admin v3
 
 ### 0.9.6
 * (foxriver76) updating code to es6
