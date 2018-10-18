@@ -1,16 +1,17 @@
 <html>
-<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
-<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
-
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
 <script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 <script type="text/javascript" src="words.js"></script>
 
 <script type="text/javascript">
-    
+
     let devices = [];
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
@@ -50,7 +51,7 @@
             onChange();
         });
     }
-    
+
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
@@ -79,43 +80,46 @@
     $(document).ready(function () {
         $('#tabs').tabs();
     });
- 
+
 </script>
 <style>
     #settings tr { line-height: 2.5em; }
 </style>
 
 <!-- you have to put your config page in a div with id adapter-container -->
-<div id="adapter-container">
-    <table><tr><td><img src="harmony.png" width="64" height="64"></td><td><h3 class="translate">Logitech Harmony adapter settings</h3></td></tr></table>
-        <div id="settings">
-            <table>
-				<tr>
-					<td><span class="translate">Only change if you know, what you are doing.</span></td>
-				</tr>
-                <tr>
-                    <td class="translate">Discovery-Subnet:</td>
-                    <td><input type="text" id="subnet" class="value"></td>
-				</tr>
-            </table>
+<div class="m adapter-container">
+    <div class="row">
+        <div class="input-field col s6">
+            <img src="harmony.png" class="logo">
+        </div>
+    </div>
+    <div id="settings">
+        <div class="input-field col s4">
+            <input class="value" id="subnet" type="text" placeholder="255.255.255.255"/>
+            <label for="subnet" class="translate">Discovery-Subnet</label>
+            <span class="translate">Only change if you know, what you are doing.</span>
+        </div>
 
-	    <table id="devices"></table>
-	    <div id="pager-devices"></div>
-				<span class="translate">If no IP address given, all Hubs in the network will be added.</span>
-				<div id="values" style="width: 100%; height: calc(100% - 195px)">
-					<button class="table-button-add" style="margin-left: 10px; width: 1.5em; height: 1.5em"></button>
-					<div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
-						<table class="table-values" style="width: 100%;">
-							<thead>
-								<tr>
-									<th data-name="_index"   style="width: 40px" class="translate"></th>
-									<th data-name="ip"     style="width: 70%" class="translate">IP address</th>
-									<th data-buttons="delete" style="width: 40px"></th>
-								</tr>
-							</thead>
-						</table>
-					</div>
-				</div>
-		</div>
+
+        <table id="devices"></table>
+        <div id="pager-devices"></div>
+        <div id="values" style="width: 100%; height: calc(100% - 195px)">
+            <div class="row">
+                <a class="btn-floating waves-effect waves-light blue"><i class="material-icons table-button-add">add</i></a>
+            </div>
+            <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+                <table class="table-values" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th data-name="_index"   style="width: 40px" class="translate blue"></th>
+                        <th data-name="ip"     style="width: 70%" class="translate blue">IP address</th>
+                        <th data-buttons="delete" style="width: 40px" class="blue"></th>
+                    </tr>
+                    </thead>
+                </table>
+                <span class="translate">If no IP address given, all Hubs in the network will be added.</span>
+            </div>
+        </div>
+    </div>
 </div>
 </html>
