@@ -156,16 +156,21 @@ function switchActivity(hub, activityLabel, value, callback) {
     }
 }
 
+// callback has to be called under any circumstances
 adapter.on('unload', callback => {
-    adapter.log.info('terminating');
-    if (discover) {
-        discover.stop();
-    }
-    discover = null;
-    for (let hub in Object.keys(hubs)) {
-        clientStop(hub);
-    }
-    callback();
+    try {
+        adapter.log.info('[END] Terminating');
+        if (discover) {
+            discover.stop();
+        } // endIf
+        discover = null;
+        for (let hub in Object.keys(hubs)) {
+            clientStop(hub);
+        } // endFor
+        callback();
+    } catch (e) {
+        callback();
+    } // endTryCatch
 });
 
 adapter.on('ready', () => {
