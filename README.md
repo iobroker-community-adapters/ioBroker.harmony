@@ -51,6 +51,10 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 0.10.1
+* (foxriver76) added discover interval and port to code
+* (foxriver76) discover interval is now 1.5 sec instead of 1 sec
+
 ### 0.10.0
 * (foxriver76) added possibility to specify subnet for discovery
 * (foxriver76) fix translations

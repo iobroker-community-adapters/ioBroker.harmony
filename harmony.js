@@ -26,6 +26,7 @@ const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 let manualDiscoverHubs;
 let subnet;
+let discoverInterval;
 
 adapter.on('stateChange', (id, state) => {
     if (!id || !state || state.ack) {
@@ -180,7 +181,9 @@ adapter.on('ready', () => {
 function main() {
 	manualDiscoverHubs = adapter.config.devices || [];
     subnet = adapter.config.subnet || '255.255.255.255';
+    discoverInterval = adapter.config.discoverInterval || 1500;
     adapter.subscribeStates('*');
+    adapter.log.debug('[START] Subnet: ' + subnet + ', Discovery interval: ' +discoverInterval);
     discoverStart();
 }
 
@@ -191,7 +194,7 @@ function discoverStart() {
     } // endIf
 
     adapter.getPort(61991, port => {
-        discover = new HarmonyHubDiscover(port, {address: subnet});
+        discover = new HarmonyHubDiscover(port, {address: subnet, port: 5224, interval: discoverInterval});
         discover.on(HarmonyHubDiscover.Events.ONLINE, hub => {
 
             // Triggered when a new hub was found
@@ -214,7 +217,7 @@ function discoverStart() {
                 let hubName = fixId(hub.friendlyName).replace('.','_');
                 if (addHub) {
                 	initHub(hubName, () => {
-	                    //wait 2 seconds for hub before connecting
+	                    // wait 2 seconds for hub before connecting
 	                    adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip +')');
 	                    hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
                 	});
@@ -229,9 +232,9 @@ function discoverStart() {
             		for(let i = 0; i < manualDiscoverHubs.length; i++) {
             			if(manualDiscoverHubs[i].ip === hub.ip) {
                             adapter.log.warn('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
-            			} else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName); // if hub is blacklisted only log on debug
+            			} else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')'); // if hub is blacklisted only log on debug
             		} // endFor
-            	} else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName);
+            	} else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
 
 	            let hubName = fixId(hub.friendlyName).replace('.','_');
 	            //stop reconnect timer
@@ -345,9 +348,7 @@ function connect(hub, hubObj) {
                 }).catch(e => {
                     adapter.log.info('[CONNECT] Keep alive failed: ' + e);
                     clientStop(hub);
-                    hubs[hub].reconnectTimer = setTimeout(() => {
-                        connect(hub, hubObj);
-                    }, 5000);
+                    hubs[hub].reconnectTimer = setTimeout(() => connect(hub, hubObj), 5000);
                 });
             } // endIf
         }());
@@ -584,7 +585,7 @@ function processConfig(hub, hubObj, config) {
     setBlocked(hub, false);
     setConnected(hub, true);
     hubs[hub].isSync = true;
-    adapter.log.info('[PROCESS] Synced hub config');
+    adapter.log.info('[PROCESS] Synced hub config for ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
 }
 
 function processDigest(hub, digest) {
