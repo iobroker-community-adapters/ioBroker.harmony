@@ -504,7 +504,7 @@ function processConfig(hub, hubObj, config) {
         delete activity.rules;
         //create states for activity
         if (!hubs[hub].ioStates.hasOwnProperty(activityLabel)) {
-            adapter.log.info('added new activity: ' + activityLabel);
+            adapter.log.info('[PROCESS] Added new activity: ' + activityLabel);
             adapter.setObject(activityChannelName, {
                 type: 'state',
                 common: {
