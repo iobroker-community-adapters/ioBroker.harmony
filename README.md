@@ -51,7 +51,7 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
-### 0.10.1
+### 0.10.2
 * (foxriver76) added discover interval and port to code
 * (foxriver76) discover interval is now 300 ms instead of 1000 ms
 
