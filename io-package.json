@@ -74,7 +74,7 @@
     "password": "default",
     "subnet": "255.255.255.255",
     "devices": [],
-    "discoverInterval": 1500
+    "discoverInterval": 300
   },
   "objects": [
   ]
