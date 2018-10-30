@@ -1,6 +1,11 @@
 ![Logo](admin/harmony.png)
 # ioBroker Logitech Harmony Adapter
+===========================
 
+[![NPM version](http://img.shields.io/npm/v/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+
+[![NPM](https://nodei.co/npm/iobroker.harmony.png?downloads=true)](https://nodei.co/npm/iobroker.harmony/)
 
 Control your harmony activities from ioBroker.
 
@@ -50,6 +55,10 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
+
+### 1.0.0
+* (foxriver76) formal increment due to semVer
+* (foxriver76) minor readme adjustments
 
 ### 0.10.2
 * (foxriver76) added discover interval and port to code
