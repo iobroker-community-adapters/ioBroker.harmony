@@ -57,7 +57,7 @@ After sending the state will be set to 0 again.
 ## Changelog
 
 ### 1.0.0
-* (foxriver76) formal increment due to semVer
+* (foxriver76) replace blanks by underscores
 * (foxriver76) minor readme adjustments
 
 ### 0.10.2

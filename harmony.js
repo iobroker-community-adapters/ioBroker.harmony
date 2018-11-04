@@ -22,7 +22,7 @@ const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = new utils.Adapter('harmony');
 let hubs = {};
 let discover;
-const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
+const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 let manualDiscoverHubs;
 let subnet;
