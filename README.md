@@ -59,6 +59,7 @@ After sending the state will be set to 0 again.
 ### 1.0.0
 * (foxriver76) replace blanks by underscores
 * (foxriver76) minor readme adjustments
+* (foxriver76) discover interval 1000 ms by default again
 
 ### 0.10.2
 * (foxriver76) added discover interval and port to code

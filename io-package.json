@@ -13,7 +13,7 @@
     ],
     "news": {
       "1.0.0": {
-        "en": "replace blanks by underscore + minor readme adjustments",
+        "en": "replace blanks by underscore + minor readme adjustments, discover interval 1000 ms",
         "de": "Es werden Leerzeichen mit Unterstrichen ersetzt und kleine README Änderungen"
       },
       "0.10.2": {
@@ -78,7 +78,7 @@
     "password": "default",
     "subnet": "255.255.255.255",
     "devices": [],
-    "discoverInterval": 300
+    "discoverInterval": 1000
   },
   "objects": [
   ]

@@ -181,7 +181,7 @@ adapter.on('ready', () => {
 function main() {
     manualDiscoverHubs = adapter.config.devices || [];
     subnet = adapter.config.subnet || '255.255.255.255';
-    discoverInterval = adapter.config.discoverInterval || 300;
+    discoverInterval = adapter.config.discoverInterval || 1000;
     adapter.subscribeStates('*');
     adapter.log.debug('[START] Subnet: ' + subnet + ', Discovery interval: ' + discoverInterval);
     discoverStart();
