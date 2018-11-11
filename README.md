@@ -16,11 +16,11 @@ Adapter should automatically find your Hubs.
 ## Usage
 
 ### Activities
-**Start:**  
+**Start:**
 Set the status state 'Instance.Hub_Name.activities.Activity_Name' to a Number greater than 0.
 During the activity's startup sequence the status changes from 1 (startup) to 2(running)
 
-**Stop:**  
+**Stop:**
 Set the state 'Instance.Hub_Name.activities.Activity_Name' to 0.
 Alternatively, you can set the hub's status 'Instance.activities.currentStatus' to any number.
 During the activity's exit sequence the status changes from 3 (stopping) to 0 (stopped)
@@ -28,29 +28,29 @@ During the activity's exit sequence the status changes from 3 (stopping) to 0 (s
 ### Indicators
 There are two indicators 'Instance.Hub_Name.activity' and 'Instance.Hub_Name.connected'. Both are read-only, changing their values has no effect.
 
-**.hubConnected**  
+**.hubConnected**
 Tells you whether the adapter is successfully connected to the hub.
  
-**.hubBlocked**  
+**.hubBlocked**
 Is set to true if Hub is busy starting/stopping activities or sending commands.
  
-**activities.currentActivity**  
+**activities.currentActivity**
 Gives you the name of the currently running activity.
 
-**activities.currentStatus**  
+**activities.currentStatus**
 Gives you the current status of the hub. 
 - 0 = inactive
 - 1 = starting
 - 2 = active
 - 3 = stopping
 
-**activities.<activity name\>**  
+**activities.<activity name\>**
 Status of this activity. Values are the same as above.
 
 
 ### Devices
 **Send Command**  
-Set 'Instance.Hub_Name.Device_Name.command' to a number x to send command for x milliseconds.  
+Set 'Instance.Hub_Name.Device_Name.command' to a number x to send command for x milliseconds.
 A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 

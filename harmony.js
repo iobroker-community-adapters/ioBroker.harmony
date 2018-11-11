@@ -397,8 +397,7 @@ function connect(hub, hubObj) {
         });
     }).catch(e => {
         adapter.log.warn('[CONNECT] Could not connect to ' + hubObj.friendlyName + ': ' + e);
-        // clientStop(hub);
-        setTimeout()
+        clientStop(hub);
     });
 }
 
