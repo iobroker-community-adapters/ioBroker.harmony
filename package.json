@@ -1,6 +1,6 @@
 {
   "name": "iobroker.harmony",
-  "version": "0.10.0",
+  "version": "1.0.0",
   "description": "Control your harmony activities from ioBroker.",
   "author": "Pmant <patrickmo@gmx.de>",
   "contributors": [],
@@ -18,8 +18,8 @@
     "url": "https://github.com/pmant/ioBroker.harmony"
   },
   "dependencies": {
-  	"@harmonyhub/client": "1.0.5",
-  	"@harmonyhub/discover": "1.0.5",
+  	"@harmonyhub/client": "^1.0.5",
+  	"@harmonyhub/discover": "^1.0.5",
     "semaphore": "~1.0.3"
   },
   "devDependencies": {

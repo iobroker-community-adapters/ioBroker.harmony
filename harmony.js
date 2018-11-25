@@ -22,10 +22,11 @@ const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = new utils.Adapter('harmony');
 let hubs = {};
 let discover;
-const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\?]/g;
+const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 let manualDiscoverHubs;
 let subnet;
+let discoverInterval;
 
 adapter.on('stateChange', (id, state) => {
     if (!id || !state || state.ack) {
@@ -178,9 +179,11 @@ adapter.on('ready', () => {
 });
 
 function main() {
-	manualDiscoverHubs = adapter.config.devices || [];
+    manualDiscoverHubs = adapter.config.devices || [];
     subnet = adapter.config.subnet || '255.255.255.255';
+    discoverInterval = adapter.config.discoverInterval || 1000;
     adapter.subscribeStates('*');
+    adapter.log.debug('[START] Subnet: ' + subnet + ', Discovery interval: ' + discoverInterval);
     discoverStart();
 }
 
@@ -191,61 +194,61 @@ function discoverStart() {
     } // endIf
 
     adapter.getPort(61991, port => {
-        discover = new HarmonyHubDiscover(port, {address: subnet});
+        discover = new HarmonyHubDiscover(port, {address: subnet, port: 5224, interval: discoverInterval});
         discover.on(HarmonyHubDiscover.Events.ONLINE, hub => {
 
             // Triggered when a new hub was found
             let addHub = false;
             if (hub.friendlyName !== 'undefined' && hub.friendlyName !== undefined) {
-            	if (manualDiscoverHubs.length) {
-            		for(let i = 0; i < manualDiscoverHubs.length; i++) {
-            			if(manualDiscoverHubs[i].ip === hub.ip) {
-            				adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
-            				addHub = true;
-            			} else {
-            				adapter.log.debug('[DISCVOER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
-            						' manual search is configured and hub\'s ip not listed');
-            			}
-            		} // endFor
-            	} else {
-    				adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
-            		addHub = true; // if no manual discovery --> add all hubs
-            	}
-                let hubName = fixId(hub.friendlyName).replace('.','_');
+                if (manualDiscoverHubs.length) {
+                    for (let i = 0; i < manualDiscoverHubs.length; i++) {
+                        if (manualDiscoverHubs[i].ip === hub.ip) {
+                            adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
+                            addHub = true;
+                        } else {
+                            adapter.log.debug('[DISCVOER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' but won\'t try to connect, because ' +
+                                ' manual search is configured and hub\'s ip not listed');
+                        }
+                    } // endFor
+                } else {
+                    adapter.log.info('[DISCOVER] Discovered ' + hub.friendlyName + ' (' + hub.ip + ')' + ' and will try to connect');
+                    addHub = true; // if no manual discovery --> add all hubs
+                }
+                let hubName = fixId(hub.friendlyName).replace('.', '_');
                 if (addHub) {
-                	initHub(hubName, () => {
-	                    //wait 2 seconds for hub before connecting
-	                    adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip +')');
-	                    hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
-                	});
+                    initHub(hubName, () => {
+                        // wait 2 seconds for hub before connecting
+                        adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip + ')');
+                        hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
+                    });
                 } // endIf
             } // endIf
         });
-        
+
         discover.on(HarmonyHubDiscover.Events.OFFLINE, hub => {
             // Triggered when a hub disappeared
             if (hub.friendlyName !== 'undefined' && hub.friendlyName !== undefined) {
-            	if (manualDiscoverHubs.length) {
-            		for(let i = 0; i < manualDiscoverHubs.length; i++) {
-            			if(manualDiscoverHubs[i].ip === hub.ip) {
+                if (manualDiscoverHubs.length) {
+                    for (let i = 0; i < manualDiscoverHubs.length; i++) {
+                        if (manualDiscoverHubs[i].ip === hub.ip) {
                             adapter.log.warn('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
-            			} else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName); // if hub is blacklisted only log on debug
-            		} // endFor
-            	} else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName);
+                        } else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')'); // if hub is blacklisted only log on debug
+                    } // endFor
+                } else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
 
-	            let hubName = fixId(hub.friendlyName).replace('.','_');
-	            //stop reconnect timer
-	            if (hubs[hubName]) {
-	                clearTimeout(hubs[hubName].reconnectTimer);
-	            } // endIf
-	            clientStop(hubName);
+                let hubName = fixId(hub.friendlyName).replace('.', '_');
+                //stop reconnect timer
+                if (hubs[hubName]) {
+                    clearTimeout(hubs[hubName].reconnectTimer);
+                } // endIf
+                clientStop(hubName);
             } // endIf
         });
-        
+
         discover.on('error', err => {
             adapter.log.warn('[DISCOVER] Discover error: ', err.message);
         });
-        
+
         discover.start();
         adapter.log.info('[DISCOVER] Searching for Harmony Hubs on ' + subnet);
     });
@@ -336,7 +339,7 @@ function connect(hub, hubObj) {
         hubs[hub].timestamp = Date.now();
         setBlocked(hub, true);
         setConnected(hub, true);
-        adapter.log.info('[CONNECT] Connected to ' + hubObj.friendlyName + ' (' + hubObj.ip +')');
+        adapter.log.info('[CONNECT] Connected to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
         hubs[hub].client = harmonyClient;
         (function keepAlive() {
             if (hubs[hub].client !== null) {
@@ -345,9 +348,7 @@ function connect(hub, hubObj) {
                 }).catch(e => {
                     adapter.log.info('[CONNECT] Keep alive failed: ' + e);
                     clientStop(hub);
-                    hubs[hub].reconnectTimer = setTimeout(() => {
-                        connect(hub, hubObj);
-                    }, 5000);
+                    hubs[hub].reconnectTimer = setTimeout(() => connect(hub, hubObj), 5000);
                 });
             } // endIf
         }());
@@ -396,8 +397,7 @@ function connect(hub, hubObj) {
         });
     }).catch(e => {
         adapter.log.warn('[CONNECT] Could not connect to ' + hubObj.friendlyName + ': ' + e);
-        // clientStop(hub);
-        setTimeout()
+        clientStop(hub);
     });
 }
 
@@ -406,7 +406,7 @@ function processConfig(hub, hubObj, config) {
         setBlocked(hub, false);
         setConnected(hub, true);
         return;
-    } 
+    }
     /* create hub */
     adapter.log.debug('[PROCESS] Creating activities and devices');
 
@@ -490,7 +490,7 @@ function processConfig(hub, hubObj, config) {
     }
 
     config.activity.forEach(activity => {
-        let activityLabel = fixId(activity.label).replace('.','_');
+        let activityLabel = fixId(activity.label).replace('.', '_');
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
         if (activity.id == '-1') return;
@@ -503,7 +503,7 @@ function processConfig(hub, hubObj, config) {
         delete activity.rules;
         //create states for activity
         if (!hubs[hub].ioStates.hasOwnProperty(activityLabel)) {
-            adapter.log.info('added new activity: ' + activityLabel);
+            adapter.log.info('[PROCESS] Added new activity: ' + activityLabel);
             adapter.setObject(activityChannelName, {
                 type: 'state',
                 common: {
@@ -525,7 +525,7 @@ function processConfig(hub, hubObj, config) {
     adapter.log.debug('[PROCESS] Creating devices');
     channelName = hub;
     config.device.forEach(device => {
-        let deviceLabel = fixId(device.label).replace('.','_');
+        let deviceLabel = fixId(device.label).replace('.', '_');
         let deviceChannelName = channelName + '.' + deviceLabel;
         let controlGroup = device.controlGroup;
         hubs[hub].devices[device.id] = deviceLabel;
@@ -547,7 +547,7 @@ function processConfig(hub, hubObj, config) {
                 controlGroup.function.forEach(command => {
                     command.controlGroup = groupName;
                     command.deviceId = device.id;
-                    let commandName = fixId(command.name).replace('.','_');
+                    let commandName = fixId(command.name).replace('.', '_');
                     //create command
                     adapter.setObject(deviceChannelName + '.' + commandName, {
                         type: 'state',
@@ -584,7 +584,7 @@ function processConfig(hub, hubObj, config) {
     setBlocked(hub, false);
     setConnected(hub, true);
     hubs[hub].isSync = true;
-    adapter.log.info('[PROCESS] Synced hub config');
+    adapter.log.info('[PROCESS] Synced hub config for ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
 }
 
 function processDigest(hub, digest) {
