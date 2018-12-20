@@ -1,37 +1,39 @@
 {
-  "name": "iobroker.harmony",
-  "version": "1.0.0",
-  "description": "Control your harmony activities from ioBroker.",
-  "author": "Pmant <patrickmo@gmx.de>",
-  "contributors": [],
-  "homepage": "https://github.com/pmant/ioBroker.harmony",
-  "license": "MIT",
-  "keywords": [
-    "ioBroker",
-    "harmony",
-    "hub",
-    "logitech",
-    "home automation"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pmant/ioBroker.harmony"
-  },
-  "dependencies": {
-  	"@harmonyhub/client": "^1.0.5",
-  	"@harmonyhub/discover": "^1.0.5",
-    "semaphore": "~1.0.3"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "mocha": "^4.1.0",
-    "chai": "^4.1.2"
-  },
-  "bugs": {
-    "url": "https://github.com/pmant/ioBroker.harmony/issues"
-  },
-  "main": "harmony.js",
-  "scripts": {
-    "test": "node node_modules/mocha/bin/mocha"
-  }
+    "name": "iobroker.harmony",
+    "version": "1.0.0",
+    "description": "Control your harmony activities from ioBroker.",
+    "author": "Pmant <patrickmo@gmx.de>",
+    "contributors": [],
+    "homepage": "https://github.com/pmant/ioBroker.harmony",
+    "license": "MIT",
+    "keywords": [
+        "ioBroker",
+        "harmony",
+        "hub",
+        "logitech",
+        "home automation"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pmant/ioBroker.harmony"
+    },
+    "dependencies": {
+        "@harmonyhub/client": "^1.0.5",
+        "@harmonyhub/discover": "^1.0.5",
+        "semaphore": "~1.0.3",
+        "@iobroker/adapter-core": "^1.0.1"
+    },
+    "devDependencies": {
+        "gulp": "^3.9.1",
+        "mocha": "^4.1.0",
+        "chai": "^4.1.2",
+        "eslint": "^5.9.0"
+    },
+    "bugs": {
+        "url": "https://github.com/pmant/ioBroker.harmony/issues"
+    },
+    "main": "harmony.js",
+    "scripts": {
+        "test": "node node_modules/mocha/bin/mocha"
+    }
 }
