@@ -24,7 +24,7 @@
         "@harmonyhub/discover": "^1.0.5",
         "semaphore": "~1.0.3",
         "@iobroker/adapter-core": "^1.0.1",
-        "harmonyhubws": "^1.0.0"
+        "harmonyhubws": "^1.0.1"
     },
     "devDependencies": {
         "gulp": "^3.9.1",
