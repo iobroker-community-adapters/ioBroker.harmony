@@ -1,85 +1,88 @@
 {
-  "common": {
-    "name": "harmony",
-    "version": "1.0.0",
-    "title": "Logitech Harmony",
-    "desc":                     {
+    "common": {
+        "name": "harmony",
+        "version": "1.1.0",
+        "title": "Logitech Harmony",
+        "desc": {
             "en": "Control your harmony activities from ioBroker",
             "de": "Geräte und Activities mit dem Logitech Harmony-Hub steuern",
             "ru": "Control your harmony activities from ioBroker"
         },
-    "authors": [
-      "Pmant <patrickmo@gmx.de>"
-    ],
-    "news": {
-      "1.0.0": {
-        "en": "replace blanks by underscore + minor readme adjustments, discover interval 1000 ms",
-        "de": "Es werden Leerzeichen mit Unterstrichen ersetzt und kleine README Änderungen"
-      },
-      "0.10.2": {
-        "en": "Added discover interval and port to code, interval is now 300 ms instead of 1000 ms, minor logging changes",
-        "de": "Discover Intervall und Port in Code aufgenommen, Intervall von 1 Sek auf 1.5 Sek erhöht, kleine Logging Verbesserungen"
-      },
-      "0.10.0": {
-        "en": "Added possibility to specify subnet for discovery, added translations, more verbose logging, materialized settings",
-        "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren, mehr Übersetzungen, informativeres Logging, Einstellungen für admin v3"
-      },
-      "0.9.6": {
-        "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
-        "de": "Aktualisierung der Abhängigkeiten, Aktualisierung, ES6-Nutzung, manuelle Discovery Funktion, kleine Änderungen"
-      },
-       "0.9.3": {
-        "en": "fix error with hubname",
-        "de": "Fehler mit Hub Namen behoben"
-      }, 
-      "0.9.1": {
-        "en": "fix problematic chars",
-        "de": "Fix für problemantische Zeichen",
-        "ru": "fix problematic chars"
-      },   
-      "0.7.1": {
-        "en": "bug fixes",
-        "de": "bug fixes",
-        "ru": "bug fixes"
-      },
-      "0.7.0": {
-        "en": "support multiple hubs",
-        "de": "Unterstützung für mehrere Hubs hinzugefügt",
-        "ru": "support multiple hubs"
-      },
-      "0.6.2": {
-        "en": "fix wrong port",
-        "de": "falscher Port korrigiert",
-        "ru": "fix wrong port"
-      }
+        "authors": [
+            "Pmant <patrickmo@gmx.de>"
+        ],
+        "news": {
+            "1.1.0": {
+                "en": "switch to websocket client",
+                "de": "wechsel auf Websocket-Client"
+            },
+            "1.0.0": {
+                "en": "replace blanks by underscore + minor readme adjustments, discover interval 1000 ms",
+                "de": "Es werden Leerzeichen mit Unterstrichen ersetzt und kleine README Änderungen"
+            },
+            "0.10.2": {
+                "en": "Added discover interval and port to code, interval is now 300 ms instead of 1000 ms, minor logging changes",
+                "de": "Discover Intervall und Port in Code aufgenommen, Intervall von 1 Sek auf 1.5 Sek erhöht, kleine Logging Verbesserungen"
+            },
+            "0.10.0": {
+                "en": "Added possibility to specify subnet for discovery, added translations, more verbose logging, materialized settings",
+                "de": "Möglichkeit hinzugefügt, das Discovery Subnetz zu konfigurieren, mehr Übersetzungen, informativeres Logging, Einstellungen für admin v3"
+            },
+            "0.9.6": {
+                "en": "Bumped dependencies version, Getting State-ofthe-art, Usage of ES6, manual discovery, minor fixes",
+                "de": "Aktualisierung der Abhängigkeiten, Aktualisierung, ES6-Nutzung, manuelle Discovery Funktion, kleine Änderungen"
+            },
+            "0.9.3": {
+                "en": "fix error with hubname",
+                "de": "Fehler mit Hub Namen behoben"
+            },
+            "0.9.1": {
+                "en": "fix problematic chars",
+                "de": "Fix für problemantische Zeichen",
+                "ru": "fix problematic chars"
+            },
+            "0.7.1": {
+                "en": "bug fixes",
+                "de": "bug fixes",
+                "ru": "bug fixes"
+            },
+            "0.7.0": {
+                "en": "support multiple hubs",
+                "de": "Unterstützung für mehrere Hubs hinzugefügt",
+                "ru": "support multiple hubs"
+            },
+            "0.6.2": {
+                "en": "fix wrong port",
+                "de": "falscher Port korrigiert",
+                "ru": "fix wrong port"
+            }
+        },
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "enabled": true,
+        "mode": "daemon",
+        "singletonHost": true,
+        "messagebox": true,
+        "readme": "https://github.com/pmant/ioBroker.harmony/blob/master/README.md",
+        "materialize": true,
+        "loglevel": "info",
+        "keywords": [
+            "ioBroker",
+            "harmony",
+            "hub",
+            "logitech",
+            "home automation"
+        ],
+        "type": "multimedia",
+        "icon": "harmony.png",
+        "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
     },
-    "license":    "MIT",
-    "platform": "Javascript/Node.js",
-    "enabled" : true,
-    "mode": "daemon",
-    "singletonHost": true,
-    "messagebox": true,
-    "readme": "https://github.com/pmant/ioBroker.harmony/blob/master/README.md",
-    "materialize": true,
-    "loglevel": "info",
-    "keywords": [
-      "ioBroker",
-      "harmony",
-      "hub",
-      "logitech",
-      "home automation"
-    ],
-    "type": "multimedia",
-    "icon": "harmony.png",
-    "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
-  },
-  "native": {
-    "user": "guest",
-    "password": "default",
-    "subnet": "255.255.255.255",
-    "devices": [],
-    "discoverInterval": 1000
-  },
-  "objects": [
-  ]
+    "native": {
+        "user": "guest",
+        "password": "default",
+        "subnet": "255.255.255.255",
+        "devices": [],
+        "discoverInterval": 1000
+    },
+    "objects": []
 }
