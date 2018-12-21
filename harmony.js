@@ -298,12 +298,19 @@ function connect(hub, hubObj) {
     clearTimeout(hubs[hub].reconnectTimer);
 
     const client = new HarmonyWS(hubObj.ip);
+    hubs[hub].client = client;
+
     client.on('online', () => {
         setBlocked(hub, true);
         setConnected(hub, true);
         adapter.log.info('[CONNECT] Connected to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
-        hubs[hub].client = client;
         hubs[hub].client.requestConfig();
+    });
+
+    client.on('offline', (config) => {
+        adapter.log.info('[CONNECT] lost Connection to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
+        setConnected(hub, false);
+        setBlocked(hub, false);
     });
 
     client.on('config', (config) => {
