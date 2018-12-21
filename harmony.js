@@ -307,7 +307,7 @@ function connect(hub, hubObj) {
         hubs[hub].client.requestConfig();
     });
 
-    client.on('offline', (config) => {
+    client.on('offline', () => {
         adapter.log.info('[CONNECT] lost Connection to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
         setConnected(hub, false);
         setBlocked(hub, false);
@@ -543,7 +543,8 @@ function processDigest(hub, activityId, activityStatus) {
 
 function setCurrentActivity(hub, id) {
     if (!hubs[hub].activities.hasOwnProperty(id)) {
-        adapter.log.warn('[SETACTIVITY] Unknown activityId: ' + id);
+        if (hubs[hub].statesExist)
+            adapter.log.warn('[SETACTIVITY] Unknown activityId: ' + id);
         return;
     }
     adapter.log.debug('current activity: ' + hubs[hub].activities[id]);
@@ -556,7 +557,7 @@ function setCurrentStatus(hub, status) {
 }
 
 function setStatusFromActivityID(hub, id, value) {
-    if (id == '-1') return;
+    if (id === '-1') return;
     if (!hubs[hub].activities.hasOwnProperty(id)) {
         adapter.log.warn('[SETSTATE] Unknown activityId: ' + id);
         return;
