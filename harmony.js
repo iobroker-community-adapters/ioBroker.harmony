@@ -16,10 +16,10 @@
  *  "harmonyhubjs-discover": "^1.1.1"
  */
 
-const harmony = require('@harmonyhub/client').getHarmonyClient;
 const HarmonyHubDiscover = require('@harmonyhub/discover').Explorer;
 const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const adapter = new utils.Adapter('harmony');
+const HarmonyWS = require(__dirname + '/lib/HarmonyWS');
 let hubs = {};
 let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\? ]/g;
@@ -103,36 +103,32 @@ function sendCommand(hub, id, ms, callback) {
             callback();
             return;
         }
-        if (!hubs[hub].client) {
+        if (!hubs[hub].client || hubs[hub].client.status !== 3) {
             adapter.log.warn('error sending command, client offline');
             adapter.setState(id, {val: 0, ack: true});
             callback();
             return;
         }
         adapter.log.debug('sending command: ' + obj.name);
-        try {
-            var encodedAction = obj.native.action.replace(/:/g, '::');
-        } catch (e) {
-            callback();
-            return;
-        }
 
         let tsStart = Date.now();
         let first = true;
-        (function repeat() {
-            let tsNow = Date.now();
-            if (tsNow - tsStart + 250 <= ms || first) {
-                hubs[hub].client.send('holdAction', 'status=press:timestamp=' + (tsNow - hubs[hub].timestamp) + ':action=' + encodedAction);
-                first = false;
-                setTimeout(repeat, 200);
-            } else {
-                setTimeout(function () {
-                    hubs[hub].client.send('holdAction', ':status=release:timestamp=' + (tsNow - hubs[hub].timestamp) + ':action=' + encodedAction);
-                    adapter.setState(id, {val: 0, ack: true});
-                    callback();
-                }, Math.max(0, ms - tsNow + tsStart));
-            }
-        }());
+        if (ms <= 250) {
+            hubs[hub].client.requestKeyPress(obj.native.action);
+            setTimeout(() => {
+                adapter.setState(id, {val: 0, ack: true});
+            }, ms);
+            callback();
+        } else {
+            hubs[hub].client.requestKeyPress(obj.native.action, 'hold');
+            let interval = setInterval(() => hubs[hub].client.requestKeyPress(obj.native.action, 'hold'), 250);
+            setTimeout(() => {
+                clearInterval(interval);
+                //hubs[hub].client.requestKeyPress(obj.native.action, 'press');
+                adapter.setState(id, {val: 0, ack: true});
+                callback();
+            }, ms-200);
+        }
     });
 }
 
@@ -147,10 +143,10 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('[ACTIVITY] Turning activity off');
-        hubs[hub].client.turnOff().then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange(-1).then(callback); //.finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('[ACTIVITY] Switching activity to: ' + activityLabel);
-        hubs[hub].client.startActivity(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
     } else {
         adapter.log.warn('[ACTIVITY] Activity does not exists');
         callback();
@@ -219,6 +215,7 @@ function discoverStart() {
                     initHub(hubName, () => {
                         // wait 2 seconds for hub before connecting
                         adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip + ')');
+                        clearTimeout(hubs[hubName].reconnectTimer);
                         hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
                     });
                 } // endIf
@@ -226,7 +223,7 @@ function discoverStart() {
         });
 
         discover.on(HarmonyHubDiscover.Events.OFFLINE, hub => {
-            // Triggered when a hub disappeared
+            /*// Triggered when a hub disappeared
             if (hub.friendlyName !== 'undefined' && hub.friendlyName !== undefined) {
                 if (manualDiscoverHubs.length) {
                     for (let i = 0; i < manualDiscoverHubs.length; i++) {
@@ -242,7 +239,7 @@ function discoverStart() {
                     clearTimeout(hubs[hubName].reconnectTimer);
                 } // endIf
                 clientStop(hubName);
-            } // endIf
+            } // endIf*/
         });
 
         discover.on('error', err => {
@@ -320,14 +317,7 @@ function clientStop(hub) {
     setConnected(hub, false);
     setBlocked(hub, false);
     if (hubs[hub] && hubs[hub].client !== null) {
-        hubs[hub].client._xmppClient.on('error', e => {
-            adapter.log.debug('[STOP] XMPP error: ' + e);
-        });
-        hubs[hub].client._xmppClient.on('offline', () => {
-            adapter.log.debug('[STOP] XMPP offline');
-        });
-        hubs[hub].client.end();
-        adapter.log.info('[STOP] Client ended: ' + hub);
+        hubs[hub].client.close();
         hubs[hub].client = null;
     }
 }
@@ -335,69 +325,27 @@ function clientStop(hub) {
 function connect(hub, hubObj) {
     if (!hubs[hub] || hubs[hub].client !== null) return;
     clearTimeout(hubs[hub].reconnectTimer);
-    harmony(hubObj.ip).then(harmonyClient => { // .timeout(5000).then
-        hubs[hub].timestamp = Date.now();
+
+    let client = new HarmonyWS(hubObj.ip);
+    client.on('online', () => {
         setBlocked(hub, true);
         setConnected(hub, true);
         adapter.log.info('[CONNECT] Connected to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
-        hubs[hub].client = harmonyClient;
-        (function keepAlive() {
-            if (hubs[hub].client !== null) {
-                hubs[hub].client.request('getCurrentActivity').then(() => { // .timeout(5000).then
-                    setTimeout(keepAlive, 5000);
-                }).catch(e => {
-                    adapter.log.info('[CONNECT] Keep alive failed: ' + e);
-                    clientStop(hub);
-                    hubs[hub].reconnectTimer = setTimeout(() => connect(hub, hubObj), 5000);
-                });
-            } // endIf
-        }());
+        hubs[hub].client = client;
+        hubs[hub].client.requestConfig();
+    });
 
-        //update objects on connect
-        harmonyClient.getAvailableCommands().then(config => {
-            try {
-                processConfig(hub, hubObj, config);
-            } catch (e) {
-                adapter.log.error(e);
-                clientStop(hub);
-                return;
-            }
+    client.on('config', (config) => {
+        try {
+            processConfig(hub, hubObj, config);
+            hubs[hub].client.requestState();
+        } catch (e) {
+            adapter.log.error(e);
+        }
+    });
 
-            //set current activity
-            harmonyClient.request('getCurrentActivity').then(response => { // .timeout(5000).then
-                if (response.hasOwnProperty('result')) {
-                    //set hub.activity to activity label
-                    setCurrentActivity(hub, response.result);
-
-                    if (response.result != '-1') {
-                        setStatusFromActivityID(hub, response.result, 2);
-                        setCurrentStatus(hub, 2);
-                    } else {
-                        setCurrentStatus(hub, 0);
-                    }
-                    //set all other activities to 'off'
-                    for (let activity in hubs[hub].activities) {
-                        if (activity != response.result && hubs[hub].activities.hasOwnProperty(activity)) {
-                            setStatusFromActivityID(hub, activity, 0);
-                        }
-                    }
-                }
-
-                //start listen for updates from hub
-                harmonyClient.on('stateDigest', digest => {
-                    processDigest(hub, digest);
-                });
-            }).catch(e => {
-                adapter.log.warn('[CONNECT] Connection down: ' + e);
-                clientStop(hub);
-            });
-        }).catch(e => {
-            adapter.log.warn('[CONNECT] Could not get config: ' + e);
-            clientStop(hub);
-        });
-    }).catch(e => {
-        adapter.log.warn('[CONNECT] Could not connect to ' + hubObj.friendlyName + ': ' + e);
-        clientStop(hub);
+    client.on('state', (activityId, activityStatus) => {
+        processDigest(hub, activityId, activityStatus);
     });
 }
 
@@ -493,7 +441,7 @@ function processConfig(hub, hubObj, config) {
         let activityLabel = fixId(activity.label).replace('.', '_');
         hubs[hub].activities[activity.id] = activityLabel;
         hubs[hub].activities_reverse[activityLabel] = activity.id;
-        if (activity.id == '-1') return;
+        if (activity.id === '-1') return;
         //create activities
         let activityChannelName = channelName + '.' + activityLabel;
         //create channel for activity
@@ -587,21 +535,21 @@ function processConfig(hub, hubObj, config) {
     adapter.log.info('[PROCESS] Synced hub config for ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
 }
 
-function processDigest(hub, digest) {
+function processDigest(hub, activityId, activityStatus) {
     //set hub activity to current activity label
-    setCurrentActivity(hub, digest.activityId);
+    setCurrentActivity(hub, activityId);
     //Set hub status to current activity status
-    setCurrentStatus(hub, digest.activityStatus);
+    setCurrentStatus(hub, activityStatus);
 
-    if (digest.activityId != '-1') { //if activityId is not powerOff
+    if (activityId !== '-1') { //if activityId is not powerOff
         //set activityId's status
-        setStatusFromActivityID(hub, digest.activityId, digest.activityStatus);
+        setStatusFromActivityID(hub, activityId, activityStatus);
 
         //if status is 'running' set all other activities to 'off'
-        if (digest.activityStatus == '2') {
+        if (activityStatus === 2) {
             //only one activity can run at once, set all other activities to off
             for (let activity in hubs[hub].activities) {
-                if (hubs[hub].activities.hasOwnProperty(activity) && activity != digest.activityId) {
+                if (hubs[hub].activities.hasOwnProperty(activity) && activity !== activityId) {
                     setStatusFromActivityID(hub, activity, 0);
                 }
             }

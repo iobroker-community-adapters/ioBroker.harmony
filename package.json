@@ -18,9 +18,11 @@
     "url": "https://github.com/pmant/ioBroker.harmony"
   },
   "dependencies": {
-  	"@harmonyhub/client": "^1.0.5",
-  	"@harmonyhub/discover": "^1.0.5",
-    "semaphore": "~1.0.3"
+    "@harmonyhub/discover": "^1.0.5",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "semaphore": "~1.0.3",
+    "ws": "^6.1.2"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
