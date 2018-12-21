@@ -143,7 +143,7 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('[ACTIVITY] Turning activity off');
-        hubs[hub].client.requestActivityChange(-1).then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange("-1").then(callback); //.finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('[ACTIVITY] Switching activity to: ' + activityLabel);
         hubs[hub].client.requestActivityChange(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
