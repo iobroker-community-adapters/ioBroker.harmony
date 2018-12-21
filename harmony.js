@@ -10,7 +10,7 @@
 'use strict';
 
 const HarmonyHubDiscover = require('@harmonyhub/discover').Explorer;
-const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core');
 const adapter = new utils.Adapter('harmony');
 const HarmonyWS = require(__dirname + '/lib/HarmonyWS');
 const hubs = {};
