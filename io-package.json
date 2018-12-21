@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,10 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.1.1": {
+                "en": "use external api module",
+                "de": "nutze externes api modul"
+            },
             "1.1.0": {
                 "en": "switch to websocket client",
                 "de": "wechsel auf Websocket-Client"

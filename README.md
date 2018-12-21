@@ -56,6 +56,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 1.1.1
+* (Pmant) switch to api module
+
 ### 1.1.0
 * (Pmant) switch to websocket client
 

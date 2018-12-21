@@ -12,7 +12,7 @@
 const HarmonyHubDiscover = require('@harmonyhub/discover').Explorer;
 const utils = require('@iobroker/adapter-core');
 const adapter = new utils.Adapter('harmony');
-const HarmonyWS = require(__dirname + '/lib/HarmonyWS');
+const HarmonyWS = require('harmonyhubws');
 const hubs = {};
 let discover;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\? ]/g;
@@ -322,7 +322,7 @@ function connect(hub, hubObj) {
         }
     });
 
-    client.on('status', (activityId, activityStatus) => {
+    client.on('state', (activityId, activityStatus) => {
         processDigest(hub, activityId, activityStatus);
     });
 }
