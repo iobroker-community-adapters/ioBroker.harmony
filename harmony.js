@@ -344,7 +344,7 @@ function connect(hub, hubObj) {
         }
     });
 
-    client.on('state', (activityId, activityStatus) => {
+    client.on('status', (activityId, activityStatus) => {
         processDigest(hub, activityId, activityStatus);
     });
 }
