@@ -104,8 +104,6 @@ function sendCommand(hub, id, ms, callback) {
         }
         adapter.log.debug('sending command: ' + obj.name);
 
-        const tsStart = Date.now();
-        const first = true;
         if (ms <= 250) {
             hubs[hub].client.requestKeyPress(obj.native.action);
             setTimeout(() => {
@@ -136,7 +134,7 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('[ACTIVITY] Turning activity off');
-        hubs[hub].client.requestActivityChange("-1").then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange('-1').then(callback); //.finally(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('[ACTIVITY] Switching activity to: ' + activityLabel);
         hubs[hub].client.requestActivityChange(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
@@ -213,26 +211,6 @@ function discoverStart() {
                     });
                 } // endIf
             } // endIf
-        });
-
-        discover.on(HarmonyHubDiscover.Events.OFFLINE, hub => {
-            /*// Triggered when a hub disappeared
-            if (hub.friendlyName !== 'undefined' && hub.friendlyName !== undefined) {
-                if (manualDiscoverHubs.length) {
-                    for (let i = 0; i < manualDiscoverHubs.length; i++) {
-                        if (manualDiscoverHubs[i].ip === hub.ip) {
-                            adapter.log.warn('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
-                        } else adapter.log.debug('[DISCONNECT] Lost ' + hub.friendlyName + ' (' + hub.ip + ')'); // if hub is blacklisted only log on debug
-                    } // endFor
-                } else adapter.log.warn('[DISCOVER] Lost ' + hub.friendlyName + ' (' + hub.ip + ')');
-
-                let hubName = fixId(hub.friendlyName).replace('.', '_');
-                //stop reconnect timer
-                if (hubs[hubName]) {
-                    clearTimeout(hubs[hubName].reconnectTimer);
-                } // endIf
-                clientStop(hubName);
-            } // endIf*/
         });
 
         discover.on('error', err => {
