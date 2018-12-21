@@ -543,8 +543,7 @@ function processDigest(hub, activityId, activityStatus) {
 
 function setCurrentActivity(hub, id) {
     if (!hubs[hub].activities.hasOwnProperty(id)) {
-        if (hubs[hub].statesExist)
-            adapter.log.warn('[SETACTIVITY] Unknown activityId: ' + id);
+        adapter.log.debug('[SETACTIVITY] Unknown activityId: ' + id);
         return;
     }
     adapter.log.debug('current activity: ' + hubs[hub].activities[id]);
