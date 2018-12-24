@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,10 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.1.2": {
+                "en": "Fixed problem where multiple connections to one hub could be opened",
+                "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten"
+            },
             "1.1.1": {
                 "en": "use external api module",
                 "de": "nutze externes api modul"

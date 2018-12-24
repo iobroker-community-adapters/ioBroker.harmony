@@ -56,6 +56,10 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 1.1.2
+* (Pmant) reduce log spam
+* (Pmant) fix multiple instances of one hub
+
 ### 1.1.1
 * (Pmant) switch to api module
 
