@@ -225,6 +225,7 @@ function discoverStart() {
 function initHub(hub, callback) {
     hubs[hub] = {
         client: null,
+        connected: false,
         activities: {},
         activities_reverse: {},
         devices: {},
@@ -308,7 +309,8 @@ function connect(hub, hubObj) {
     });
 
     client.on('offline', () => {
-        adapter.log.info('[CONNECT] lost Connection to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
+        if (hubs[hub].connected)
+            adapter.log.info('[CONNECT] lost Connection to ' + hubObj.friendlyName + ' (' + hubObj.ip + ')');
         setConnected(hub, false);
         setBlocked(hub, false);
     });
@@ -576,6 +578,7 @@ function setBlocked(hub, bool) {
 function setConnected(hub, bool) {
     if (hubs[hub] && hubs[hub].statesExist) {
         bool = Boolean(bool);
+        hubs[hub].connected = bool;
         adapter.setState(hub + '.hubConnected', {val: bool, ack: true});
     }
 }
