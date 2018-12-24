@@ -102,7 +102,7 @@ function sendCommand(hub, id, ms, callback) {
             callback();
             return;
         }
-        adapter.log.debug('sending command: ' + obj.name);
+        adapter.log.debug('sending command: ' + obj.common.name);
 
         if (ms <= 250) {
             hubs[hub].client.requestKeyPress(obj.native.action);
