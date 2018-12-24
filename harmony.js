@@ -202,12 +202,11 @@ function discoverStart() {
                     addHub = true; // if no manual discovery --> add all hubs
                 }
                 const hubName = fixId(hub.friendlyName).replace('.', '_');
-                if (addHub) {
+                if (addHub && !hubs[hubName]) {
                     initHub(hubName, () => {
                         // wait 2 seconds for hub before connecting
                         adapter.log.info('[CONNECT] Connecting to ' + hub.friendlyName + ' (' + hub.ip + ')');
-                        clearTimeout(hubs[hubName].reconnectTimer);
-                        hubs[hubName].reconnectTimer = setTimeout(() => connect(hubName, hub), 2000);
+                        connect(hubName, hub);
                     });
                 } // endIf
             } // endIf
@@ -236,7 +235,6 @@ function initHub(hub, callback) {
         ioChannels: {},
         ioStates: {},
         isSync: false,
-        reconnectTimer: 0,
         semaphore: require('semaphore')(1)
     };
 
@@ -296,7 +294,6 @@ function clientStop(hub) {
 
 function connect(hub, hubObj) {
     if (!hubs[hub] || hubs[hub].client !== null) return;
-    clearTimeout(hubs[hub].reconnectTimer);
 
     const client = new HarmonyWS(hubObj.ip);
     hubs[hub].client = client;
