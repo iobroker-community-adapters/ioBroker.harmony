@@ -108,6 +108,7 @@ function sendCommand(hub, id, ms, callback) {
             hubs[hub].client.requestKeyPress(obj.native.action);
             setTimeout(() => {
                 adapter.setState(id, {val: 0, ack: true});
+                hubs[hub].client.requestKeyPress(obj.native.action, 'release');
             }, ms);
             callback();
         } else {
