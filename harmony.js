@@ -106,10 +106,11 @@ function sendCommand(hub, id, ms, callback) {
 
         if (ms <= 250) {
             hubs[hub].client.requestKeyPress(obj.native.action, 100);
+            adapter.setState(id, {val: 0, ack: true});
             callback();
         } else {
             hubs[hub].client.requestKeyPress(obj.native.action, 'hold');
-            const interval = setInterval(() => hubs[hub].client.requestKeyPress(obj.native.action, 'hold'), 100);
+            const interval = setInterval(() => {hubs[hub].client.requestKeyPress(obj.native.action, 'hold');}, 100);
             setTimeout(() => {
                 clearInterval(interval);
                 //hubs[hub].client.requestKeyPress(obj.native.action, 'press');
