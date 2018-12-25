@@ -105,21 +105,17 @@ function sendCommand(hub, id, ms, callback) {
         adapter.log.debug('sending command: ' + obj.common.name);
 
         if (ms <= 250) {
-            hubs[hub].client.requestKeyPress(obj.native.action);
-            setTimeout(() => {
-                adapter.setState(id, {val: 0, ack: true});
-                hubs[hub].client.requestKeyPress(obj.native.action, 'release');
-            }, ms);
+            hubs[hub].client.requestKeyPress(obj.native.action, 'press', 100);
             callback();
         } else {
             hubs[hub].client.requestKeyPress(obj.native.action, 'hold');
-            const interval = setInterval(() => hubs[hub].client.requestKeyPress(obj.native.action, 'hold'), 250);
+            const interval = setInterval(() => hubs[hub].client.requestKeyPress(obj.native.action, 'hold'), 100);
             setTimeout(() => {
                 clearInterval(interval);
                 //hubs[hub].client.requestKeyPress(obj.native.action, 'press');
                 adapter.setState(id, {val: 0, ack: true});
                 callback();
-            }, ms-200);
+            }, ms-100);
         }
     });
 }
