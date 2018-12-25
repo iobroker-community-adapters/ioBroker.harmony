@@ -14,7 +14,7 @@
         "news": {
             "1.1.4": {
                 "en": "fix key pressed multiple times",
-                "de": "fix Tasten wurden mehrfach gesendet",
+                "de": "fix Tasten wurden mehrfach gesendet"
             },
             "1.1.2": {
                 "en": "Fixed problem where multiple connections to one hub could be opened",
