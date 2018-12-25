@@ -55,9 +55,9 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
-### 1.1.3 (2018-12-25)
-* news
 
+### 1.1.4 (2018-12-25)
+* (Pmant) fix single key presses 
 
 ### 1.1.2
 * (Pmant) reduce log spam

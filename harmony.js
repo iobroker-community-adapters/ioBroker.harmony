@@ -105,7 +105,7 @@ function sendCommand(hub, id, ms, callback) {
         adapter.log.debug('sending command: ' + obj.common.name);
 
         if (ms <= 250) {
-            hubs[hub].client.requestKeyPress(obj.native.action, 'press', 100);
+            hubs[hub].client.requestKeyPress(obj.native.action, 100);
             callback();
         } else {
             hubs[hub].client.requestKeyPress(obj.native.action, 'hold');
