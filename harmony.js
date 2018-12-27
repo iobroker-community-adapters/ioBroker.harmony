@@ -109,14 +109,11 @@ function sendCommand(hub, id, ms, callback) {
             adapter.setState(id, {val: 0, ack: true});
             callback();
         } else {
-            hubs[hub].client.requestKeyPress(obj.native.action, 'hold');
-            const interval = setInterval(() => {hubs[hub].client.requestKeyPress(obj.native.action, 'hold');}, 100);
+            hubs[hub].client.requestKeyPress(obj.native.action, 'hold', ms);
             setTimeout(() => {
-                clearInterval(interval);
-                //hubs[hub].client.requestKeyPress(obj.native.action, 'press');
                 adapter.setState(id, {val: 0, ack: true});
                 callback();
-            }, ms-100);
+            }, ms);
         }
     });
 }

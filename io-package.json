@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.1.4",
+        "version": "1.1.5",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,10 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.1.5": {
+                "en": "fix hold key (for values > 250ms)",
+                "de": "fix Taste gedrückt halten (für Werte > 250ms)"
+            },
             "1.1.4": {
                 "en": "fix key pressed multiple times",
                 "de": "fix Tasten wurden mehrfach gesendet"

@@ -56,6 +56,9 @@ After sending the state will be set to 0 again.
 
 ## Changelog
 
+### 1.1.5 (2018-12-28)
+* (Pmant) fix hold key (for values > 250ms)
+
 ### 1.1.4 (2018-12-25)
 * (Pmant) fix single key presses 
 
