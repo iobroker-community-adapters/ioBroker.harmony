@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.1.5",
+        "version": "1.2.0",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,17 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.2.0": {
+                "en": "compact mode compatibility added",
+                "de": "Kompaktmodus-Kompatibilität hinzugefügt",
+                "ru": "добавлена ​​совместимость с компактным режимом",
+                "pt": "compatibilidade de modo compacto adicionada",
+                "nl": "compatibiliteit met compacte modus toegevoegd",
+                "fr": "Compatibilité en mode compact ajoutée",
+                "it": "aggiunta la compatibilità in modalità compatta",
+                "es": "compatibilidad de modo compacto agregado",
+                "pl": "Dodano kompatybilność w trybie kompaktowym"
+            },
             "1.1.5": {
                 "en": "fix hold key (for values > 250ms)",
                 "de": "fix Taste gedrückt halten (für Werte > 250ms)"
@@ -93,6 +104,7 @@
         "icon": "harmony.png",
         "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
     },
+    "compact": true,
     "native": {
         "user": "guest",
         "password": "default",

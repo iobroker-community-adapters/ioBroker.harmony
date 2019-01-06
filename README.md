@@ -55,6 +55,8 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
+### 1.2.0 (2018-01-06)
+* (foxriver76) compact mode compatibility added
 
 ### 1.1.5 (2018-12-28)
 * (Pmant) fix hold key (for values > 250ms)
