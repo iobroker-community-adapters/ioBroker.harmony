@@ -87,6 +87,7 @@
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "enabled": true,
+        "compact": true,
         "mode": "daemon",
         "singletonHost": true,
         "messagebox": true,
@@ -104,7 +105,6 @@
         "icon": "harmony.png",
         "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
     },
-    "compact": true,
     "native": {
         "user": "guest",
         "password": "default",
