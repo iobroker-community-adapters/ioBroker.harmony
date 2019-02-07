@@ -11,11 +11,11 @@ clone_folder: 'c:\projects\%APPVEYOR_PROJECT_NAME%'
 install:
   - ps: 'Install-Product node $env:nodejs_version $env:platform'
   - npm install
-  - npm install winston@2.3.0
-  - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
 test_script:
   - echo %cd%
   - node --version
   - npm --version
-  - npm test
+  - npm run test:unit
+  - npm run test:integration
+  - npm run test:package
 build: 'off'

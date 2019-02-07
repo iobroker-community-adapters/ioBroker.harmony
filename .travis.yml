@@ -10,8 +10,14 @@ before_install:
   - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CC=gcc-4.9; fi'
   - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then CXX=g++-4.9; fi'
 before_script:
-  - npm install winston@2.3.1
-  - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
+  - export NPMVERSION=$(echo "$($(which npm) -v)"|cut -c1)
+  - 'if [[ $NPMVERSION == 5 ]]; then npm install -g npm@5; fi'
+  - npm -v
+script:
+  - npm run test:unit
+  - export DEBUG=testing:*
+  - npm run test:integration
+  - npm run test:package
 env:
   - CXX=g++-4.8
 addons:
