@@ -11,40 +11,72 @@
 
 const HarmonyHubDiscover = require('@harmonyhub/discover').Explorer;
 const utils = require('@iobroker/adapter-core');
-const adapter = new utils.Adapter('harmony');
 const HarmonyWS = require('harmonyhubws');
 const hubs = {};
+let adapter;
 let discover;
-const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\? ]/g;
+const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 let manualDiscoverHubs;
 let subnet;
 let discoverInterval;
 
-adapter.on('stateChange', (id, state) => {
-    if (!id || !state || state.ack) {
-        return;
-    }
-    const hub = id.split('.')[2];
-    if (!hubs[hub]) return;
-    const semaphore = hubs[hub].semaphore;
-    if (semaphore === undefined) {
-        adapter.log.warn('state changed in offline hub');
-        return;
-    }
-    if (semaphore.current > 0) {
-        adapter.log.info('hub busy, stateChange delayed: ' + id + '=' + state.val);
-    }
-    semaphore.take(() => {
-        setBlocked(hub, true);
-        processStateChange(hub, id, state, () => {
-            if (semaphore.current === 1) {
-                setBlocked(hub, false);
-            }
-            semaphore.leave();
+
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {
+        name: 'harmony'
+    });
+    adapter = new utils.Adapter(options);
+
+    adapter.on('stateChange', (id, state) => {
+        if (!id || !state || state.ack) {
+            return;
+        }
+        const hub = id.split('.')[2];
+        if (!hubs[hub]) return;
+        const semaphore = hubs[hub].semaphore;
+        if (semaphore === undefined) {
+            adapter.log.warn('state changed in offline hub');
+            return;
+        }
+        if (semaphore.current > 0) {
+            adapter.log.info('hub busy, stateChange delayed: ' + id + '=' + state.val);
+        }
+        semaphore.take(() => {
+            setBlocked(hub, true);
+            processStateChange(hub, id, state, () => {
+                if (semaphore.current === 1) {
+                    setBlocked(hub, false);
+                }
+                semaphore.leave();
+            });
         });
     });
-});
+
+    // callback has to be called under any circumstances
+    adapter.on('unload', callback => {
+        try {
+            adapter.log.info('[END] Terminating');
+            if (discover) {
+                discover.stop();
+            } // endIf
+            discover = null;
+            for (const hub in Object.keys(hubs)) {
+                clientStop(hub);
+            } // endFor
+            callback();
+        } catch (e) {
+            callback();
+        } // endTryCatch
+    });
+
+    adapter.on('ready', () => {
+        main();
+    });
+
+    return adapter;
+} // endStartAdapter
 
 function processStateChange(hub, id, state, callback) {
     const tmp = id.split('.');
@@ -138,27 +170,6 @@ function switchActivity(hub, activityLabel, value, callback) {
         callback();
     }
 }
-
-// callback has to be called under any circumstances
-adapter.on('unload', callback => {
-    try {
-        adapter.log.info('[END] Terminating');
-        if (discover) {
-            discover.stop();
-        } // endIf
-        discover = null;
-        for (const hub in Object.keys(hubs)) {
-            clientStop(hub);
-        } // endFor
-        callback();
-    } catch (e) {
-        callback();
-    } // endTryCatch
-});
-
-adapter.on('ready', () => {
-    main();
-});
 
 function main() {
     manualDiscoverHubs = adapter.config.devices || [];
@@ -573,4 +584,12 @@ function setConnected(hub, bool) {
         hubs[hub].connected = bool;
         adapter.setState(hub + '.hubConnected', {val: bool, ack: true});
     }
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
