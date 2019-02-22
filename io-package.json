@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,18 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.2.1": {
+                "en": "at least version 1.0.5 of harmonyhubws is used",
+                "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
+                "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
+                "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
+                "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
+                "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
+                "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
+                "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
+                "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
+                "zh-cn": "至少使用版本1.0.5的harmonyhubws"
+            },
             "1.2.0": {
                 "en": "compact mode compatibility added",
                 "de": "Kompaktmodus-Kompatibilität hinzugefügt",

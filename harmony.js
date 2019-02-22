@@ -151,6 +151,9 @@ function sendCommand(hub, id, ms, callback) {
 }
 
 function switchActivity(hub, activityLabel, value, callback) {
+    // TODO: requestActivityChange is no longer a fully working promise (it resolves after execution now instead
+    //  of after hub has confirmed that the activity has been changed). So we should just block hub before
+    //  calling switchActivity and unblock on receiving changed activity in listener maybe in setStatusFromActivityID
     if (!hubs[hub].client) {
         adapter.log.warn('[ACTIVITY] Error changing activity, client offline');
         callback();
@@ -161,10 +164,10 @@ function switchActivity(hub, activityLabel, value, callback) {
     if (isNaN(value)) value = 1;
     if (value === 0) {
         adapter.log.debug('[ACTIVITY] Turning activity off');
-        hubs[hub].client.requestActivityChange('-1').then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange('-1').then(callback);
     } else if (hubs[hub].activities_reverse.hasOwnProperty(activityLabel)) {
         adapter.log.debug('[ACTIVITY] Switching activity to: ' + activityLabel);
-        hubs[hub].client.requestActivityChange(hubs[hub].activities_reverse[activityLabel]).then(callback); //.finally(callback);
+        hubs[hub].client.requestActivityChange(hubs[hub].activities_reverse[activityLabel]).then(callback);
     } else {
         adapter.log.warn('[ACTIVITY] Activity does not exists');
         callback();
