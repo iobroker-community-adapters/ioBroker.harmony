@@ -1,45 +1,47 @@
 {
-    "name": "iobroker.harmony",
-    "version": "1.2.1",
-    "engines": {
-        "node": ">=6.0.0"
-    },
-    "description": "Control your harmony activities from ioBroker.",
-    "author": "Pmant <patrickmo@gmx.de>",
-    "contributors": [],
-    "homepage": "https://github.com/pmant/ioBroker.harmony",
-    "license": "MIT",
-    "keywords": [
-        "ioBroker",
-        "harmony",
-        "hub",
-        "logitech",
-        "home automation"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Pmant/ioBroker.harmony.git"
-    },
-    "dependencies": {
-        "@harmonyhub/discover": "^1.0.5",
-        "@iobroker/adapter-core": "^1.0.3",
-        "harmonyhubws": "^1.0.5",
-        "semaphore": "~1.0.3"
-    },
-    "devDependencies": {
-        "gulp": "^4.0.0",
-        "mocha": "^4.1.0",
-        "chai": "^4.1.2",
-        "eslint": "^5.9.0",
-        "@iobroker/testing": "^1.0.4"
-    },
-    "bugs": {
-        "url": "https://github.com/pmant/ioBroker.harmony/issues"
-    },
-    "main": "harmony.js",
-    "scripts": {
-        "test:unit": "node_modules/.bin/mocha test/unitAdapter --exit",
-        "test:package": "node_modules/.bin/mocha test/packageFiles --exit",
-        "test:integration": "node_modules/.bin/mocha test/integrationAdapter --exit"
-    }
+  "name": "iobroker.harmony",
+  "version": "1.2.1",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "description": "Control your harmony activities from ioBroker.",
+  "author": "Pmant <patrickmo@gmx.de>",
+  "contributors": [],
+  "homepage": "https://github.com/pmant/ioBroker.harmony",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "harmony",
+    "hub",
+    "logitech",
+    "home automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pmant/ioBroker.harmony.git"
+  },
+  "dependencies": {
+    "@harmonyhub/discover": "^1.0.5",
+    "@iobroker/adapter-core": "^1.0.3",
+    "harmonyhubws": "^1.0.5",
+    "semaphore": "~1.0.3"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "mocha": "^4.1.0",
+    "chai": "^4.1.2",
+    "eslint": "^5.9.0",
+    "@iobroker/testing": "^1.0.4",
+    "@iobroker/adapter-core": "^1.0.3"
+  },
+  "bugs": {
+    "url": "https://github.com/pmant/ioBroker.harmony/issues"
+  },
+  "main": "harmony.js",
+  "scripts": {
+    "test:unit": "node_modules/.bin/mocha test/unitAdapter --exit",
+    "test:package": "node_modules/.bin/mocha test/packageFiles --exit",
+    "test:integration": "node_modules/.bin/mocha test/integrationAdapter --exit",
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  }
 }
