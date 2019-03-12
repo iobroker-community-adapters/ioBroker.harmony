@@ -87,6 +87,7 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+.history
 
 # temporary
 package-lock.json
