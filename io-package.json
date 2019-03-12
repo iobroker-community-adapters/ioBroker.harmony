@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "harmony",
-        "version": "1.2.1",
+        "version": "1.2.2",
         "title": "Logitech Harmony",
         "desc": {
             "en": "Control your harmony activities from ioBroker",
@@ -12,6 +12,18 @@
             "Pmant <patrickmo@gmx.de>"
         ],
         "news": {
+            "1.2.2": {
+                "en": "reduce discover interval and only log new discovered hubs",
+                "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
+                "ru": "сократить интервал обнаружения и регистрировать только новые обнаруженные концентраторы",
+                "pt": "reduza o intervalo de descoberta e registre somente novos hubs descobertos",
+                "nl": "verminder het ontdekkingsinterval en registreer alleen nieuw ontdekte hubs",
+                "fr": "réduire l'intervalle de découverte et ne consigner que les nouveaux concentrateurs découverts",
+                "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
+                "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
+                "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
+                "zh-cn": "减少发现间隔并仅记录新发现的集线器"
+            },
             "1.2.1": {
                 "en": "at least version 1.0.5 of harmonyhubws is used",
                 "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
@@ -79,21 +91,6 @@
                 "en": "fix problematic chars",
                 "de": "Fix für problemantische Zeichen",
                 "ru": "fix problematic chars"
-            },
-            "0.7.1": {
-                "en": "bug fixes",
-                "de": "bug fixes",
-                "ru": "bug fixes"
-            },
-            "0.7.0": {
-                "en": "support multiple hubs",
-                "de": "Unterstützung für mehrere Hubs hinzugefügt",
-                "ru": "support multiple hubs"
-            },
-            "0.6.2": {
-                "en": "fix wrong port",
-                "de": "falscher Port korrigiert",
-                "ru": "fix wrong port"
             }
         },
         "license": "MIT",
@@ -122,7 +119,7 @@
         "password": "default",
         "subnet": "255.255.255.255",
         "devices": [],
-        "discoverInterval": 1000
+        "discoverInterval": 10000
     },
     "objects": []
 }

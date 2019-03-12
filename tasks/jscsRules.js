@@ -1,7 +1,7 @@
 module.exports = {
     force: true,
-    "requireCurlyBraces": ["else", "for", "while", "do", "try", "catch"], /*"if",*/
-    "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
+    "requireCurlyBraces": [`else`, `for`, `while`, `do`, `try`, `catch`], /*"if",*/
+    "requireSpaceAfterKeywords": [`if`, `else`, `for`, `while`, `do`, `switch`, `return`, `try`, `catch`],
     "requireSpaceBeforeBlockStatements": true,
     "requireParenthesesAroundIIFE": true,
     "disallowSpacesInFunctionDeclaration": {"beforeOpeningRoundBrace": true},
@@ -19,18 +19,18 @@ module.exports = {
     "disallowSpacesInsideParentheses": true,
     "requireCommaBeforeLineBreak": true,
     //"requireAlignedObjectValues": "all",
-    "requireOperatorBeforeLineBreak": ["?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
-//            "disallowLeftStickedOperators": ["?", "+", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
-//                    "requireRightStickedOperators": ["!"],
-//                    "requireSpaceAfterBinaryOperators": ["?", "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
+    "requireOperatorBeforeLineBreak": [`?`, `+`, `-`, `/`, `*`, `=`, `==`, `===`, `!=`, `!==`, `>`, `>=`, `<`, `<=`],
+    //            "disallowLeftStickedOperators": ["?", "+", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
+    //                    "requireRightStickedOperators": ["!"],
+    //                    "requireSpaceAfterBinaryOperators": ["?", "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
     //"disallowSpaceAfterBinaryOperators": [","],
-    "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~", "!"],
-    "disallowSpaceBeforePostfixUnaryOperators": ["++", "--"],
-    "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
-    "requireSpaceAfterBinaryOperators": ["?", ">", ",", ">=", "<=", "<", "+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
+    "disallowSpaceAfterPrefixUnaryOperators": [`++`, `--`, `+`, `-`, `~`, `!`],
+    "disallowSpaceBeforePostfixUnaryOperators": [`++`, `--`],
+    "requireSpaceBeforeBinaryOperators": [`+`, `-`, `/`, `*`, `=`, `==`, `===`, `!=`, `!==`],
+    "requireSpaceAfterBinaryOperators": [`?`, `>`, `,`, `>=`, `<=`, `<`, `+`, `-`, `/`, `*`, `=`, `==`, `===`, `!=`, `!==`],
     //"validateIndentation": 4,
     //"validateQuoteMarks": { "mark": "\"", "escape": true },
     "disallowMixedSpacesAndTabs": true,
-    "disallowKeywordsOnNewLine": ["else", "catch"]
+    "disallowKeywordsOnNewLine": [`else`, `catch`]
 
 };
