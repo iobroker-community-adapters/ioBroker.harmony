@@ -2,7 +2,7 @@
 # ioBroker Logitech Harmony Adapter
 ===========================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+![Number of Installations](http://iobroker.live/badges/harmony-installed.svg) ![Number of Installations](http://iobroker.live/badges/harmony-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
 
 [![NPM](https://nodei.co/npm/iobroker.harmony.png?downloads=true)](https://nodei.co/npm/iobroker.harmony/)
