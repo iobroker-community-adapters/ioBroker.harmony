@@ -185,5 +185,7 @@ please delete all harmony.x objects once
 ### License
 MIT
 
+Copyright (c) 20xx-2019 Pmant <patrickmo@gmx.de>
+
 
 
