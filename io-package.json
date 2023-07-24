@@ -100,7 +100,7 @@
         "mode": "daemon",
         "singletonHost": true,
         "messagebox": true,
-        "readme": "https://github.com/pmant/ioBroker.harmony/blob/master/README.md",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
         "materialize": true,
         "loglevel": "info",
         "keywords": [
@@ -112,7 +112,7 @@
         ],
         "type": "multimedia",
         "icon": "harmony.png",
-        "extIcon": "https://raw.githubusercontent.com/pmant/ioBroker.harmony/master/admin/harmony.png"
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png"
     },
     "native": {
         "user": "guest",

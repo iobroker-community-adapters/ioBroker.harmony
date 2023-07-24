@@ -7,7 +7,7 @@
     "description": "Control your harmony activities from ioBroker.",
     "author": "Pmant <patrickmo@gmx.de>",
     "contributors": [],
-    "homepage": "https://github.com/pmant/ioBroker.harmony",
+    "homepage": "https://github.com/iobroker-community-adapters/ioBroker.harmony",
     "license": "MIT",
     "keywords": [
         "ioBroker",
@@ -18,7 +18,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Pmant/ioBroker.harmony.git"
+        "url": "git+https://github.com/iobroker-community-adapters/ioBroker.harmony.git"
     },
     "dependencies": {
         "@harmonyhub/discover": "^1.0.8",
@@ -34,7 +34,7 @@
         "@iobroker/testing": "^1.0.4"
     },
     "bugs": {
-        "url": "https://github.com/pmant/ioBroker.harmony/issues"
+        "url": "https://github.com/iobroker-community-adapters/issues"
     },
     "main": "harmony.js",
     "scripts": {
