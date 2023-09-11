@@ -20,6 +20,9 @@
         "type": "git",
         "url": "git+https://github.com/iobroker-community-adapters/ioBroker.harmony.git"
     },
+  "engines": {
+    "node": ">=16"
+  },
     "dependencies": {
         "@harmonyhub/discover": "^1.0.8",
         "@iobroker/adapter-core": "^1.0.3",
