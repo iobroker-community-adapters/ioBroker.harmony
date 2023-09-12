@@ -24,7 +24,7 @@
     "node": ">=16"
   },
     "dependencies": {
-        "@harmonyhub/discover": "^1.0.8",
+        "@harmonyhub/discover": "^1.0.9",
         "@iobroker/adapter-core": "^1.0.3",
         "harmonyhubws": "^1.0.5",
         "semaphore": "~1.0.3"
