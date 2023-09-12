@@ -30,7 +30,7 @@
         "semaphore": "~1.0.3"
     },
     "devDependencies": {
-        "gulp": "^4.0.0",
+        "gulp": "^4.0.2",
         "mocha": "^4.1.0",
         "chai": "^4.3.8",
         "eslint": "^5.9.0",
