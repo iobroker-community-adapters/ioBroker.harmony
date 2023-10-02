@@ -34,7 +34,7 @@
         "mocha": "^4.1.0",
         "chai": "^4.3.10",
         "eslint": "^5.9.0",
-        "@iobroker/testing": "^1.0.4"
+        "@iobroker/testing": "^4.1.0"
     },
     "bugs": {
         "url": "https://github.com/iobroker-community-adapters/issues"
