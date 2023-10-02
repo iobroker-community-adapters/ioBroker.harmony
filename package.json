@@ -33,7 +33,7 @@
         "gulp": "^4.0.2",
         "mocha": "^4.1.0",
         "chai": "^4.3.10",
-        "eslint": "^5.9.0",
+        "eslint": "^8.50.0",
         "@iobroker/testing": "^1.0.4"
     },
     "bugs": {
