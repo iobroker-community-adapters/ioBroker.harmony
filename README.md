@@ -1,11 +1,31 @@
 ![Logo](admin/harmony.png)
-# ioBroker Logitech Harmony Adapter
-===========================
+# ioBroker.harmony
 
-![Number of Installations](http://iobroker.live/badges/harmony-installed.svg) ![Number of Installations](http://iobroker.live/badges/harmony-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+![GitHub license](https://img.shields.io/github/license/iobroker-community-adapters/ioBroker.harmony)](https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/LICENSE)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+![GitHub repo size](https://img.shields.io/github/repo-size/iobroker-community-adapters/ioBroker.harmony)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/harmony/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)</br>
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/iobroker-community-adapters/ioBroker.harmony)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/iobroker-community-adapters/ioBroker.harmony/latest)
+![GitHub last commit](https://img.shields.io/github/last-commit/iobroker-community-adapters/ioBroker.harmony)
+![GitHub issues](https://img.shields.io/github/issues/iobroker-community-adapters/ioBroker.harmony)
+</br>
+**Version:** </br>
+[![NPM version](http://img.shields.io/npm/v/iobroker.harmony.svg)](https://www.npmjs.com/package/iobroker.harmony)
+![Current version in stable repository](https://iobroker.live/badges/harmony-stable.svg)
+![Number of Installations](https://iobroker.live/badges/harmony-installed.svg)
+</br>
+**Tests:** </br>
+[![Test and Release](https://github.com/iobroker-community-adapters/ioBroker.harmony/actions/workflows/test-and-release.yml/badge.svg)](https://github.com/iobroker-community-adapters/ioBroker.harmony/actions/workflows/test-and-release.yml)
+[![CodeQL](https://github.com/iobroker-community-adapters/ioBroker.harmony/actions/workflows/codeql.yml/badge.svg)](https://github.com/iobroker-community-adapters/ioBroker.harmony/actions/workflows/codeql.yml)
 
-[![NPM](https://nodei.co/npm/iobroker.harmony.png?downloads=true)](https://nodei.co/npm/iobroker.harmony/)
+<!--
+## Sentry
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.**
+For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+-->
+
+## ioBroker Logitech Harmony Adapter
 
 Control your harmony activities from ioBroker.
 
@@ -55,6 +75,15 @@ A value smaller than 250 probably will send the command only once.
 After sending the state will be set to 0 again.
 
 ## Changelog
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+* (mcm1957) Adapter requires node 16 now.
+* (mcm1957) Adpter has been mode to iobroker-community-adapters organisation.
+* (mcm1957) Dependencies have been updated.
+
 ### 1.2.2 (2019-03-11)
 * (foxriver76) reduce discover interval and only log newly discovered hubs
 
@@ -179,13 +208,28 @@ please delete all harmony.x objects once
 * (Pmant) listen for activies
 
 
-### TODO
-* translations
-
 ### License
-MIT
+The MIT License (MIT)
 
-Copyright (c) 20xx-2019 Pmant <patrickmo@gmx.de>
+Copyright (c) 2023 iobroker-community-adapters <mcm57@gmx.at>
+Copyright (c) 2015-2019 Pmant <patrickmo@gmx.de>
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 
