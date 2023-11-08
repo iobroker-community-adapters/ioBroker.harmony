@@ -80,8 +80,8 @@ After sending the state will be set to 0 again.
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (mcm1957) Adapter requires node 16 now.
-* (mcm1957) Adpter has been mode to iobroker-community-adapters organisation.
+* (mcm1957) Adapter requires nodejs 16 now.
+* (mcm1957) Adapter has been moved to iobroker-community-adapters organisation.
 * (mcm1957) Dependencies have been updated.
 
 ### 1.2.2 (2019-03-11)
