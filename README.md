@@ -79,7 +79,7 @@ After sending the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.3.0-alpha.0 (2023-11-08)
 * (mcm1957) Adapter requires nodejs 16 now.
 * (mcm1957) Adapter has been moved to iobroker-community-adapters organisation.
 * (mcm1957) Dependencies have been updated.
@@ -88,7 +88,7 @@ After sending the state will be set to 0 again.
 * (foxriver76) reduce discover interval and only log newly discovered hubs
 
 ### 1.2.1 (2019-02-21)
-* (foxriver76) use at least 1.0.5 of harmonyhubws 
+* (foxriver76) use at least 1.0.5 of harmonyhubws
 
 ### 1.2.0 (2019-01-06)
 * (foxriver76) compact mode compatibility added
@@ -97,7 +97,7 @@ After sending the state will be set to 0 again.
 * (Pmant) fix hold key (for values > 250ms)
 
 ### 1.1.4 (2018-12-25)
-* (Pmant) fix single key presses 
+* (Pmant) fix single key presses
 
 ### 1.1.2
 * (Pmant) reduce log spam
@@ -207,7 +207,6 @@ please delete all harmony.x objects once
 * (Pmant) connect to hub
 * (Pmant) listen for activies
 
-
 ### License
 The MIT License (MIT)
 
@@ -231,5 +230,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-

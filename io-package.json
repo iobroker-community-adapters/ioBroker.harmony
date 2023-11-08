@@ -1,138 +1,139 @@
 {
-    "common": {
-        "name": "harmony",
-        "version": "1.2.2",
-        "news": {
-            "1.2.2": {
-                "en": "reduce discover interval and only log new discovered hubs",
-                "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
-                "ru": "сократить интервал обнаружения и регистрировать только новые обнаруженные концентраторы",
-                "pt": "reduza o intervalo de descoberta e registre somente novos hubs descobertos",
-                "nl": "verminder het ontdekkingsinterval en registreer alleen nieuw ontdekte hubs",
-                "fr": "réduire l'intervalle de découverte et ne consigner que les nouveaux concentrateurs découverts",
-                "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
-                "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
-                "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
-                "zh-cn": "减少发现间隔并仅记录新发现的集线器"
-            },
-            "1.2.1": {
-                "en": "at least version 1.0.5 of harmonyhubws is used",
-                "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
-                "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
-                "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
-                "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
-                "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
-                "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
-                "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
-                "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
-                "zh-cn": "至少使用版本1.0.5的harmonyhubws"
-            },
-            "1.2.0": {
-                "en": "compact mode compatibility added",
-                "de": "Kompaktmodus-Kompatibilität hinzugefügt",
-                "ru": "добавлена ​​совместимость с компактным режимом",
-                "pt": "compatibilidade de modo compacto adicionada",
-                "nl": "compatibiliteit met compacte modus toegevoegd",
-                "fr": "Compatibilité en mode compact ajoutée",
-                "it": "aggiunta la compatibilità in modalità compatta",
-                "es": "compatibilidad de modo compacto agregado",
-                "pl": "Dodano kompatybilność w trybie kompaktowym"
-            },
-            "1.1.5": {
-                "en": "fix hold key (for values > 250ms)",
-                "de": "fix Taste gedrückt halten (für Werte > 250ms)"
-            },
-            "1.1.4": {
-                "en": "fix key pressed multiple times",
-                "de": "fix Tasten wurden mehrfach gesendet"
-            },
-            "1.1.2": {
-                "en": "Fixed problem where multiple connections to one hub could be opened",
-                "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten"
-            },
-            "1.1.1": {
-                "en": "use external api module",
-                "de": "nutze externes api modul"
-            },
-            "1.1.0": {
-                "en": "switch to websocket client",
-                "de": "wechsel auf Websocket-Client"
-            },
-            "1.0.0": {
-                "en": "replace blanks by underscore + minor readme adjustments, discover interval 1000 ms",
-                "de": "Es werden Leerzeichen mit Unterstrichen ersetzt und kleine README Änderungen"
-            }
-        },
-        "titleLang":{
-            "en": "Logitech Harmony",
-            "de": "Logitech Harmony",
-            "ru": "Logitech Гармония",
-            "pt": "Harmonia da Logitech",
-            "nl": "Logitech Harmony",
-            "fr": "Logitech Harmony",
-            "it": "Logitech Harmony",
-            "es": "Logitech Harmony",
-            "pl": "Harmonia",
-            "uk": "Логітех Гармонія",
-            "zh-cn": "后勤技术"
-        },
-        "desc": {
-            "en": "Control your harmony activities from ioBroker",
-            "de": "Steuern Sie Ihre harmonischen Aktivitäten von ioBroker",
-            "ru": "Контролируйте деятельность гармонии от ioBroker",
-            "pt": "Controle suas atividades de harmonia do ioBroker",
-            "nl": "Controleer je harmonie activiteiten van ioBroker",
-            "fr": "Contrôlez vos activités d'harmonie de ioBroker",
-            "it": "Controlla le tue attività di armonia da ioBroker",
-            "es": "Controla tus actividades de armonía de ioBroker",
-            "pl": "Kontrola twojej harmonii z iobrokerem",
-            "uk": "Керуйте своєю гармонією з ioBroker",
-            "zh-cn": "控制你的奥布罗克人的和谐活动"        
-        },
-        "authors": [
-            "Pmant <patrickmo@gmx.de>",
-            "iobroker-community-adapters <mcm57@gmx.at>"
-        ],
-        "keywords": [
-            "ioBroker",
-            "harmony",
-            "hub",
-            "logitech",
-            "home automation"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "harmony.js",
-        "icon": "harmony.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "multimedia",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "poll",
-        "singletonHost": true,
-        "messagebox": true,
-        "materialize": true,
-        "dependencies": [
-            {
-              "js-controller": ">=4.0.24"
-            }
-        ],
-        "globalDependencies": [
-            {
-              "admin": ">=5.1.13"
-            }
-        ]
+  "common": {
+    "name": "harmony",
+    "version": "1.3.0-alpha.0",
+    "news": {
+      "1.3.0-alpha.0": {
+        "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
+        "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
+        "ru": "Адаптер требует nodejs 16 сейчас.\nАдаптер переехал в организацию iobroker-community-adapters.\nОбновлены зависимости.",
+        "pt": "Adaptador requer nodejs 16 agora.\nAdapter foi transferido para a organização iobroker-community-adapters.\nAs dependências foram atualizadas.",
+        "nl": "Adapter vereist nodejs 16 nu.\nAdapter is verplaatst naar iobroker-community-apters organisatie.\nAfhankelijkheid is geüpdateerd.",
+        "fr": "L'adaptateur nécessite 16 nodejs maintenant.\nAdaptateur a été déplacé à l'organisation iobroker-community-adapters.\nLes dépendances ont été mises à jour.",
+        "it": "L'adattatore richiede nodejs 16 ora.\nL'adattatore è stato spostato nell'organizzazione di hobroker-community-adapters.\nLe dipendenze sono state aggiornate.",
+        "es": "Adaptador requiere nodejs 16 ahora.\nEl adaptador ha sido trasladado a la organización de ibroker-community-adapters.\nSe han actualizado las dependencias.",
+        "pl": "Adapter wymaga węzła 16.\nAdapter przeniesiono do organizacji iobroker-community-adapters.\nW zależności zostały zaktualizowane.",
+        "uk": "Адаптер вимагає nodejs 16 тепер.\nПереміщено перехід на iobroker-community-adapters.\nОновлено залежність.",
+        "zh-cn": "现在需要16秒。.\n已经向加勒比采掘业者组织道歉。.\n情况已经更新。."
+      },
+      "1.2.2": {
+        "en": "reduce discover interval and only log new discovered hubs",
+        "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
+        "ru": "сократить интервал обнаружения и регистрировать только новые обнаруженные концентраторы",
+        "pt": "reduza o intervalo de descoberta e registre somente novos hubs descobertos",
+        "nl": "verminder het ontdekkingsinterval en registreer alleen nieuw ontdekte hubs",
+        "fr": "réduire l'intervalle de découverte et ne consigner que les nouveaux concentrateurs découverts",
+        "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
+        "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
+        "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
+        "zh-cn": "减少发现间隔并仅记录新发现的集线器"
+      },
+      "1.2.1": {
+        "en": "at least version 1.0.5 of harmonyhubws is used",
+        "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
+        "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
+        "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
+        "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
+        "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
+        "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
+        "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
+        "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
+        "zh-cn": "至少使用版本1.0.5的harmonyhubws"
+      },
+      "1.2.0": {
+        "en": "compact mode compatibility added",
+        "de": "Kompaktmodus-Kompatibilität hinzugefügt",
+        "ru": "добавлена ​​совместимость с компактным режимом",
+        "pt": "compatibilidade de modo compacto adicionada",
+        "nl": "compatibiliteit met compacte modus toegevoegd",
+        "fr": "Compatibilité en mode compact ajoutée",
+        "it": "aggiunta la compatibilità in modalità compatta",
+        "es": "compatibilidad de modo compacto agregado",
+        "pl": "Dodano kompatybilność w trybie kompaktowym"
+      },
+      "1.1.5": {
+        "en": "fix hold key (for values > 250ms)",
+        "de": "fix Taste gedrückt halten (für Werte > 250ms)"
+      },
+      "1.1.4": {
+        "en": "fix key pressed multiple times",
+        "de": "fix Tasten wurden mehrfach gesendet"
+      },
+      "1.1.2": {
+        "en": "Fixed problem where multiple connections to one hub could be opened",
+        "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten"
+      }
     },
-    "native": {
-        "user": "guest",
-        "password": "default",
-        "subnet": "255.255.255.255",
-        "devices": [],
-        "discoverInterval": 10000
+    "titleLang": {
+      "en": "Logitech Harmony",
+      "de": "Logitech Harmony",
+      "ru": "Logitech Гармония",
+      "pt": "Harmonia da Logitech",
+      "nl": "Logitech Harmony",
+      "fr": "Logitech Harmony",
+      "it": "Logitech Harmony",
+      "es": "Logitech Harmony",
+      "pl": "Harmonia",
+      "uk": "Логітех Гармонія",
+      "zh-cn": "后勤技术"
     },
-    "objects": []
+    "desc": {
+      "en": "Control your harmony activities from ioBroker",
+      "de": "Steuern Sie Ihre harmonischen Aktivitäten von ioBroker",
+      "ru": "Контролируйте деятельность гармонии от ioBroker",
+      "pt": "Controle suas atividades de harmonia do ioBroker",
+      "nl": "Controleer je harmonie activiteiten van ioBroker",
+      "fr": "Contrôlez vos activités d'harmonie de ioBroker",
+      "it": "Controlla le tue attività di armonia da ioBroker",
+      "es": "Controla tus actividades de armonía de ioBroker",
+      "pl": "Kontrola twojej harmonii z iobrokerem",
+      "uk": "Керуйте своєю гармонією з ioBroker",
+      "zh-cn": "控制你的奥布罗克人的和谐活动"
+    },
+    "authors": [
+      "Pmant <patrickmo@gmx.de>",
+      "iobroker-community-adapters <mcm57@gmx.at>"
+    ],
+    "keywords": [
+      "ioBroker",
+      "harmony",
+      "hub",
+      "logitech",
+      "home automation"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "harmony.js",
+    "icon": "harmony.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "multimedia",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "singletonHost": true,
+    "messagebox": true,
+    "materialize": true,
+    "dependencies": [
+      {
+        "js-controller": ">=4.0.24"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.13"
+      }
+    ]
+  },
+  "native": {
+    "user": "guest",
+    "password": "default",
+    "subnet": "255.255.255.255",
+    "devices": [],
+    "discoverInterval": 10000
+  },
+  "objects": []
 }
