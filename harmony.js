@@ -7,6 +7,7 @@
  */
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
+/* eslint-disable no-prototype-builtins */
 'use strict';
 
 const HarmonyHubDiscover = require(`@harmonyhub/discover`).Explorer;
