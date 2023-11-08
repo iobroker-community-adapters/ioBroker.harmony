@@ -3,19 +3,6 @@
     "name": "harmony",
     "version": "1.3.0-alpha.0",
     "news": {
-      "1.3.0-alpha.0": {
-        "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
-        "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
-        "ru": "Адаптер требует nodejs 16 сейчас.\nАдаптер переехал в организацию iobroker-community-adapters.\nОбновлены зависимости.",
-        "pt": "Adaptador requer nodejs 16 agora.\nAdapter foi transferido para a organização iobroker-community-adapters.\nAs dependências foram atualizadas.",
-        "nl": "Adapter vereist nodejs 16 nu.\nAdapter is verplaatst naar iobroker-community-apters organisatie.\nAfhankelijkheid is geüpdateerd.",
-        "fr": "L'adaptateur nécessite 16 nodejs maintenant.\nAdaptateur a été déplacé à l'organisation iobroker-community-adapters.\nLes dépendances ont été mises à jour.",
-        "it": "L'adattatore richiede nodejs 16 ora.\nL'adattatore è stato spostato nell'organizzazione di hobroker-community-adapters.\nLe dipendenze sono state aggiornate.",
-        "es": "Adaptador requiere nodejs 16 ahora.\nEl adaptador ha sido trasladado a la organización de ibroker-community-adapters.\nSe han actualizado las dependencias.",
-        "pl": "Adapter wymaga węzła 16.\nAdapter przeniesiono do organizacji iobroker-community-adapters.\nW zależności zostały zaktualizowane.",
-        "uk": "Адаптер вимагає nodejs 16 тепер.\nПереміщено перехід на iobroker-community-adapters.\nОновлено залежність.",
-        "zh-cn": "现在需要16秒。.\n已经向加勒比采掘业者组织道歉。.\n情况已经更新。."
-      },
       "1.2.2": {
         "en": "reduce discover interval and only log new discovered hubs",
         "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
