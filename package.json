@@ -27,7 +27,7 @@
     "@harmonyhub/discover": "^1.0.9",
     "@iobroker/adapter-core": "^3.0.4",
     "harmonyhubws": "^1.0.6",
-    "semaphore": "~1.0.3"
+    "semaphore": "~1.1.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.6.0",
