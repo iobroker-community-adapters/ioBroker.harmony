@@ -177,10 +177,10 @@ function switchActivity(hub, activityLabel, value, callback) {
 
 function main() {
     manualDiscoverHubs = adapter.config.devices || [];
-    subnet = adapter.config.subnet || `255.255.255.255`;
+    subnet = adapter.config.subnet.split(',') || [`255.255.255.255`];
     discoverInterval = adapter.config.discoverInterval || 1000;
     adapter.subscribeStates(`*`);
-    adapter.log.debug(`[START] Subnet: ${subnet}, Discovery interval: ${discoverInterval}`);
+    adapter.log.debug(`[START] Subnet: ${subnet.join(',')}, Discovery interval: ${discoverInterval}`);
     discoverStart();
 }
 
@@ -228,7 +228,7 @@ function discoverStart() {
         });
 
         discover.start();
-        adapter.log.info(`[DISCOVER] Searching for Harmony Hubs on ${subnet}`);
+        adapter.log.info(`[DISCOVER] Searching for Harmony Hubs on ${subnet.join(',')}`);
     });
 } // endDiscoverStart
 
