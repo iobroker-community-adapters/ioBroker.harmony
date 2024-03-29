@@ -12,8 +12,8 @@ systemDictionary = {
         "Hub User": {"en": "Hub User", "de": "Hub User", "ru": "Hub User"},
         "Hub Password": {"en": "Hub Password", "de": "Hub Passwort", "ru": "Hub Password"},
         "Find Hub": {"en": "Find Hub", "de": "Suche Hub", "ru": "Find Hub"},
-        "Discovery-Subnet:": {"en": "Discovery-Subnet:", "de": "Discovery-Subnetz:"},
-        "Discovery-Subnet": {"en": "Discovery-Subnet", "de": "Discovery-Subnetz"},
+        "Discovery-Subnet(s) (seperated by comma):": {"en": "Discovery-Subnet(s) (seperated by comma):", "de": "Discovery-Subnetz(e) (durch Komma getrennt):"},
+        "Discovery-Subnet(s) (seperated by comma)": {"en": "Discovery-Subnet(s) (seperated by comma)", "de": "Discovery-Subnetz(e) (durch Komma getrennt)"},
         "Only change if you know, what you are doing.": {
 	        "en": "Only change if you know, what you are doing.",
             "de": "Nur ändern, falls benötigt."
