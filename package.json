@@ -21,7 +21,7 @@
     "url": "git+https://github.com/iobroker-community-adapters/ioBroker.harmony.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "dependencies": {
     "@harmonyhub/discover": "^1.0.9",
