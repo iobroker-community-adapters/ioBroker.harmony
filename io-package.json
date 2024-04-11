@@ -26,7 +26,8 @@
         "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
         "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
         "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
-        "zh-cn": "减少发现间隔并仅记录新发现的集线器"
+        "zh-cn": "减少发现间隔并仅记录新发现的集线器",
+        "uk": "зменшити інтервал виявлення та реєструвати лише нові виявлені концентратори"
       },
       "1.2.1": {
         "en": "at least version 1.0.5 of harmonyhubws is used",
@@ -38,7 +39,8 @@
         "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
         "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
         "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
-        "zh-cn": "至少使用版本1.0.5的harmonyhubws"
+        "zh-cn": "至少使用版本1.0.5的harmonyhubws",
+        "uk": "використовується принаймні версія harmonyhubws 1.0.5"
       },
       "1.2.0": {
         "en": "compact mode compatibility added",
@@ -49,19 +51,48 @@
         "fr": "Compatibilité en mode compact ajoutée",
         "it": "aggiunta la compatibilità in modalità compatta",
         "es": "compatibilidad de modo compacto agregado",
-        "pl": "Dodano kompatybilność w trybie kompaktowym"
+        "pl": "Dodano kompatybilność w trybie kompaktowym",
+        "uk": "додано сумісність із компактним режимом",
+        "zh-cn": "添加了紧凑模式兼容性"
       },
       "1.1.5": {
         "en": "fix hold key (for values > 250ms)",
-        "de": "fix Taste gedrückt halten (für Werte > 250ms)"
+        "de": "fix Taste gedrückt halten (für Werte > 250ms)",
+        "ru": "исправить клавишу удержания (для значений > 250 мс)",
+        "pt": "corrigir chave de espera (para valores > 250ms)",
+        "nl": "fix hold-toets (voor waarden > 250 ms)",
+        "fr": "correction de la touche de maintien (pour les valeurs > 250 ms)",
+        "it": "correggere il tasto di attesa (per valori > 250 ms)",
+        "es": "Tecla de retención fija (para valores > 250 ms)",
+        "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
+        "uk": "виправити клавішу утримання (для значень > 250 мс)",
+        "zh-cn": "修复保持键（对于值> 250ms）"
       },
       "1.1.4": {
         "en": "fix key pressed multiple times",
-        "de": "fix Tasten wurden mehrfach gesendet"
+        "de": "fix Tasten wurden mehrfach gesendet",
+        "ru": "исправить нажатие клавиши несколько раз",
+        "pt": "tecla de correção pressionada várias vezes",
+        "nl": "fix-toets meerdere keren ingedrukt",
+        "fr": "touche de réparation enfoncée plusieurs fois",
+        "it": "tasto fisso premuto più volte",
+        "es": "arreglar la tecla presionada varias veces",
+        "pl": "Napraw klawisz wciśnięty wiele razy",
+        "uk": "виправити натискання клавіші кілька разів",
+        "zh-cn": "修复多次按下按键的问题"
       },
       "1.1.2": {
         "en": "Fixed problem where multiple connections to one hub could be opened",
-        "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten"
+        "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten",
+        "ru": "Исправлена ​​проблема, при которой можно было открыть несколько подключений к одному концентратору.",
+        "pt": "Corrigido problema onde múltiplas conexões para um hub podiam ser abertas",
+        "nl": "Probleem opgelost waarbij meerdere verbindingen met één hub konden worden geopend",
+        "fr": "Correction d'un problème où plusieurs connexions à un hub pouvaient être ouvertes",
+        "it": "Risolto il problema per cui potevano essere aperte più connessioni a un hub",
+        "es": "Se solucionó el problema por el cual se podían abrir múltiples conexiones a un concentrador.",
+        "pl": "Naprawiono problem polegający na tym, że można było otworzyć wiele połączeń z jednym koncentratorem",
+        "uk": "Виправлена ​​проблема, через яку можна було відкрити кілька підключень до одного концентратора",
+        "zh-cn": "修复了可以打开与一个集线器的多个连接的问题"
       }
     },
     "titleLang": {
@@ -95,13 +126,14 @@
       "iobroker-community-adapters <mcm57@gmx.at>"
     ],
     "keywords": [
-      "ioBroker",
       "harmony",
       "hub",
-      "logitech",
-      "home automation"
+      "logitech"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
     "main": "harmony.js",
     "icon": "harmony.png",
