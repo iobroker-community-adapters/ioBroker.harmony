@@ -1,0 +1,13 @@
+{
+    "Discovery-Subnet": "Discovery-Подсеть",
+    "Discovery-Subnet:": "Discovery-Подсеть:",
+    "Find Hub": "Find Hub",
+    "Hub Name": "Hub Name",
+    "Hub Password": "Hub Password",
+    "Hub User": "Hub User",
+    "IP address": "айпи адрес",
+    "If no IP address given, all Hubs in the network will be added.": "Если IP-адрес не указан, будут добавлены все концентраторы в сети.",
+    "Logitech Harmony adapter settings": "Logitech Harmony adapter settings",
+    "Only change if you know, what you are doing.": "Меняйтесь только в том случае, если вы знаете, что делаете.",
+    "Settings": "Settings"
+}
