@@ -109,6 +109,7 @@
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "multimedia",
     "compact": true,
