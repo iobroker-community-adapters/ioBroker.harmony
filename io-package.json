@@ -144,7 +144,7 @@
     "tier": 2,
     "mode": "daemon",
     "type": "multimedia",
-    "compact": true,
+    "compact": false,
     "connectionType": "local",
     "dataSource": "poll",
     "singletonHost": true,
