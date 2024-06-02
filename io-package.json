@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "harmony",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "news": {
+      "1.5.0": {
+        "en": "Multiple subnets can be entered as comma seperated list now. (#147)\nTesting for node.js 22 has been added.\nDependencies have been updated.",
+        "de": "Mehrere Subnetze können jetzt als Komma seperated Liste eingetragen werden. (#147)\nDie Prüfung auf node.js 22 wurde hinzugefügt.\nAbhängigkeiten wurden aktualisiert.",
+        "ru": "Множественные подсети могут быть включены как comma seperated list. (#147)\nДобавлено тестирование на node.js 22.\nЗависимость была обновлена.",
+        "pt": "Múltiplas sub-redes podem ser inseridas como lista de vírgulas agora. (#147)\nTestar para node.js 22 foi adicionado.\nAs dependências foram atualizadas.",
+        "nl": "Meerdere subnetten kunnen nu worden ingevoerd als komma gescheiden lijst. (#147)\nTesten op node.js 22 is toegevoegd.\nAfhankelijkheden zijn bijgewerkt.",
+        "fr": "Plusieurs sous-réseaux peuvent être entrés en tant que liste séparée par des virgules. (#147)\nLe test pour node.js 22 a été ajouté.\nLes dépendances ont été actualisées.",
+        "it": "Molteplici sottonet possono essere inseriti come elenco seperato da virgola. (#147)\nÈ stato aggiunto il test per node.js 22.\nLe dipendenze sono state aggiornate.",
+        "es": "Múltiples subnetes pueden ser introducidos como lista separada de coma ahora. (#147)\nSe han añadido pruebas para node.js 22.\nSe han actualizado las dependencias.",
+        "pl": "Wiele podsieci można wprowadzić jako listę przecinek seperated teraz. (# 147)\nDodano test na node.js 22.\nZaktualizowano zależność.",
+        "uk": "Кілька підмереж можна ввести в список, що відповідає комі. (#147)\nДодано тестування для node.js 22.\nОновлено залежність.",
+        "zh-cn": "多个子网现在可以作为逗号分隔列表输入. (# 147) (中文(简体) )\n增加了节点.js 22的测试.\n附属关系已经更新."
+      },
       "1.4.0": {
         "en": "Adapter requires node.js 18 and js-controller >= 5 now\nTranslations have been updated\nDependencies have been updated",
         "de": "Adapter benötigt node.js 18 und js-controller >= 5 jetzt\nÜbersetzungen wurden aktualisiert\nAbhängigkeiten wurden aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
         "uk": "виправити клавішу утримання (для значень > 250 мс)",
         "zh-cn": "修复保持键（对于值> 250ms）"
-      },
-      "1.1.4": {
-        "en": "fix key pressed multiple times",
-        "de": "fix Tasten wurden mehrfach gesendet",
-        "ru": "исправить нажатие клавиши несколько раз",
-        "pt": "tecla de correção pressionada várias vezes",
-        "nl": "fix-toets meerdere keren ingedrukt",
-        "fr": "touche de réparation enfoncée plusieurs fois",
-        "it": "tasto fisso premuto più volte",
-        "es": "arreglar la tecla presionada varias veces",
-        "pl": "Napraw klawisz wciśnięty wiele razy",
-        "uk": "виправити натискання клавіші кілька разів",
-        "zh-cn": "修复多次按下按键的问题"
       }
     },
     "titleLang": {
