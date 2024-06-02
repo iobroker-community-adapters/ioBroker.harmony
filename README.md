@@ -33,6 +33,8 @@ Control your harmony activities from ioBroker.
 Install Harmony via ioBroker Admin.
 Adapter should automatically find your Hubs.
 
+If the hub and iobroker are in different subnets broadcasts will not work (#147). The workaround is to add the hub IP as subnet IP but this only works for one hub, e.g. setting the subnet(s) to ("192.168.178.5,192.168.178.6") in admin will allow discovery for both hubs.
+
 ## Usage
 
 ### Activities
@@ -79,6 +81,11 @@ After sending the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (WolfspiritM) Multiple subnets can be entered as comma seperated list now. (#147)
+* (mcm1957) Testing for node.js 22 has been added.
+* (mcm1957) Dependencies have been updated.
+
 ### 1.4.0 (2024-04-11)
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
 * (mcm1957) Translations have been updated
