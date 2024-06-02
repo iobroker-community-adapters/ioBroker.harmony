@@ -1,0 +1,13 @@
+{
+    "Discovery-Subnet": "Sottorete di rilevamento",
+    "Discovery-Subnet:": "Sottorete di rilevamento:",
+    "Find Hub": "Trova Hub",
+    "Hub Name": "Nome dell'hub",
+    "Hub Password": "Password dell'hub",
+    "Hub User": "Utente dell'Hub",
+    "IP address": "indirizzo IP",
+    "If no IP address given, all Hubs in the network will be added.": "Se non viene fornito alcun indirizzo IP, verranno aggiunti tutti gli hub nella rete.",
+    "Logitech Harmony adapter settings": "Impostazioni dell'adattatore Logitech Harmony",
+    "Only change if you know, what you are doing.": "Cambia solo se sai cosa stai facendo.",
+    "Settings": "Impostazioni"
+}

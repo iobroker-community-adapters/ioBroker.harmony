@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "harmony",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "news": {
+      "1.4.0": {
+        "en": "Adapter requires node.js 18 and js-controller >= 5 now\nTranslations have been updated\nDependencies have been updated",
+        "de": "Adapter benötigt node.js 18 und js-controller >= 5 jetzt\nÜbersetzungen wurden aktualisiert\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер требует node.js 18 и js-controller >= 5 сейчас\nПереводы были обновлены\nЗависимость обновлена",
+        "pt": "Adapter requer node.js 18 e js-controller >= 5 agora\nAs traduções foram atualizadas\nAs dependências foram atualizadas",
+        "nl": "Adapter vereist node.js 18 en js-controller Nu 5\nVertalingen zijn bijgewerkt\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "Adaptateur nécessite node.js 18 et js-controller >= 5 maintenant\nLes traductions ont été mises à jour\nLes dépendances ont été actualisées",
+        "it": "Adattatore richiede node.js 18 e js-controller >= 5 ora\nLe traduzioni sono state aggiornate\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador requiere node.js 18 y js-controller √= 5 ahora\nSe han actualizado las traducciones\nSe han actualizado las dependencias",
+        "pl": "Adapter wymaga node.js 18 i sterownika js- > = 5 teraz\nTłumaczenia zostały zaktualizowane\nZaktualizowano zależności",
+        "uk": "Адаптер вимагає node.js 18 і js-controller >= 5 тепер\nОновлено переклади\nЗалежність було оновлено",
+        "zh-cn": "适配器需要节点.js 18和js控制器 QQ 现在5号\n翻译已更新\n依赖关系已更新"
+      },
       "1.3.0": {
         "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
         "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
@@ -26,7 +39,8 @@
         "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
         "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
         "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
-        "zh-cn": "减少发现间隔并仅记录新发现的集线器"
+        "zh-cn": "减少发现间隔并仅记录新发现的集线器",
+        "uk": "зменшити інтервал виявлення та реєструвати лише нові виявлені концентратори"
       },
       "1.2.1": {
         "en": "at least version 1.0.5 of harmonyhubws is used",
@@ -38,7 +52,8 @@
         "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
         "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
         "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
-        "zh-cn": "至少使用版本1.0.5的harmonyhubws"
+        "zh-cn": "至少使用版本1.0.5的harmonyhubws",
+        "uk": "використовується принаймні версія harmonyhubws 1.0.5"
       },
       "1.2.0": {
         "en": "compact mode compatibility added",
@@ -49,19 +64,35 @@
         "fr": "Compatibilité en mode compact ajoutée",
         "it": "aggiunta la compatibilità in modalità compatta",
         "es": "compatibilidad de modo compacto agregado",
-        "pl": "Dodano kompatybilność w trybie kompaktowym"
+        "pl": "Dodano kompatybilność w trybie kompaktowym",
+        "uk": "додано сумісність із компактним режимом",
+        "zh-cn": "添加了紧凑模式兼容性"
       },
       "1.1.5": {
         "en": "fix hold key (for values > 250ms)",
-        "de": "fix Taste gedrückt halten (für Werte > 250ms)"
+        "de": "fix Taste gedrückt halten (für Werte > 250ms)",
+        "ru": "исправить клавишу удержания (для значений > 250 мс)",
+        "pt": "corrigir chave de espera (para valores > 250ms)",
+        "nl": "fix hold-toets (voor waarden > 250 ms)",
+        "fr": "correction de la touche de maintien (pour les valeurs > 250 ms)",
+        "it": "correggere il tasto di attesa (per valori > 250 ms)",
+        "es": "Tecla de retención fija (para valores > 250 ms)",
+        "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
+        "uk": "виправити клавішу утримання (для значень > 250 мс)",
+        "zh-cn": "修复保持键（对于值> 250ms）"
       },
       "1.1.4": {
         "en": "fix key pressed multiple times",
-        "de": "fix Tasten wurden mehrfach gesendet"
-      },
-      "1.1.2": {
-        "en": "Fixed problem where multiple connections to one hub could be opened",
-        "de": "Fehler behoben, wodurch zu einem Hub mehrere Verbindungen aufgebaut werden konnten"
+        "de": "fix Tasten wurden mehrfach gesendet",
+        "ru": "исправить нажатие клавиши несколько раз",
+        "pt": "tecla de correção pressionada várias vezes",
+        "nl": "fix-toets meerdere keren ingedrukt",
+        "fr": "touche de réparation enfoncée plusieurs fois",
+        "it": "tasto fisso premuto più volte",
+        "es": "arreglar la tecla presionada varias veces",
+        "pl": "Napraw klawisz wciśnięty wiele razy",
+        "uk": "виправити натискання клавіші кілька разів",
+        "zh-cn": "修复多次按下按键的问题"
       }
     },
     "titleLang": {
@@ -95,13 +126,14 @@
       "iobroker-community-adapters <mcm57@gmx.at>"
     ],
     "keywords": [
-      "ioBroker",
       "harmony",
       "hub",
-      "logitech",
-      "home automation"
+      "logitech"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
     "main": "harmony.js",
     "icon": "harmony.png",
@@ -109,9 +141,10 @@
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "multimedia",
-    "compact": true,
+    "compact": false,
     "connectionType": "local",
     "dataSource": "poll",
     "singletonHost": true,
@@ -119,7 +152,7 @@
     "materialize": true,
     "dependencies": [
       {
-        "js-controller": ">=4.0.24"
+        "js-controller": ">=5.0.0"
       }
     ],
     "globalDependencies": [
