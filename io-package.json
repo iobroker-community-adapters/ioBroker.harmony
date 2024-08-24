@@ -68,19 +68,6 @@
         "zh-cn": "至少使用版本1.0.5的harmonyhubws",
         "uk": "використовується принаймні версія harmonyhubws 1.0.5"
       },
-      "1.2.0": {
-        "en": "compact mode compatibility added",
-        "de": "Kompaktmodus-Kompatibilität hinzugefügt",
-        "ru": "добавлена ​​совместимость с компактным режимом",
-        "pt": "compatibilidade de modo compacto adicionada",
-        "nl": "compatibiliteit met compacte modus toegevoegd",
-        "fr": "Compatibilité en mode compact ajoutée",
-        "it": "aggiunta la compatibilità in modalità compatta",
-        "es": "compatibilidad de modo compacto agregado",
-        "pl": "Dodano kompatybilność w trybie kompaktowym",
-        "uk": "додано сумісність із компактним режимом",
-        "zh-cn": "添加了紧凑模式兼容性"
-      },
       "1.1.5": {
         "en": "fix hold key (for values > 250ms)",
         "de": "fix Taste gedrückt halten (für Werte > 250ms)",
