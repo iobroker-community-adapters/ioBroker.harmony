@@ -40,6 +40,14 @@ interface HubData {
     semaphore: any;
 }
 
+// Activity status state mappings
+const ACTIVITY_STATUS_STATES: { [id: number]: string } = {
+    0: 'stopped',
+    1: 'starting',
+    2: 'running',
+    3: 'stopping',
+};
+
 export class HarmonyAdapter extends Adapter {
     declare config: HarmonyAdapterConfig;
     private hubs: { [id: string]: HubData } = {};
@@ -496,6 +504,7 @@ export class HarmonyAdapter extends Adapter {
                     read: true,
                     min: 0,
                     max: 3,
+                    states: ACTIVITY_STATUS_STATES,
                 },
                 native: {},
             });
@@ -522,12 +531,13 @@ export class HarmonyAdapter extends Adapter {
                     type: 'state',
                     common: {
                         name: `activity:${activityLabel}`,
-                        role: 'switch',
+                        role: 'level',
                         type: 'number',
                         write: true,
                         read: true,
                         min: 0,
                         max: 3,
+                        states: ACTIVITY_STATUS_STATES,
                     },
                     native: activity,
                 });
