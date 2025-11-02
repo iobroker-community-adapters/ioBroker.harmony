@@ -16,6 +16,13 @@ const semaphore_1 = require("semaphore");
 const harmonyhubws_1 = require("harmonyhubws");
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
+// Activity status state mappings
+const ACTIVITY_STATUS_STATES = {
+    0: 'stopped',
+    1: 'starting',
+    2: 'running',
+    3: 'stopping',
+};
 class HarmonyAdapter extends adapter_core_1.Adapter {
     hubs = {};
     discover = null;
@@ -387,6 +394,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
                     read: true,
                     min: 0,
                     max: 3,
+                    states: ACTIVITY_STATUS_STATES,
                 },
                 native: {},
             });
@@ -412,12 +420,13 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
                     type: 'state',
                     common: {
                         name: `activity:${activityLabel}`,
-                        role: 'switch',
+                        role: 'level',
                         type: 'number',
                         write: true,
                         read: true,
                         min: 0,
                         max: 3,
+                        states: ACTIVITY_STATUS_STATES,
                     },
                     native: activity,
                 });
