@@ -79,7 +79,7 @@ After sending, the state will be set to 0 again.
 -->
 ### **WORK IN PROGRESS**
 * (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
-* (@GermanBluefox) Rewritten with TypeScript
+* (@GermanBluefox) Adapter has been rewritten with TypeScript
 * (mcm1957) Dependencies have been updated.
 
 ### 1.5.0 (2024-06-02)
