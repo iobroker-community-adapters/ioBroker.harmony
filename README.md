@@ -78,7 +78,9 @@ After sending, the state will be set to 0 again.
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
 * (@GermanBluefox) Rewritten with TypeScript
+* (mcm1957) Dependencies have been updated.
 
 ### 1.5.0 (2024-06-02)
 * (WolfspiritM) Multiple subnets can be entered as comma separated list now. (#147)
