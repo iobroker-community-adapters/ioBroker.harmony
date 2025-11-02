@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "发现子网",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "定义一个或多个集线器 IP 地址。如果为空，则会添加网络中的所有集线器。",
+    "Devices (optional)": "设备（可选）",
+    "Discovery Interval": "发现间隔",
     "Discovery-Subnet:": "发现子网：",
+    "Discovery-Subnets": "发现子网",
     "Find Hub": "寻找中心",
     "Hub Name": "集线器名称",
     "Hub Password": "集线器密码",

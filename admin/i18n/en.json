@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "Discovery-Subnet",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.",
+    "Devices (optional)": "Devices (optional)",
+    "Discovery Interval": "Discovery Interval",
     "Discovery-Subnet:": "Discovery-Subnet:",
+    "Discovery-Subnets": "Discovery-Subnets",
     "Find Hub": "Find Hub",
     "Hub Name": "Hub Name",
     "Hub Password": "Hub Password",

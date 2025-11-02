@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "Sub-rede de descoberta",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Defina um ou mais endereços IP de Hub. Se estiver vazio, todos os Hubs da rede serão adicionados.",
+    "Devices (optional)": "Dispositivos (opcional)",
+    "Discovery Interval": "Intervalo de descoberta",
     "Discovery-Subnet:": "Sub-rede de descoberta:",
+    "Discovery-Subnets": "Descoberta de sub-redes",
     "Find Hub": "Encontrar hub",
     "Hub Name": "Nome do hub",
     "Hub Password": "Senha do hub",

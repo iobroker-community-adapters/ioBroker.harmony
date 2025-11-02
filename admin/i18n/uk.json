@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "Discovery-Subnet",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Визначте одну або кілька IP-адрес хабів. Якщо поле порожнє, будуть додані всі хаби в мережі.",
+    "Devices (optional)": "Пристрої (необов'язково)",
+    "Discovery Interval": "Інтервал виявлення",
     "Discovery-Subnet:": "Discovery-Subnet:",
+    "Discovery-Subnets": "Підмережі виявлення",
     "Find Hub": "Знайти Hub",
     "Hub Name": "Назва концентратора",
     "Hub Password": "Пароль концентратора",

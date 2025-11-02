@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "Discovery-subnet",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definieer een of meer hub-IP-adressen. Indien leeg, worden alle hubs in het netwerk toegevoegd.",
+    "Devices (optional)": "Apparaten (optioneel)",
+    "Discovery Interval": "Ontdekkingsinterval",
     "Discovery-Subnet:": "Discovery-subnet:",
+    "Discovery-Subnets": "Discovery-subnetten",
     "Find Hub": "Zoek Hub",
     "Hub Name": "Hubnaam",
     "Hub Password": "Hub-wachtwoord",

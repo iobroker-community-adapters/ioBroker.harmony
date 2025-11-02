@@ -1,6 +1,9 @@
 {
-    "Discovery-Subnet": "Podsieć wykrywania",
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Zdefiniuj jeden lub więcej adresów IP Hubów. Jeśli pole jest puste, zostaną dodane wszystkie Huby w sieci.",
+    "Devices (optional)": "Urządzenia (opcjonalnie)",
+    "Discovery Interval": "Interwał odkrywania",
     "Discovery-Subnet:": "Podsieć wykrywania:",
+    "Discovery-Subnets": "Odkrywanie-Podsieci",
     "Find Hub": "Znajdź Hub",
     "Hub Name": "Nazwa centrum",
     "Hub Password": "Hasło centrum",
