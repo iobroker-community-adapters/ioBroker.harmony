@@ -21,4 +21,7 @@ export default [
             'jsdoc/require-param': 'off',
         },
     },
+    {
+        ignores: ['**/*.js', 'build/**/*', '*.mjs'],
+    },
 ];
