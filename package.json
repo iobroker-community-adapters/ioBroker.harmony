@@ -53,6 +53,7 @@
         "test:integration": "mocha test/integration --exit",
         "test": "npm run test:js && npm run test:package",
         "build": "tsc -p tsconfig.build.json",
+        "check": "tsc --noEmit",
         "lint": "eslint .",
         "translate": "translate-adapter",
         "release": "release-script",
