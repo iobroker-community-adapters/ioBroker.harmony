@@ -117,7 +117,7 @@ export class Ping {
         this.socket.unref();
 
         // start the interval, do not unref to keep Node.js running
-        this.intervalToken = setInterval(this.emit, this.options.interval);
+        this.intervalToken = setInterval(() => this.emit(), this.options.interval);
     }
 
     /**

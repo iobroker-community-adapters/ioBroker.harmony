@@ -112,7 +112,7 @@ export class Explorer extends EventEmitter {
 
         this.responseCollector = new ResponseCollector(this.port);
         this.responseCollector.on(ResponseCollectorEvents.RESPONSE, this.handleResponse);
-        this.cleanUpIntervalToken = setInterval(this.executeCleanUp, 2000);
+        this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
 
         this.responseCollector.start();
         this.ping.start();
@@ -133,7 +133,7 @@ export class Explorer extends EventEmitter {
      * Handles the response from a hub by deserializing the response
      * and storing the information. Also emits the online and update events.
      *
-     * @param data
+     * @param data response data from the hub
      */
     handleResponse(data: string): void {
         const hub: any = deserializeResponse(data);
