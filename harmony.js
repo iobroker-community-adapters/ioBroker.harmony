@@ -419,7 +419,13 @@ function processConfig(hub, hubObj, config) {
                 write: true,
                 read: true,
                 min: 0,
-                max: 3
+                max: 3,
+                states: {
+                    0: `stopped`,
+                    1: `starting`,
+                    2: `running`,
+                    3: `stopping`
+                }
             },
             native: {}
         });
@@ -444,12 +450,18 @@ function processConfig(hub, hubObj, config) {
                 type: `state`,
                 common: {
                     name: `activity:${activityLabel}`,
-                    role: `switch`,
+                    role: `level`,
                     type: `number`,
                     write: true,
                     read: true,
                     min: 0,
-                    max: 3
+                    max: 3,
+                    states: {
+                        0: `stopped`,
+                        1: `starting`,
+                        2: `running`,
+                        3: `stopping`
+                    }
                 },
                 native: activity
             });

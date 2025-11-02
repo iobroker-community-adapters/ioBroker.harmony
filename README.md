@@ -81,6 +81,9 @@ After sending the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (copilot) **FIXED**: Changed activity states from role 'switch' to 'level' with proper state labels for better type detector compatibility
+
 ### 1.5.0 (2024-06-02)
 * (WolfspiritM) Multiple subnets can be entered as comma seperated list now. (#147)
 * (mcm1957) Testing for node.js 22 has been added.
