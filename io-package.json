@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "harmony",
-    "version": "2.0.0-alpha.0",
+    "version": "2.0.0-alpha.1",
     "news": {
-      "2.0.0-alpha.0": {
+      "2.0.0-alpha.1": {
         "en": "Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.\nAdapter has been rewritten with TypeScript\nDependencies have been updated.",
         "de": "Adapter erfordert jetzt node.js >= 20, js-controller >= 6.0.11 und admin >= 7.6.17.\nAdapter wurde mit TypeScript neu geschrieben\nAbhängigkeiten wurden aktualisiert.",
         "ru": "Адаптер требует node.js >= 20, js-контроллер >= 6.0.11 и админ >= 7.6.17 сейчас.\nАдаптер был переписан с помощью TypeScript\nЗависимости были обновлены.",
@@ -80,19 +80,6 @@
         "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
         "zh-cn": "至少使用版本1.0.5的harmonyhubws",
         "uk": "використовується принаймні версія harmonyhubws 1.0.5"
-      },
-      "1.1.5": {
-        "en": "fix hold key (for values > 250ms)",
-        "de": "fix Taste gedrückt halten (für Werte > 250ms)",
-        "ru": "исправить клавишу удержания (для значений > 250 мс)",
-        "pt": "corrigir chave de espera (para valores > 250ms)",
-        "nl": "fix hold-toets (voor waarden > 250 ms)",
-        "fr": "correction de la touche de maintien (pour les valeurs > 250 ms)",
-        "it": "correggere il tasto di attesa (per valori > 250 ms)",
-        "es": "Tecla de retención fija (para valores > 250 ms)",
-        "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
-        "uk": "виправити клавішу утримання (для значень > 250 мс)",
-        "zh-cn": "修复保持键（对于值> 250ms）"
       }
     },
     "titleLang": {

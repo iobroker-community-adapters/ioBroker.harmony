@@ -77,7 +77,7 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.0.0-alpha.1 (2025-11-02)
 * (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
 * (@GermanBluefox) Adapter has been rewritten with TypeScript
 * (mcm1957) Dependencies have been updated.
