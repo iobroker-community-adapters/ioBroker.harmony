@@ -22,6 +22,14 @@ let manualDiscoverHubs;
 let subnet;
 let discoverInterval;
 
+// Activity status state mappings
+const ACTIVITY_STATUS_STATES = {
+    0: 'stopped',
+    1: 'starting',
+    2: 'running',
+    3: 'stopping'
+};
+
 
 function startAdapter(options) {
     options = options || {};
@@ -420,12 +428,7 @@ function processConfig(hub, hubObj, config) {
                 read: true,
                 min: 0,
                 max: 3,
-                states: {
-                    0: `stopped`,
-                    1: `starting`,
-                    2: `running`,
-                    3: `stopping`
-                }
+                states: ACTIVITY_STATUS_STATES
             },
             native: {}
         });
@@ -456,12 +459,7 @@ function processConfig(hub, hubObj, config) {
                     read: true,
                     min: 0,
                     max: 3,
-                    states: {
-                        0: `stopped`,
-                        1: `starting`,
-                        2: `running`,
-                        3: `stopping`
-                    }
+                    states: ACTIVITY_STATUS_STATES
                 },
                 native: activity
             });
