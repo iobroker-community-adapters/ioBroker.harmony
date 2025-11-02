@@ -1,0 +1,41 @@
+{
+    "type": "panel",
+    "i18n": true,
+    "items": {
+        "subnet": {
+            "type": "chips",
+            "label": "Discovery-Subnets",
+            "help": "Only change if you know what you are doing. Example: 192.168.178.5,192.168.178.6",
+            "default": "255.255.255.255",
+            "sm": 12
+        },
+        "discoverInterval": {
+            "type": "number",
+            "label": "Discovery Interval",
+            "unit": "ms",
+            "default": 10,
+            "sm": 12,
+            "style": { "marginTop": 16 }
+        },
+        "_staticText": {
+            "style": { "marginTop": 16 },
+            "newLine": true,
+            "type": "staticText",
+            "sm": 12,
+            "label": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added."
+        },
+        "devices": {
+            "newLine": true,
+            "sm": 12,
+            "type": "table",
+            "label": "Devices (optional)",
+            "items": [
+                {
+                    "attr": "ip",
+                    "type": "text",
+                    "label": "IP Address"
+                }
+            ]
+        }
+    }
+}

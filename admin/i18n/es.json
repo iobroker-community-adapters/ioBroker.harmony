@@ -1,0 +1,16 @@
+{
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Defina una o más direcciones IP de concentrador. Si no se especifica, se agregarán todos los concentradores de la red.",
+    "Devices (optional)": "Dispositivos (opcional)",
+    "Discovery Interval": "Intervalo de descubrimiento",
+    "Discovery-Subnet:": "Subred de descubrimiento:",
+    "Discovery-Subnets": "Subredes de descubrimiento",
+    "Find Hub": "Buscar centro",
+    "Hub Name": "Nombre del centro",
+    "Hub Password": "Contraseña del concentrador",
+    "Hub User": "Usuario del concentrador",
+    "IP address": "dirección IP",
+    "If no IP address given, all Hubs in the network will be added.": "Si no se proporciona ninguna dirección IP, se agregarán todos los Hubs de la red.",
+    "Logitech Harmony adapter settings": "Configuración del adaptador Logitech Harmony",
+    "Only change if you know, what you are doing.": "Solo cambia si sabes lo que estás haciendo.",
+    "Settings": "Ajustes"
+}

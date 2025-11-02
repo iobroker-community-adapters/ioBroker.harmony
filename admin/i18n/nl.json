@@ -1,0 +1,16 @@
+{
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definieer een of meer hub-IP-adressen. Indien leeg, worden alle hubs in het netwerk toegevoegd.",
+    "Devices (optional)": "Apparaten (optioneel)",
+    "Discovery Interval": "Ontdekkingsinterval",
+    "Discovery-Subnet:": "Discovery-subnet:",
+    "Discovery-Subnets": "Discovery-subnetten",
+    "Find Hub": "Zoek Hub",
+    "Hub Name": "Hubnaam",
+    "Hub Password": "Hub-wachtwoord",
+    "Hub User": "Hub-gebruiker",
+    "IP address": "IP adres",
+    "If no IP address given, all Hubs in the network will be added.": "Als er geen IP-adres wordt opgegeven, worden alle Hubs in het netwerk toegevoegd.",
+    "Logitech Harmony adapter settings": "Logitech Harmony-adapterinstellingen",
+    "Only change if you know, what you are doing.": "Verander alleen als je weet wat je doet.",
+    "Settings": "Instellingen"
+}

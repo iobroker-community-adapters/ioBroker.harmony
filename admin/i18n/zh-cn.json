@@ -1,0 +1,16 @@
+{
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "定义一个或多个集线器 IP 地址。如果为空，则会添加网络中的所有集线器。",
+    "Devices (optional)": "设备（可选）",
+    "Discovery Interval": "发现间隔",
+    "Discovery-Subnet:": "发现子网：",
+    "Discovery-Subnets": "发现子网",
+    "Find Hub": "寻找中心",
+    "Hub Name": "集线器名称",
+    "Hub Password": "集线器密码",
+    "Hub User": "集线器用户",
+    "IP address": "IP地址",
+    "If no IP address given, all Hubs in the network will be added.": "如果没有给出 IP 地址，则将添加网络中的所有集线器。",
+    "Logitech Harmony adapter settings": "罗技 Harmony 适配器设置",
+    "Only change if you know, what you are doing.": "只有当你知道自己在做什么时才改变。",
+    "Settings": "设置"
+}

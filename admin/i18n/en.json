@@ -1,0 +1,16 @@
+{
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.",
+    "Devices (optional)": "Devices (optional)",
+    "Discovery Interval": "Discovery Interval",
+    "Discovery-Subnet:": "Discovery-Subnet:",
+    "Discovery-Subnets": "Discovery-Subnets",
+    "Find Hub": "Find Hub",
+    "Hub Name": "Hub Name",
+    "Hub Password": "Hub Password",
+    "Hub User": "Hub User",
+    "IP address": "IP address",
+    "If no IP address given, all Hubs in the network will be added.": "If no IP address given, all hubs in the network will be added.",
+    "Logitech Harmony adapter settings": "Logitech Harmony adapter settings",
+    "Only change if you know, what you are doing.": "Only change if you know, what you are doing.",
+    "Settings": "Settings"
+}

@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "allowSyntheticDefaultImports": true,
+        "checkJs": false,
+        "noEmit": false,
+        "outDir": "./build",
+        "sourceMap": true,
+        "sourceRoot": "./src",
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "lib": ["es2018", "DOM"],
+        "types": ["@iobroker/types"],
+    },
+    "exclude": ["**/node_modules", "**/build"],
+    "include": ["src/**/*.ts", "src/**/*.d.ts",
+        "eslint.config.mjs"
+    ],
+}

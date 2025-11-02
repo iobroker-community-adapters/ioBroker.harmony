@@ -1,0 +1,16 @@
+{
+    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definisci uno o più indirizzi IP dell'hub. Se vuoto, verranno aggiunti tutti gli hub nella rete.",
+    "Devices (optional)": "Dispositivi (facoltativo)",
+    "Discovery Interval": "Intervallo di scoperta",
+    "Discovery-Subnet:": "Sottorete di rilevamento:",
+    "Discovery-Subnets": "Scoperta-Subnet",
+    "Find Hub": "Trova Hub",
+    "Hub Name": "Nome dell'hub",
+    "Hub Password": "Password dell'hub",
+    "Hub User": "Utente dell'Hub",
+    "IP address": "indirizzo IP",
+    "If no IP address given, all Hubs in the network will be added.": "Se non viene fornito alcun indirizzo IP, verranno aggiunti tutti gli hub nella rete.",
+    "Logitech Harmony adapter settings": "Impostazioni dell'adattatore Logitech Harmony",
+    "Only change if you know, what you are doing.": "Cambia solo se sai cosa stai facendo.",
+    "Settings": "Impostazioni"
+}
