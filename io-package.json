@@ -1,159 +1,153 @@
 {
-  "common": {
-    "name": "harmony",
-    "version": "1.5.0",
-    "news": {
-      "1.5.0": {
-        "en": "Multiple subnets can be entered as comma seperated list now. (#147)\nTesting for node.js 22 has been added.\nDependencies have been updated.",
-        "de": "Mehrere Subnetze können jetzt als Komma seperated Liste eingetragen werden. (#147)\nDie Prüfung auf node.js 22 wurde hinzugefügt.\nAbhängigkeiten wurden aktualisiert.",
-        "ru": "Множественные подсети могут быть включены как comma seperated list. (#147)\nДобавлено тестирование на node.js 22.\nЗависимость была обновлена.",
-        "pt": "Múltiplas sub-redes podem ser inseridas como lista de vírgulas agora. (#147)\nTestar para node.js 22 foi adicionado.\nAs dependências foram atualizadas.",
-        "nl": "Meerdere subnetten kunnen nu worden ingevoerd als komma gescheiden lijst. (#147)\nTesten op node.js 22 is toegevoegd.\nAfhankelijkheden zijn bijgewerkt.",
-        "fr": "Plusieurs sous-réseaux peuvent être entrés en tant que liste séparée par des virgules. (#147)\nLe test pour node.js 22 a été ajouté.\nLes dépendances ont été actualisées.",
-        "it": "Molteplici sottonet possono essere inseriti come elenco seperato da virgola. (#147)\nÈ stato aggiunto il test per node.js 22.\nLe dipendenze sono state aggiornate.",
-        "es": "Múltiples subnetes pueden ser introducidos como lista separada de coma ahora. (#147)\nSe han añadido pruebas para node.js 22.\nSe han actualizado las dependencias.",
-        "pl": "Wiele podsieci można wprowadzić jako listę przecinek seperated teraz. (# 147)\nDodano test na node.js 22.\nZaktualizowano zależność.",
-        "uk": "Кілька підмереж можна ввести в список, що відповідає комі. (#147)\nДодано тестування для node.js 22.\nОновлено залежність.",
-        "zh-cn": "多个子网现在可以作为逗号分隔列表输入. (# 147) (中文(简体) )\n增加了节点.js 22的测试.\n附属关系已经更新."
-      },
-      "1.4.0": {
-        "en": "Adapter requires node.js 18 and js-controller >= 5 now\nTranslations have been updated\nDependencies have been updated",
-        "de": "Adapter benötigt node.js 18 und js-controller >= 5 jetzt\nÜbersetzungen wurden aktualisiert\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер требует node.js 18 и js-controller >= 5 сейчас\nПереводы были обновлены\nЗависимость обновлена",
-        "pt": "Adapter requer node.js 18 e js-controller >= 5 agora\nAs traduções foram atualizadas\nAs dependências foram atualizadas",
-        "nl": "Adapter vereist node.js 18 en js-controller Nu 5\nVertalingen zijn bijgewerkt\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "Adaptateur nécessite node.js 18 et js-controller >= 5 maintenant\nLes traductions ont été mises à jour\nLes dépendances ont été actualisées",
-        "it": "Adattatore richiede node.js 18 e js-controller >= 5 ora\nLe traduzioni sono state aggiornate\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador requiere node.js 18 y js-controller √= 5 ahora\nSe han actualizado las traducciones\nSe han actualizado las dependencias",
-        "pl": "Adapter wymaga node.js 18 i sterownika js- > = 5 teraz\nTłumaczenia zostały zaktualizowane\nZaktualizowano zależności",
-        "uk": "Адаптер вимагає node.js 18 і js-controller >= 5 тепер\nОновлено переклади\nЗалежність було оновлено",
-        "zh-cn": "适配器需要节点.js 18和js控制器 QQ 现在5号\n翻译已更新\n依赖关系已更新"
-      },
-      "1.3.0": {
-        "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
-        "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
-        "ru": "Адаптер требует nodejs 16 сейчас.\nАдаптер переехал в организацию iobroker-community-adapters.\nОбновлены зависимости.",
-        "pt": "Adaptador requer nodejs 16 agora.\nAdapter foi transferido para a organização iobroker-community-adapters.\nAs dependências foram atualizadas.",
-        "nl": "Adapter vereist nodejs 16 nu.\nAdapter is verplaatst naar iobroker-community-apters organisatie.\nAfhankelijkheid is geüpdateerd.",
-        "fr": "L'adaptateur nécessite 16 nodejs maintenant.\nAdaptateur a été déplacé à l'organisation iobroker-community-adapters.\nLes dépendances ont été mises à jour.",
-        "it": "L'adattatore richiede nodejs 16 ora.\nL'adattatore è stato spostato nell'organizzazione di hobroker-community-adapters.\nLe dipendenze sono state aggiornate.",
-        "es": "Adaptador requiere nodejs 16 ahora.\nEl adaptador ha sido trasladado a la organización de ibroker-community-adapters.\nSe han actualizado las dependencias.",
-        "pl": "Adapter wymaga węzła 16.\nAdapter przeniesiono do organizacji iobroker-community-adapters.\nW zależności zostały zaktualizowane.",
-        "uk": "Адаптер вимагає nodejs 16 тепер.\nПереміщено перехід на iobroker-community-adapters.\nОновлено залежність.",
-        "zh-cn": "现在需要16秒。.\n已经向加勒比采掘业者组织道歉。.\n情况已经更新。."
-      },
-      "1.2.2": {
-        "en": "reduce discover interval and only log new discovered hubs",
-        "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
-        "ru": "сократить интервал обнаружения и регистрировать только новые обнаруженные концентраторы",
-        "pt": "reduza o intervalo de descoberta e registre somente novos hubs descobertos",
-        "nl": "verminder het ontdekkingsinterval en registreer alleen nieuw ontdekte hubs",
-        "fr": "réduire l'intervalle de découverte et ne consigner que les nouveaux concentrateurs découverts",
-        "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
-        "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
-        "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
-        "zh-cn": "减少发现间隔并仅记录新发现的集线器",
-        "uk": "зменшити інтервал виявлення та реєструвати лише нові виявлені концентратори"
-      },
-      "1.2.1": {
-        "en": "at least version 1.0.5 of harmonyhubws is used",
-        "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
-        "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
-        "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
-        "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
-        "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
-        "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
-        "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
-        "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
-        "zh-cn": "至少使用版本1.0.5的harmonyhubws",
-        "uk": "використовується принаймні версія harmonyhubws 1.0.5"
-      },
-      "1.1.5": {
-        "en": "fix hold key (for values > 250ms)",
-        "de": "fix Taste gedrückt halten (für Werte > 250ms)",
-        "ru": "исправить клавишу удержания (для значений > 250 мс)",
-        "pt": "corrigir chave de espera (para valores > 250ms)",
-        "nl": "fix hold-toets (voor waarden > 250 ms)",
-        "fr": "correction de la touche de maintien (pour les valeurs > 250 ms)",
-        "it": "correggere il tasto di attesa (per valori > 250 ms)",
-        "es": "Tecla de retención fija (para valores > 250 ms)",
-        "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
-        "uk": "виправити клавішу утримання (для значень > 250 мс)",
-        "zh-cn": "修复保持键（对于值> 250ms）"
-      }
+    "common": {
+        "name": "harmony",
+        "version": "1.5.0",
+        "news": {
+            "1.5.0": {
+                "en": "Multiple subnets can be entered as comma seperated list now. (#147)\nTesting for node.js 22 has been added.\nDependencies have been updated.",
+                "de": "Mehrere Subnetze können jetzt als Komma seperated Liste eingetragen werden. (#147)\nDie Prüfung auf node.js 22 wurde hinzugefügt.\nAbhängigkeiten wurden aktualisiert.",
+                "ru": "Множественные подсети могут быть включены как comma seperated list. (#147)\nДобавлено тестирование на node.js 22.\nЗависимость была обновлена.",
+                "pt": "Múltiplas sub-redes podem ser inseridas como lista de vírgulas agora. (#147)\nTestar para node.js 22 foi adicionado.\nAs dependências foram atualizadas.",
+                "nl": "Meerdere subnetten kunnen nu worden ingevoerd als komma gescheiden lijst. (#147)\nTesten op node.js 22 is toegevoegd.\nAfhankelijkheden zijn bijgewerkt.",
+                "fr": "Plusieurs sous-réseaux peuvent être entrés en tant que liste séparée par des virgules. (#147)\nLe test pour node.js 22 a été ajouté.\nLes dépendances ont été actualisées.",
+                "it": "Molteplici sottonet possono essere inseriti come elenco seperato da virgola. (#147)\nÈ stato aggiunto il test per node.js 22.\nLe dipendenze sono state aggiornate.",
+                "es": "Múltiples subnetes pueden ser introducidos como lista separada de coma ahora. (#147)\nSe han añadido pruebas para node.js 22.\nSe han actualizado las dependencias.",
+                "pl": "Wiele podsieci można wprowadzić jako listę przecinek seperated teraz. (# 147)\nDodano test na node.js 22.\nZaktualizowano zależność.",
+                "uk": "Кілька підмереж можна ввести в список, що відповідає комі. (#147)\nДодано тестування для node.js 22.\nОновлено залежність.",
+                "zh-cn": "多个子网现在可以作为逗号分隔列表输入. (# 147) (中文(简体) )\n增加了节点.js 22的测试.\n附属关系已经更新."
+            },
+            "1.4.0": {
+                "en": "Adapter requires node.js 18 and js-controller >= 5 now\nTranslations have been updated\nDependencies have been updated",
+                "de": "Adapter benötigt node.js 18 und js-controller >= 5 jetzt\nÜbersetzungen wurden aktualisiert\nAbhängigkeiten wurden aktualisiert",
+                "ru": "Адаптер требует node.js 18 и js-controller >= 5 сейчас\nПереводы были обновлены\nЗависимость обновлена",
+                "pt": "Adapter requer node.js 18 e js-controller >= 5 agora\nAs traduções foram atualizadas\nAs dependências foram atualizadas",
+                "nl": "Adapter vereist node.js 18 en js-controller Nu 5\nVertalingen zijn bijgewerkt\nAfhankelijkheden zijn bijgewerkt",
+                "fr": "Adaptateur nécessite node.js 18 et js-controller >= 5 maintenant\nLes traductions ont été mises à jour\nLes dépendances ont été actualisées",
+                "it": "Adattatore richiede node.js 18 e js-controller >= 5 ora\nLe traduzioni sono state aggiornate\nLe dipendenze sono state aggiornate",
+                "es": "Adaptador requiere node.js 18 y js-controller √= 5 ahora\nSe han actualizado las traducciones\nSe han actualizado las dependencias",
+                "pl": "Adapter wymaga node.js 18 i sterownika js- > = 5 teraz\nTłumaczenia zostały zaktualizowane\nZaktualizowano zależności",
+                "uk": "Адаптер вимагає node.js 18 і js-controller >= 5 тепер\nОновлено переклади\nЗалежність було оновлено",
+                "zh-cn": "适配器需要节点.js 18和js控制器 QQ 现在5号\n翻译已更新\n依赖关系已更新"
+            },
+            "1.3.0": {
+                "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
+                "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
+                "ru": "Адаптер требует nodejs 16 сейчас.\nАдаптер переехал в организацию iobroker-community-adapters.\nОбновлены зависимости.",
+                "pt": "Adaptador requer nodejs 16 agora.\nAdapter foi transferido para a organização iobroker-community-adapters.\nAs dependências foram atualizadas.",
+                "nl": "Adapter vereist nodejs 16 nu.\nAdapter is verplaatst naar iobroker-community-apters organisatie.\nAfhankelijkheid is geüpdateerd.",
+                "fr": "L'adaptateur nécessite 16 nodejs maintenant.\nAdaptateur a été déplacé à l'organisation iobroker-community-adapters.\nLes dépendances ont été mises à jour.",
+                "it": "L'adattatore richiede nodejs 16 ora.\nL'adattatore è stato spostato nell'organizzazione di hobroker-community-adapters.\nLe dipendenze sono state aggiornate.",
+                "es": "Adaptador requiere nodejs 16 ahora.\nEl adaptador ha sido trasladado a la organización de ibroker-community-adapters.\nSe han actualizado las dependencias.",
+                "pl": "Adapter wymaga węzła 16.\nAdapter przeniesiono do organizacji iobroker-community-adapters.\nW zależności zostały zaktualizowane.",
+                "uk": "Адаптер вимагає nodejs 16 тепер.\nПереміщено перехід на iobroker-community-adapters.\nОновлено залежність.",
+                "zh-cn": "现在需要16秒。.\n已经向加勒比采掘业者组织道歉。.\n情况已经更新。."
+            },
+            "1.2.2": {
+                "en": "reduce discover interval and only log new discovered hubs",
+                "de": "Reduzieren des Erkennungsintervall und logge nur neu entdeckte Hubs",
+                "ru": "сократить интервал обнаружения и регистрировать только новые обнаруженные концентраторы",
+                "pt": "reduza o intervalo de descoberta e registre somente novos hubs descobertos",
+                "nl": "verminder het ontdekkingsinterval en registreer alleen nieuw ontdekte hubs",
+                "fr": "réduire l'intervalle de découverte et ne consigner que les nouveaux concentrateurs découverts",
+                "it": "ridurre l'intervallo di rilevamento e registrare solo i nuovi hub rilevati",
+                "es": "reducir el intervalo de descubrimiento y solo registrar nuevos concentradores descubiertos",
+                "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
+                "zh-cn": "减少发现间隔并仅记录新发现的集线器",
+                "uk": "зменшити інтервал виявлення та реєструвати лише нові виявлені концентратори"
+            },
+            "1.2.1": {
+                "en": "at least version 1.0.5 of harmonyhubws is used",
+                "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
+                "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
+                "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
+                "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
+                "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
+                "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
+                "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
+                "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
+                "zh-cn": "至少使用版本1.0.5的harmonyhubws",
+                "uk": "використовується принаймні версія harmonyhubws 1.0.5"
+            },
+            "1.1.5": {
+                "en": "fix hold key (for values > 250ms)",
+                "de": "fix Taste gedrückt halten (für Werte > 250ms)",
+                "ru": "исправить клавишу удержания (для значений > 250 мс)",
+                "pt": "corrigir chave de espera (para valores > 250ms)",
+                "nl": "fix hold-toets (voor waarden > 250 ms)",
+                "fr": "correction de la touche de maintien (pour les valeurs > 250 ms)",
+                "it": "correggere il tasto di attesa (per valori > 250 ms)",
+                "es": "Tecla de retención fija (para valores > 250 ms)",
+                "pl": "napraw klawisz wstrzymania (dla wartości > 250ms)",
+                "uk": "виправити клавішу утримання (для значень > 250 мс)",
+                "zh-cn": "修复保持键（对于值> 250ms）"
+            }
+        },
+        "titleLang": {
+            "en": "Logitech Harmony",
+            "de": "Logitech Harmony",
+            "ru": "Logitech Гармония",
+            "pt": "Harmonia da Logitech",
+            "nl": "Logitech Harmony",
+            "fr": "Logitech Harmony",
+            "it": "Logitech Harmony",
+            "es": "Logitech Harmony",
+            "pl": "Harmonia",
+            "uk": "Логітех Гармонія",
+            "zh-cn": "后勤技术"
+        },
+        "desc": {
+            "en": "Control your harmony activities from ioBroker",
+            "de": "Steuern Sie Ihre harmonischen Aktivitäten von ioBroker",
+            "ru": "Контролируйте деятельность гармонии от ioBroker",
+            "pt": "Controle suas atividades de harmonia do ioBroker",
+            "nl": "Controleer je harmonie activiteiten van ioBroker",
+            "fr": "Contrôlez vos activités d'harmonie de ioBroker",
+            "it": "Controlla le tue attività di armonia da ioBroker",
+            "es": "Controla tus actividades de armonía de ioBroker",
+            "pl": "Kontrola twojej harmonii z iobrokerem",
+            "uk": "Керуйте своєю гармонією з ioBroker",
+            "zh-cn": "控制你的奥布罗克人的和谐活动"
+        },
+        "authors": ["Pmant <patrickmo@gmx.de>", "iobroker-community-adapters <mcm57@gmx.at>"],
+        "nogit": true,
+        "keywords": ["harmony", "hub", "logitech"],
+        "licenseInformation": {
+            "license": "MIT",
+            "type": "free"
+        },
+        "platform": "Javascript/Node.js",
+        "main": "harmony.js",
+        "icon": "harmony.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
+        "loglevel": "info",
+        "tier": 2,
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": false,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "singletonHost": true,
+        "adminUI": {
+            "config": "json"
+        },
+        "messagebox": true,
+        "dependencies": [
+            {
+                "js-controller": ">=5.0.0"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.13"
+            }
+        ]
     },
-    "titleLang": {
-      "en": "Logitech Harmony",
-      "de": "Logitech Harmony",
-      "ru": "Logitech Гармония",
-      "pt": "Harmonia da Logitech",
-      "nl": "Logitech Harmony",
-      "fr": "Logitech Harmony",
-      "it": "Logitech Harmony",
-      "es": "Logitech Harmony",
-      "pl": "Harmonia",
-      "uk": "Логітех Гармонія",
-      "zh-cn": "后勤技术"
+    "native": {
+        "subnet": "255.255.255.255",
+        "devices": [],
+        "discoverInterval": 10000
     },
-    "desc": {
-      "en": "Control your harmony activities from ioBroker",
-      "de": "Steuern Sie Ihre harmonischen Aktivitäten von ioBroker",
-      "ru": "Контролируйте деятельность гармонии от ioBroker",
-      "pt": "Controle suas atividades de harmonia do ioBroker",
-      "nl": "Controleer je harmonie activiteiten van ioBroker",
-      "fr": "Contrôlez vos activités d'harmonie de ioBroker",
-      "it": "Controlla le tue attività di armonia da ioBroker",
-      "es": "Controla tus actividades de armonía de ioBroker",
-      "pl": "Kontrola twojej harmonii z iobrokerem",
-      "uk": "Керуйте своєю гармонією з ioBroker",
-      "zh-cn": "控制你的奥布罗克人的和谐活动"
-    },
-    "authors": [
-      "Pmant <patrickmo@gmx.de>",
-      "iobroker-community-adapters <mcm57@gmx.at>"
-    ],
-    "keywords": [
-      "harmony",
-      "hub",
-      "logitech"
-    ],
-    "licenseInformation": {
-      "license": "MIT",
-      "type": "free"
-    },
-    "platform": "Javascript/Node.js",
-    "main": "harmony.js",
-    "icon": "harmony.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.harmony/master/admin/harmony.png",
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.harmony/blob/master/README.md",
-    "loglevel": "info",
-    "tier": 2,
-    "mode": "daemon",
-    "type": "multimedia",
-    "compact": false,
-    "connectionType": "local",
-    "dataSource": "poll",
-    "singletonHost": true,
-    "messagebox": true,
-    "materialize": true,
-    "dependencies": [
-      {
-        "js-controller": ">=5.0.0"
-      }
-    ],
-    "globalDependencies": [
-      {
-        "admin": ">=5.1.13"
-      }
-    ]
-  },
-  "native": {
-    "user": "guest",
-    "password": "default",
-    "subnet": "255.255.255.255",
-    "devices": [],
-    "discoverInterval": 10000
-  },
-  "objects": []
+    "objects": []
 }

@@ -1,0 +1,42 @@
+{
+    "type": "panel",
+    "i18n": true,
+    "items": {
+        "subnet": {
+            "type": "chips",
+            "label": "Discovery-Subnet(s) (separated by comma)",
+            "help": "Only change if you know what you are doing. Example: 192.168.178.5,192.168.178.6",
+            "default": "255.255.255.255",
+            "sm": 12
+        },
+        "discoverInterval": {
+            "type": "number",
+            "label": "Discovery Interval (minutes)",
+            "help": "Interval in minutes to scan for new Harmony Hubs. Set to 0 to disable periodic scanning.",
+            "default": 10,
+            "sm": 12
+        },
+        "_staticText": {
+            "newLine": true,
+            "type": "staticText",
+            "sm": 12,
+            "label": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added."
+        },
+        "devices": {
+            "newLine": true,
+            "sm": 12,
+            "md": 2,
+            "lg": 1,
+            "type": "table",
+            "label": "Devices (optional)",
+            "items": [
+                {
+                    "attr": "ip",
+                    "type": "text",
+                    "label": "IP Address",
+                    "default": ""
+                }
+            ]
+        }
+    }
+}
