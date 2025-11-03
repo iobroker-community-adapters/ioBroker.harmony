@@ -77,6 +77,9 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added state "switch" to switch activities on/off with Alexa
+
 ### 2.0.0-alpha.1 (2025-11-02)
 * (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
 * (@GermanBluefox) Adapter has been rewritten with TypeScript
@@ -223,7 +226,7 @@ please delete all harmony.x objects once
 ### License
 The MIT License (MIT)
 
-Copyright (c) 2023-2025 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
+Copyright (c) 2023-2025 iobroker-community-adapters <iobroker-community-adapters@gmx.de>
 Copyright (c) 2015-2019 Pmant <patrickmo@gmx.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
