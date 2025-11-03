@@ -15,8 +15,14 @@
         "lib": ["es2018", "DOM"],
         "types": ["@iobroker/types"],
     },
-    "exclude": ["**/node_modules", "**/build"],
-    "include": ["src/**/*.ts", "src/**/*.d.ts",
+    "exclude": [
+        "**/node_modules", 
+        "**/build",
+        "src/**/*.test.ts"
+    ],
+    "include": [
+        "src/**/*.ts", 
+        "src/**/*.d.ts",
         "eslint.config.mjs"
     ],
 }
