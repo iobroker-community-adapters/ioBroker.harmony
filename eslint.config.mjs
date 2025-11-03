@@ -6,7 +6,7 @@ export default [
         languageOptions: {
             parserOptions: {
                 allowDefaultProject: {
-                    allow: ['*.js', '*.mjs'],
+                    allow: ['*.js', '*.mjs', 'src/harmony.test.ts'],
                 },
                 tsconfigRootDir: import.meta.dirname,
                 project: './tsconfig.json',

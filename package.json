@@ -37,6 +37,7 @@
         "@iobroker/adapter-dev": "^1.5.0",
         "@iobroker/eslint-config": "^2.2.0",
         "@iobroker/testing": "^5.1.1",
+        "@types/chai": "^5.2.3",
         "@types/debug": "^4.1.12",
         "@types/mocha": "^10.0.10",
         "rimraf": "^6.0.1",
@@ -58,7 +59,7 @@
         "test:integration": "mocha test/integration --exit",
         "test": "npm run test:ts && npm run test:package",
         "check": "tsc --noEmit",
-        "lint": "eslint .",
+        "lint": "eslint -c eslint.config.mjs",
         "translate": "translate-adapter",
         "release": "release-script",
         "update-packages": "npx -y npm-check-updates --upgrade"
