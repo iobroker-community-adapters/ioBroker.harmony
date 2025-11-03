@@ -110,7 +110,7 @@ export class Explorer extends EventEmitter {
         this.logger('start()');
 
         this.responseCollector = new ResponseCollector(this.port, this.logger);
-        this.responseCollector.on(ResponseCollectorEvents.RESPONSE, this.handleResponse);
+        this.responseCollector.on(ResponseCollectorEvents.RESPONSE, (data: string) => this.handleResponse(data));
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
 
         this.responseCollector.start();
