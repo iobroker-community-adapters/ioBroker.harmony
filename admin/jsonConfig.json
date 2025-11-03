@@ -7,28 +7,44 @@
             "label": "Discovery-Subnets",
             "help": "Only change if you know what you are doing. Example: 192.168.178.5,192.168.178.6",
             "default": "255.255.255.255",
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
         "discoverInterval": {
             "type": "number",
             "label": "Discovery Interval",
             "unit": "ms",
             "default": 10,
+            "xs": 12,
             "sm": 12,
+            "md": 10,
+            "lg": 8,
+            "xl": 4,
             "style": { "marginTop": 16 }
         },
         "_staticText": {
-            "style": { "marginTop": 16 },
             "newLine": true,
             "type": "staticText",
+            "label": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.",
+            "xs": 12,
             "sm": 12,
-            "label": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added."
+            "md": 12,
+            "lg": 12,
+            "xl": 12,
+            "style": { "marginTop": 16 }
         },
         "devices": {
             "newLine": true,
-            "sm": 12,
             "type": "table",
             "label": "Devices (optional)",
+            "xs": 12,
+            "sm": 12,
+            "md": 10,
+            "lg": 8,
+            "xl": 4,
             "items": [
                 {
                     "attr": "ip",
