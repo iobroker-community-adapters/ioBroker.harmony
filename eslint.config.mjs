@@ -22,6 +22,6 @@ export default [
         },
     },
     {
-        ignores: ['**/*.js', 'build/**/*', '*.mjs'],
+        ignores: ['**/*.js', 'build/**/*', '*.mjs', 'test/**/*'],
     },
 ];
