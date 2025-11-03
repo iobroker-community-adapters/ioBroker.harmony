@@ -105,7 +105,7 @@ After sending, the state will be set to 0 again.
 ### License
 The MIT License (MIT)
 
-Copyright (c) 2023-2025 iobroker-community-adapters <iobroker-community-adapters@gmx.de>
+Copyright (c) 2023-2025 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2015-2019 Pmant <patrickmo@gmx.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
