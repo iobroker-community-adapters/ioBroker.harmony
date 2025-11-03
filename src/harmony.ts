@@ -7,7 +7,7 @@
  */
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 
-import { Explorer, type HubData as HubDataConfig, ExplorerEvents } from './discover/lib/index';
+import { Explorer, type HubData as HubDataConfig, ExplorerEvents } from './discover/lib/index.js';
 // @ts-expect-error -- no types available
 import createSemaphore from 'semaphore';
 // @ts-expect-error -- no types available
@@ -218,7 +218,14 @@ export class HarmonyAdapter extends Adapter {
         }
 
         this.getPort(61991, port => {
-            this.discover = new Explorer(port, { address: this.subnet, port: 5224, interval: this.discoverInterval });
+            this.discover = new Explorer(port, {
+                address: this.subnet,
+                port: 5224,
+                interval: this.discoverInterval,
+                logger: (text: string) => {
+                    this.log.debug(text);
+                },
+            });
             this.discover.on(ExplorerEvents.ONLINE, async (hub: HubDataConfig): Promise<void> => {
                 // Triggered when a new hub was found
                 if (hub.friendlyName !== undefined) {

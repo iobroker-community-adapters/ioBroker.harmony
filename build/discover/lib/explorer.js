@@ -1,8 +1,9 @@
-import * as logger from 'debug';
-const debug = logger('harmonyhub:discover:explorer');
-import { EventEmitter } from 'node:events';
-import { Ping } from './ping';
-import { ResponseCollector, ResponseCollectorEvents } from './responseCollector';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Explorer = exports.ExplorerEvents = void 0;
+const node_events_1 = require("node:events");
+const ping_js_1 = require("./ping.js");
+const responseCollector_js_1 = require("./responseCollector.js");
 function deserializeResponse(response) {
     const pairs = {};
     response.split(';').forEach(rawPair => {
@@ -20,19 +21,13 @@ function deserializeResponse(response) {
 function arrayOfKnownHubs(knownHubs) {
     return Array.from(knownHubs.values());
 }
-export var ExplorerEvents;
+var ExplorerEvents;
 (function (ExplorerEvents) {
     ExplorerEvents["ONLINE"] = "online";
     ExplorerEvents["OFFLINE"] = "offline";
     ExplorerEvents["UPDATE"] = "update";
-})(ExplorerEvents || (ExplorerEvents = {}));
-export class Explorer extends EventEmitter {
-    port;
-    knownHubs = new Map();
-    ping;
-    responseCollector;
-    cleanUpIntervalToken;
-    cleanUpTimeout;
+})(ExplorerEvents || (exports.ExplorerEvents = ExplorerEvents = {}));
+class Explorer extends node_events_1.EventEmitter {
     /**
      * @param incomingPort The port on the current client to use when pinging.
      * If unspecified using any port available.
@@ -42,23 +37,25 @@ export class Explorer extends EventEmitter {
      */
     constructor(incomingPort = 5222, pingOptions, cleanUpTimeout = 5000) {
         super();
+        this.knownHubs = new Map();
         this.port = incomingPort;
-        if (pingOptions && pingOptions.interval) {
+        if (pingOptions === null || pingOptions === void 0 ? void 0 : pingOptions.interval) {
             this.cleanUpTimeout = Math.max(cleanUpTimeout, pingOptions.interval * 2 + 2500);
         }
         else {
             this.cleanUpTimeout = cleanUpTimeout;
         }
-        debug(`Explorer(${this.port})`);
-        this.ping = new Ping(this.port, pingOptions);
+        this.logger = (pingOptions === null || pingOptions === void 0 ? void 0 : pingOptions.logger) || (() => { });
+        this.logger(`Explorer(${this.port})`);
+        this.ping = new ping_js_1.Ping(this.port, pingOptions);
     }
     /**
      * Inits the listening for hub replies, and starts broadcasting.
      */
     start() {
-        debug('start()');
-        this.responseCollector = new ResponseCollector(this.port);
-        this.responseCollector.on(ResponseCollectorEvents.RESPONSE, this.handleResponse);
+        this.logger('start()');
+        this.responseCollector = new responseCollector_js_1.ResponseCollector(this.port, this.logger);
+        this.responseCollector.on(responseCollector_js_1.ResponseCollectorEvents.RESPONSE, this.handleResponse);
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
         this.responseCollector.start();
         this.ping.start();
@@ -67,7 +64,7 @@ export class Explorer extends EventEmitter {
      * Stop the emitting of broadcasts and disassamble all listeners.
      */
     stop() {
-        debug('stop()');
+        this.logger('stop()');
         this.ping.stop();
         this.responseCollector.stop();
         clearInterval(this.cleanUpIntervalToken);
@@ -81,7 +78,7 @@ export class Explorer extends EventEmitter {
     handleResponse(data) {
         const hub = deserializeResponse(data);
         if (this.knownHubs.get(hub.uuid) === undefined) {
-            debug(`discovered new hub ${hub.friendlyName}`);
+            this.logger(`discovered new hub ${hub.friendlyName}`);
             this.knownHubs.set(hub.uuid, hub);
             this.emit(ExplorerEvents.ONLINE, hub);
             this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));
@@ -95,12 +92,12 @@ export class Explorer extends EventEmitter {
      * are no longer tracked and discharged. Also emits the offline and update events.
      */
     executeCleanUp() {
-        debug('executeCleanUp()');
+        this.logger('executeCleanUp()');
         const now = Date.now();
         Array.from(this.knownHubs.values()).forEach((hub) => {
             const diff = now - hub.lastSeen;
             if (diff > this.cleanUpTimeout) {
-                debug(`hub at ${hub.ip} seen last ${diff}ms ago. clean up and tell subscribers that we lost that one.`);
+                this.logger(`hub at ${hub.ip} seen last ${diff}ms ago. clean up and tell subscribers that we lost that one.`);
                 this.knownHubs.delete(hub.uuid);
                 this.emit(ExplorerEvents.OFFLINE, hub);
                 this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));
@@ -108,4 +105,5 @@ export class Explorer extends EventEmitter {
         });
     }
 }
+exports.Explorer = Explorer;
 //# sourceMappingURL=explorer.js.map

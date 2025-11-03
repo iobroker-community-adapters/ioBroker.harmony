@@ -1,3 +1,9 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HarmonyAdapter = void 0;
 /**
  *
  *      ioBroker Logitech Harmony Adapter
@@ -5,12 +11,12 @@
  *      MIT License
  *
  */
-import { Adapter } from '@iobroker/adapter-core';
-import { Explorer, ExplorerEvents } from './discover/lib';
+const adapter_core_1 = require("@iobroker/adapter-core");
+const index_js_1 = require("./discover/lib/index.js");
 // @ts-expect-error -- no types available
-import createSemaphore from 'semaphore';
+const semaphore_1 = __importDefault(require("semaphore"));
 // @ts-expect-error -- no types available
-import HarmonyWS from 'harmonyhubws';
+const harmonyhubws_1 = __importDefault(require("harmonyhubws"));
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 // Activity status state mappings
@@ -20,12 +26,7 @@ const ACTIVITY_STATUS_STATES = {
     2: 'running',
     3: 'stopping',
 };
-export class HarmonyAdapter extends Adapter {
-    hubs = {};
-    discover = null;
-    manualDiscoverHubs = [];
-    subnet = [];
-    discoverInterval = 0;
+class HarmonyAdapter extends adapter_core_1.Adapter {
     constructor(options = {}) {
         super({
             ...options,
@@ -33,9 +34,10 @@ export class HarmonyAdapter extends Adapter {
             ready: () => this.main(),
             stateChange: (id, state) => this.onStateChange(id, state),
             unload: async (callback) => {
+                var _a;
                 try {
                     this.log.info('[END] Terminating');
-                    this.discover?.stop();
+                    (_a = this.discover) === null || _a === void 0 ? void 0 : _a.stop();
                     this.discover = null;
                     for (const hub of Object.keys(this.hubs)) {
                         await this.clientStop(hub);
@@ -47,6 +49,11 @@ export class HarmonyAdapter extends Adapter {
                 }
             },
         });
+        this.hubs = {};
+        this.discover = null;
+        this.manualDiscoverHubs = [];
+        this.subnet = [];
+        this.discoverInterval = 0;
     }
     onStateChange(id, state) {
         if (!id || !state || state.ack) {
@@ -183,8 +190,15 @@ export class HarmonyAdapter extends Adapter {
             return;
         }
         this.getPort(61991, port => {
-            this.discover = new Explorer(port, { address: this.subnet, port: 5224, interval: this.discoverInterval });
-            this.discover.on(ExplorerEvents.ONLINE, async (hub) => {
+            this.discover = new index_js_1.Explorer(port, {
+                address: this.subnet,
+                port: 5224,
+                interval: this.discoverInterval,
+                logger: (text) => {
+                    this.log.debug(text);
+                },
+            });
+            this.discover.on(index_js_1.ExplorerEvents.ONLINE, async (hub) => {
                 // Triggered when a new hub was found
                 if (hub.friendlyName !== undefined) {
                     let addHub = false;
@@ -233,7 +247,7 @@ export class HarmonyAdapter extends Adapter {
             ioChannels: {},
             ioStates: {},
             isSync: false,
-            semaphore: createSemaphore(1),
+            semaphore: (0, semaphore_1.default)(1),
             hasActivities: false,
         };
         try {
@@ -277,10 +291,11 @@ export class HarmonyAdapter extends Adapter {
         }
     }
     async clientStop(hub) {
+        var _a, _b;
         await this.setConnected(hub, false);
         await this.setBlocked(hub, false);
         if (this.hubs[hub]) {
-            this.hubs[hub]?.client?.close();
+            (_b = (_a = this.hubs[hub]) === null || _a === void 0 ? void 0 : _a.client) === null || _b === void 0 ? void 0 : _b.close();
             this.hubs[hub].client = null;
         }
     }
@@ -288,7 +303,7 @@ export class HarmonyAdapter extends Adapter {
         if (!this.hubs[hub] || this.hubs[hub].client !== null) {
             return;
         }
-        const client = new HarmonyWS(hubObj.ip);
+        const client = new harmonyhubws_1.default(hubObj.ip);
         this.hubs[hub].client = client;
         client.on('online', async () => {
             await this.setBlocked(hub, true);
@@ -579,6 +594,7 @@ export class HarmonyAdapter extends Adapter {
         }
     }
 }
+exports.HarmonyAdapter = HarmonyAdapter;
 if (require.main !== module) {
     // Export the constructor in compact mode
     module.exports = (options) => new HarmonyAdapter(options);

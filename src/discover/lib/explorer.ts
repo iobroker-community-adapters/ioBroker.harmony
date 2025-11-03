@@ -1,9 +1,6 @@
-import * as logger from 'debug';
-const debug = logger('harmonyhub:discover:explorer');
-
 import { EventEmitter } from 'node:events';
-import { Ping, type PingOptions } from './ping';
-import { ResponseCollector, ResponseCollectorEvents } from './responseCollector';
+import { Ping, type PingOptions } from './ping.js';
+import { ResponseCollector, ResponseCollectorEvents } from './responseCollector.js';
 
 function deserializeResponse(response: string): IHubData {
     const pairs: any = {};
@@ -80,6 +77,7 @@ export class Explorer extends EventEmitter {
     responseCollector: ResponseCollector;
     cleanUpIntervalToken: NodeJS.Timeout;
     cleanUpTimeout: number;
+    private readonly logger: (text: string) => void;
 
     /**
      * @param incomingPort The port on the current client to use when pinging.
@@ -93,13 +91,14 @@ export class Explorer extends EventEmitter {
 
         this.port = incomingPort;
 
-        if (pingOptions && pingOptions.interval) {
+        if (pingOptions?.interval) {
             this.cleanUpTimeout = Math.max(cleanUpTimeout, pingOptions.interval * 2 + 2500);
         } else {
             this.cleanUpTimeout = cleanUpTimeout;
         }
+        this.logger = pingOptions?.logger || (() => {});
 
-        debug(`Explorer(${this.port})`);
+        this.logger(`Explorer(${this.port})`);
 
         this.ping = new Ping(this.port, pingOptions);
     }
@@ -108,9 +107,9 @@ export class Explorer extends EventEmitter {
      * Inits the listening for hub replies, and starts broadcasting.
      */
     start(): void {
-        debug('start()');
+        this.logger('start()');
 
-        this.responseCollector = new ResponseCollector(this.port);
+        this.responseCollector = new ResponseCollector(this.port, this.logger);
         this.responseCollector.on(ResponseCollectorEvents.RESPONSE, this.handleResponse);
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
 
@@ -122,7 +121,7 @@ export class Explorer extends EventEmitter {
      * Stop the emitting of broadcasts and disassamble all listeners.
      */
     stop(): void {
-        debug('stop()');
+        this.logger('stop()');
 
         this.ping.stop();
         this.responseCollector.stop();
@@ -139,7 +138,7 @@ export class Explorer extends EventEmitter {
         const hub: any = deserializeResponse(data);
 
         if (this.knownHubs.get(hub.uuid) === undefined) {
-            debug(`discovered new hub ${hub.friendlyName}`);
+            this.logger(`discovered new hub ${hub.friendlyName}`);
             this.knownHubs.set(hub.uuid, hub);
             this.emit(ExplorerEvents.ONLINE, hub);
             this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));
@@ -153,14 +152,16 @@ export class Explorer extends EventEmitter {
      * are no longer tracked and discharged. Also emits the offline and update events.
      */
     executeCleanUp(): void {
-        debug('executeCleanUp()');
+        this.logger('executeCleanUp()');
 
         const now: number = Date.now();
 
         Array.from(this.knownHubs.values()).forEach((hub: IHubData) => {
             const diff = now - hub.lastSeen;
             if (diff > this.cleanUpTimeout) {
-                debug(`hub at ${hub.ip} seen last ${diff}ms ago. clean up and tell subscribers that we lost that one.`);
+                this.logger(
+                    `hub at ${hub.ip} seen last ${diff}ms ago. clean up and tell subscribers that we lost that one.`,
+                );
                 this.knownHubs.delete(hub.uuid);
                 this.emit(ExplorerEvents.OFFLINE, hub);
                 this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));

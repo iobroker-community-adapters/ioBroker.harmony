@@ -1,22 +1,20 @@
-import * as logger from 'debug';
-const debug = logger('harmonyhub:discover:ping');
-
-import * as dgram from 'dgram';
-import * as os from 'os';
+import * as dgram from 'node:dgram';
+import * as os from 'node:os';
 
 export class PingOptions {
     port?: number;
     address?: string | Array<string>;
     interval?: number;
+    logger?: (text: string) => void;
 }
 
-function generateBroadcastIp(): Array<string> {
+function generateBroadcastIp(logger: (text: string) => void): Array<string> {
     if (!/^win/i.test(process.platform)) {
-        debug('We are running non windows so just broadcast');
+        logger('We are running non windows so just broadcast');
         return ['255.255.255.255'];
     }
 
-    debug('We are running on windows so we try to find the local ip address to fix a windows broadcast protocol bug');
+    logger('We are running on windows so we try to find the local ip address to fix a windows broadcast protocol bug');
     const ifaces = os.networkInterfaces();
     const possibleIps: string[] = [];
 
@@ -32,13 +30,11 @@ function generateBroadcastIp(): Array<string> {
     });
 
     return possibleIps
-        .filter(ip => {
-            return ip.indexOf('192.') === 0;
-        })
+        .filter(ip => ip.indexOf('192.') === 0)
         .map(ip => {
             const nums = ip.split('.');
             nums[3] = '255';
-            debug(`Fallback to local ip address -> ${nums.join('.')}`);
+            logger(`Fallback to local ip address -> ${nums.join('.')}`);
             return nums.join('.');
         });
 }
@@ -52,11 +48,13 @@ export class Ping {
     private intervalToken: NodeJS.Timeout;
 
     private readonly options: PingOptions;
+    private readonly logger: (text: string) => void;
 
     constructor(portToAnnounce: number, options?: PingOptions) {
         // try to find an ip address that is in a local (home) network
-        options = options || {};
-        options.address = options.address || generateBroadcastIp();
+        options ||= {};
+        this.logger = options.logger || (() => {});
+        options.address ||= generateBroadcastIp(this.logger);
 
         if (typeof options.address === 'string') {
             options.address = [options.address];
@@ -72,7 +70,7 @@ export class Ping {
             ...options,
         };
 
-        debug(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
+        this.logger(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
 
         this.portToAnnounce = portToAnnounce;
         // init the welcome messages
@@ -84,13 +82,13 @@ export class Ping {
      * emit a broadcast into the network.
      */
     emit(): void {
-        debug('emit()');
+        this.logger('emit()');
 
         // emit to all the addresses
         (this.options.address as Array<string>).forEach(address =>
             this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
                 if (err) {
-                    debug(`error emitting ping. stopping now :( (${err})`);
+                    this.logger(`error emitting ping. stopping now :( (${err})`);
                     this.stop();
                 }
             }),
@@ -101,10 +99,10 @@ export class Ping {
      * Start an interval emitting broadcasts into the network.
      */
     start(): void {
-        debug('start()');
+        this.logger('start()');
 
         if (this.socket) {
-            debug('Ping is already running, call stop() first');
+            this.logger('Ping is already running, call stop() first');
             return;
         }
         // setup socket to broadcast messages from the incoming ping
@@ -124,10 +122,10 @@ export class Ping {
      * Stop broadcasting into the network.
      */
     stop(): void {
-        debug('stop()');
+        this.logger('stop()');
 
         if (this.intervalToken === undefined) {
-            debug('ping has already been stopped, call start() first');
+            this.logger('ping has already been stopped, call start() first');
             return;
         }
 
@@ -144,7 +142,7 @@ export class Ping {
      * Return an indicator it this ping is currently running.
      */
     isRunning(): boolean {
-        debug('isRunning()');
+        this.logger('isRunning()');
         return this.intervalToken !== undefined;
     }
 }

@@ -1,18 +1,50 @@
-import * as logger from 'debug';
-const debug = logger('harmonyhub:discover:ping');
-import * as dgram from 'dgram';
-import * as os from 'os';
-export class PingOptions {
-    port;
-    address;
-    interval;
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Ping = exports.PingOptions = void 0;
+const dgram = __importStar(require("node:dgram"));
+const os = __importStar(require("node:os"));
+class PingOptions {
 }
-function generateBroadcastIp() {
+exports.PingOptions = PingOptions;
+function generateBroadcastIp(logger) {
     if (!/^win/i.test(process.platform)) {
-        debug('We are running non windows so just broadcast');
+        logger('We are running non windows so just broadcast');
         return ['255.255.255.255'];
     }
-    debug('We are running on windows so we try to find the local ip address to fix a windows broadcast protocol bug');
+    logger('We are running on windows so we try to find the local ip address to fix a windows broadcast protocol bug');
     const ifaces = os.networkInterfaces();
     const possibleIps = [];
     Object.keys(ifaces).forEach(ifname => {
@@ -25,27 +57,20 @@ function generateBroadcastIp() {
         });
     });
     return possibleIps
-        .filter(ip => {
-        return ip.indexOf('192.') === 0;
-    })
+        .filter(ip => ip.indexOf('192.') === 0)
         .map(ip => {
         const nums = ip.split('.');
         nums[3] = '255';
-        debug(`Fallback to local ip address -> ${nums.join('.')}`);
+        logger(`Fallback to local ip address -> ${nums.join('.')}`);
         return nums.join('.');
     });
 }
-export class Ping {
-    socket;
-    portToAnnounce;
-    message;
-    messageBuffer;
-    intervalToken;
-    options;
+class Ping {
     constructor(portToAnnounce, options) {
         // try to find an ip address that is in a local (home) network
-        options = options || {};
-        options.address = options.address || generateBroadcastIp();
+        options || (options = {});
+        this.logger = options.logger || (() => { });
+        options.address || (options.address = generateBroadcastIp(this.logger));
         if (typeof options.address === 'string') {
             options.address = [options.address];
         }
@@ -58,7 +83,7 @@ export class Ping {
             },
             ...options,
         };
-        debug(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
+        this.logger(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
         this.portToAnnounce = portToAnnounce;
         // init the welcome messages
         this.message = `_logitech-reverse-bonjour._tcp.local.\n${portToAnnounce}`;
@@ -68,11 +93,11 @@ export class Ping {
      * emit a broadcast into the network.
      */
     emit() {
-        debug('emit()');
+        this.logger('emit()');
         // emit to all the addresses
         this.options.address.forEach(address => this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
             if (err) {
-                debug(`error emitting ping. stopping now :( (${err})`);
+                this.logger(`error emitting ping. stopping now :( (${err})`);
                 this.stop();
             }
         }));
@@ -81,9 +106,9 @@ export class Ping {
      * Start an interval emitting broadcasts into the network.
      */
     start() {
-        debug('start()');
+        this.logger('start()');
         if (this.socket) {
-            debug('Ping is already running, call stop() first');
+            this.logger('Ping is already running, call stop() first');
             return;
         }
         // setup socket to broadcast messages from the incoming ping
@@ -101,9 +126,9 @@ export class Ping {
      * Stop broadcasting into the network.
      */
     stop() {
-        debug('stop()');
+        this.logger('stop()');
         if (this.intervalToken === undefined) {
-            debug('ping has already been stopped, call start() first');
+            this.logger('ping has already been stopped, call start() first');
             return;
         }
         // stop the message emit
@@ -117,8 +142,9 @@ export class Ping {
      * Return an indicator it this ping is currently running.
      */
     isRunning() {
-        debug('isRunning()');
+        this.logger('isRunning()');
         return this.intervalToken !== undefined;
     }
 }
+exports.Ping = Ping;
 //# sourceMappingURL=ping.js.map
