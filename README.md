@@ -79,6 +79,7 @@ After sending, the state will be set to 0 again.
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Rewritten with TypeScript
+* (@GermanBluefox) Added state "switch" to switch activities on/off with Alexa
 
 ### 1.5.0 (2024-06-02)
 * (WolfspiritM) Multiple subnets can be entered as comma separated list now. (#147)
