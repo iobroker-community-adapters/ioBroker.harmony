@@ -3,7 +3,7 @@
     "i18n": true,
     "items": {
         "subnet": {
-            "type": "chips",
+            "type": "text",
             "label": "Discovery-Subnets",
             "help": "Only change if you know what you are doing. Example: 192.168.178.5,192.168.178.6",
             "default": "255.255.255.255",
