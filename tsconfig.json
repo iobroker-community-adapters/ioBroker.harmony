@@ -13,15 +13,15 @@
         "noImplicitAny": true,
         "skipLibCheck": true,
         "lib": ["es2018", "DOM"],
-        "types": ["@iobroker/types"],
+        "types": ["@iobroker/types" ,"node", "mocha", "chai"],
     },
     "exclude": [
-        "**/node_modules", 
+        "**/node_modules",
         "**/build",
         "src/**/*.test.ts"
     ],
     "include": [
-        "src/**/*.ts", 
+        "src/**/*.ts",
         "src/**/*.d.ts",
         "eslint.config.mjs"
     ],

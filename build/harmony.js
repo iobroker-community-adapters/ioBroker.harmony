@@ -75,8 +75,8 @@ export class HarmonyAdapter extends Adapter {
     }
     async processStateChange(hub, id, state) {
         const tmp = id.split('.');
-        let channel = ``;
-        let name = ``;
+        let channel = '';
+        let name = '';
         if (tmp.length === 5) {
             name = tmp.pop();
             channel = tmp.pop();
@@ -95,6 +95,7 @@ export class HarmonyAdapter extends Adapter {
                         this.log.warn('change activities, not currentActivity');
                         break;
                     default:
+                        name = name.replace(/-control$/, '');
                         await this.switchActivity(hub, name, state.val);
                         break;
                 }
@@ -147,6 +148,9 @@ export class HarmonyAdapter extends Adapter {
         if (!this.hubs[hub].client) {
             this.log.warn('[ACTIVITY] Error changing activity, client offline');
             return;
+        }
+        if (typeof value === 'boolean') {
+            value = value ? 1 : 0;
         }
         // get current Activity
         value = parseInt(value, 10);
@@ -428,6 +432,17 @@ export class HarmonyAdapter extends Adapter {
                     native: activity,
                 });
             }
+            await this.setObjectNotExistsAsync(`${activityChannelName}-control`, {
+                type: 'state',
+                common: {
+                    name: `Control for activity: ${activityLabel}`,
+                    role: 'switch',
+                    type: 'boolean',
+                    write: true,
+                    read: true,
+                },
+                native: activity,
+            });
             delete this.hubs[hub].ioStates[activityLabel];
         }
         /* create devices */
@@ -547,6 +562,7 @@ export class HarmonyAdapter extends Adapter {
         }
         const channelName = fixId(`${hub}.activities.${this.hubs[hub].activities[id]}`);
         await this.setStateAsync(channelName, { val: value, ack: true });
+        await this.setStateAsync(`${channelName}-control`, { val: !!value, ack: true });
     }
     async setBlocked(hub, bool) {
         if (this.hubs[hub] && this.hubs[hub].statesExist) {
