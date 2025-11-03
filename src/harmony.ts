@@ -7,7 +7,7 @@
  */
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 
-import { Explorer, type HubData as HubDataConfig, ExplorerEvents } from './discover/lib';
+import { Explorer, type HubData as HubDataConfig, ExplorerEvents } from './discover/lib/index';
 // @ts-expect-error -- no types available
 import createSemaphore from 'semaphore';
 // @ts-expect-error -- no types available
