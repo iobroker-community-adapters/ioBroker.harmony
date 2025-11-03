@@ -38,8 +38,8 @@
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/testing": "^5.1.1",
     "@types/debug": "^4.1.12",
-    "chai": "^4.5.0",
-    "mocha": "^11.7.4",
+    "rimraf": "^6.0.1",
+    "source-map-support": "^0.5.21",
     "typescript": "~5.9.3"
   },
   "main": "build/harmony.js",
@@ -49,11 +49,13 @@
     "io-package.json"
   ],
   "scripts": {
-    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+    "prebuild": "rimraf build",
+    "build": "tsc -p tsconfig.build.json ",
+    "watch": "tsc -p tsconfig.build.json --watch ",
+    "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
     "test:package": "mocha test/package --exit",
     "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
-    "build": "tsc -p tsconfig.build.json",
+    "test": "npm run test:ts && npm run test:package",
     "check": "tsc --noEmit",
     "lint": "eslint .",
     "translate": "translate-adapter",
