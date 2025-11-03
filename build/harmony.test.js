@@ -25,5 +25,5 @@ describe('module to test => function to test', () => {
 });
 
 // ... more test suites => describe
-*/ 
+*/
 //# sourceMappingURL=harmony.test.js.map
