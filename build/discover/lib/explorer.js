@@ -55,7 +55,7 @@ class Explorer extends node_events_1.EventEmitter {
     start() {
         this.logger('start()');
         this.responseCollector = new responseCollector_js_1.ResponseCollector(this.port, this.logger);
-        this.responseCollector.on(responseCollector_js_1.ResponseCollectorEvents.RESPONSE, this.handleResponse);
+        this.responseCollector.on(responseCollector_js_1.ResponseCollectorEvents.RESPONSE, (data) => this.handleResponse(data));
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
         this.responseCollector.start();
         this.ping.start();
