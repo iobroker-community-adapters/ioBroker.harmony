@@ -1,16 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ping = exports.PingOptions = void 0;
-const logger = require("debug");
+import * as logger from 'debug';
 const debug = logger('harmonyhub:discover:ping');
-const dgram = require("dgram");
-const os = require("os");
-class PingOptions {
+import * as dgram from 'dgram';
+import * as os from 'os';
+export class PingOptions {
     port;
     address;
     interval;
 }
-exports.PingOptions = PingOptions;
 function generateBroadcastIp() {
     if (!/^win/i.test(process.platform)) {
         debug('We are running non windows so just broadcast');
@@ -39,7 +35,7 @@ function generateBroadcastIp() {
         return nums.join('.');
     });
 }
-class Ping {
+export class Ping {
     socket;
     portToAnnounce;
     message;
@@ -125,5 +121,4 @@ class Ping {
         return this.intervalToken !== undefined;
     }
 }
-exports.Ping = Ping;
 //# sourceMappingURL=ping.js.map

@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HarmonyAdapter = void 0;
 /**
  *
  *      ioBroker Logitech Harmony Adapter
@@ -8,12 +5,12 @@ exports.HarmonyAdapter = void 0;
  *      MIT License
  *
  */
-const adapter_core_1 = require("@iobroker/adapter-core");
-const lib_1 = require("./discover/lib");
+import { Adapter } from '@iobroker/adapter-core';
+import { Explorer, ExplorerEvents } from './discover/lib';
 // @ts-expect-error -- no types available
-const semaphore_1 = require("semaphore");
+import createSemaphore from 'semaphore';
 // @ts-expect-error -- no types available
-const harmonyhubws_1 = require("harmonyhubws");
+import HarmonyWS from 'harmonyhubws';
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 // Activity status state mappings
@@ -23,7 +20,7 @@ const ACTIVITY_STATUS_STATES = {
     2: 'running',
     3: 'stopping',
 };
-class HarmonyAdapter extends adapter_core_1.Adapter {
+export class HarmonyAdapter extends Adapter {
     hubs = {};
     discover = null;
     manualDiscoverHubs = [];
@@ -182,8 +179,8 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             return;
         }
         this.getPort(61991, port => {
-            this.discover = new lib_1.Explorer(port, { address: this.subnet, port: 5224, interval: this.discoverInterval });
-            this.discover.on(lib_1.ExplorerEvents.ONLINE, async (hub) => {
+            this.discover = new Explorer(port, { address: this.subnet, port: 5224, interval: this.discoverInterval });
+            this.discover.on(ExplorerEvents.ONLINE, async (hub) => {
                 // Triggered when a new hub was found
                 if (hub.friendlyName !== undefined) {
                     let addHub = false;
@@ -232,7 +229,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             ioChannels: {},
             ioStates: {},
             isSync: false,
-            semaphore: (0, semaphore_1.default)(1),
+            semaphore: createSemaphore(1),
             hasActivities: false,
         };
         try {
@@ -287,7 +284,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         if (!this.hubs[hub] || this.hubs[hub].client !== null) {
             return;
         }
-        const client = new harmonyhubws_1.default(hubObj.ip);
+        const client = new HarmonyWS(hubObj.ip);
         this.hubs[hub].client = client;
         client.on('online', async () => {
             await this.setBlocked(hub, true);
@@ -566,7 +563,6 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         }
     }
 }
-exports.HarmonyAdapter = HarmonyAdapter;
 if (require.main !== module) {
     // Export the constructor in compact mode
     module.exports = (options) => new HarmonyAdapter(options);

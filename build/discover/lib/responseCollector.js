@@ -1,15 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResponseCollector = exports.ResponseCollectorEvents = void 0;
-const logger = require("debug");
+import * as logger from 'debug';
 const debug = logger('harmonyhub:discover:responsecollector');
-const node_events_1 = require("node:events");
-const net = require("node:net");
-var ResponseCollectorEvents;
+import { EventEmitter } from 'node:events';
+import * as net from 'node:net';
+export var ResponseCollectorEvents;
 (function (ResponseCollectorEvents) {
     ResponseCollectorEvents["RESPONSE"] = "response";
-})(ResponseCollectorEvents || (exports.ResponseCollectorEvents = ResponseCollectorEvents = {}));
-class ResponseCollector extends node_events_1.EventEmitter {
+})(ResponseCollectorEvents || (ResponseCollectorEvents = {}));
+export class ResponseCollector extends EventEmitter {
     port;
     server;
     /**
@@ -55,5 +52,4 @@ class ResponseCollector extends node_events_1.EventEmitter {
         }
     }
 }
-exports.ResponseCollector = ResponseCollector;
 //# sourceMappingURL=responseCollector.js.map

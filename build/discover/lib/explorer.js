@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Explorer = exports.ExplorerEvents = void 0;
-const logger = require("debug");
+import * as logger from 'debug';
 const debug = logger('harmonyhub:discover:explorer');
-const node_events_1 = require("node:events");
-const ping_1 = require("./ping");
-const responseCollector_1 = require("./responseCollector");
+import { EventEmitter } from 'node:events';
+import { Ping } from './ping';
+import { ResponseCollector, ResponseCollectorEvents } from './responseCollector';
 function deserializeResponse(response) {
     const pairs = {};
     response.split(';').forEach(rawPair => {
@@ -23,13 +20,13 @@ function deserializeResponse(response) {
 function arrayOfKnownHubs(knownHubs) {
     return Array.from(knownHubs.values());
 }
-var ExplorerEvents;
+export var ExplorerEvents;
 (function (ExplorerEvents) {
     ExplorerEvents["ONLINE"] = "online";
     ExplorerEvents["OFFLINE"] = "offline";
     ExplorerEvents["UPDATE"] = "update";
-})(ExplorerEvents || (exports.ExplorerEvents = ExplorerEvents = {}));
-class Explorer extends node_events_1.EventEmitter {
+})(ExplorerEvents || (ExplorerEvents = {}));
+export class Explorer extends EventEmitter {
     port;
     knownHubs = new Map();
     ping;
@@ -53,15 +50,15 @@ class Explorer extends node_events_1.EventEmitter {
             this.cleanUpTimeout = cleanUpTimeout;
         }
         debug(`Explorer(${this.port})`);
-        this.ping = new ping_1.Ping(this.port, pingOptions);
+        this.ping = new Ping(this.port, pingOptions);
     }
     /**
      * Inits the listening for hub replies, and starts broadcasting.
      */
     start() {
         debug('start()');
-        this.responseCollector = new responseCollector_1.ResponseCollector(this.port);
-        this.responseCollector.on(responseCollector_1.ResponseCollectorEvents.RESPONSE, this.handleResponse);
+        this.responseCollector = new ResponseCollector(this.port);
+        this.responseCollector.on(ResponseCollectorEvents.RESPONSE, this.handleResponse);
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
         this.responseCollector.start();
         this.ping.start();
@@ -111,5 +108,4 @@ class Explorer extends node_events_1.EventEmitter {
         });
     }
 }
-exports.Explorer = Explorer;
 //# sourceMappingURL=explorer.js.map
