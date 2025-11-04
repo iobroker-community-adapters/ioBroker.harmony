@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "harmony",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "news": {
+      "2.0.3": {
+        "en": "Corrected the table in the configuration",
+        "de": "Die Tabelle in der Konfiguration korrigiert",
+        "ru": "Исправленная таблица в конфигурации",
+        "pt": "Corrigido a tabela na configuração",
+        "nl": "De tabel in de configuratie gecorrigeerd",
+        "fr": "Correction de la table dans la configuration",
+        "it": "Corretto la tabella nella configurazione",
+        "es": "Corregido la tabla en la configuración",
+        "pl": "Poprawiono tabelę w konfiguracji",
+        "uk": "Виправлено таблицю в конфігурації",
+        "zh-cn": "修改配置中的表格"
+      },
       "2.0.2": {
         "en": "Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.\nAdded state \"switch\" to switch activities on/off with Alexa\nAdapter has been rewritten with TypeScript\nDependencies have been updated.",
         "de": "Adapter erfordert jetzt node.js >= 20, js-controller >= 6.0.11 und admin >= 7.6.17.\nZustand \"Schalter\" hinzugefügt, um Aktivitäten einzuschalten/aus mit Alexa\nAdapter wurde mit TypeScript neu geschrieben\nAbhängigkeiten wurden aktualisiert.",
@@ -97,15 +110,15 @@
     },
     "desc": {
       "en": "Control your harmony activities from ioBroker",
-      "de": "Steuern Sie Ihre harmonischen Aktivitäten von ioBroker",
-      "ru": "Контролируйте деятельность гармонии от ioBroker",
-      "pt": "Controle suas atividades de harmonia do ioBroker",
+      "de": "Harmony über ioBroker steuern",
+      "ru": "Контролируйте harmony через ioBroker",
+      "pt": "Controle suas atividades de harmony do ioBroker",
       "nl": "Controleer je harmonie activiteiten van ioBroker",
-      "fr": "Contrôlez vos activités d'harmonie de ioBroker",
-      "it": "Controlla le tue attività di armonia da ioBroker",
-      "es": "Controla tus actividades de armonía de ioBroker",
-      "pl": "Kontrola twojej harmonii z iobrokerem",
-      "uk": "Керуйте своєю гармонією з ioBroker",
+      "fr": "Contrôlez vos activités d'harmony de ioBroker",
+      "it": "Controlla le tue attività di harmony da ioBroker",
+      "es": "Controla tus actividades de harmony de ioBroker",
+      "pl": "Kontrola twojej harmony z iobrokerem",
+      "uk": "Керуйте своєю harmony з ioBroker",
       "zh-cn": "控制你的奥布罗克人的和谐活动"
     },
     "authors": [

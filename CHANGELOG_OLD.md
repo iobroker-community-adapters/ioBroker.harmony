@@ -1,4 +1,7 @@
 # Older Changelogs
+## 1.2.2 (2019-03-11)
+* (foxriver76) reduce discover interval and only log newly discovered hubs
+
 ## 1.2.1 (2019-02-21)
 * (foxriver76) use at least 1.0.5 of harmonyhubws
 

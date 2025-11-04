@@ -77,7 +77,7 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.0.3 (2025-11-04)
 * (@GermanBluefox) Corrected the table in the configuration
 
 ### 2.0.2 (2025-11-03)
@@ -100,9 +100,6 @@ After sending, the state will be set to 0 again.
 * (mcm1957) Adapter requires nodejs 16 now.
 * (mcm1957) Adapter has been moved to iobroker-community-adapters organisation.
 * (mcm1957) Dependencies have been updated.
-
-### 1.2.2 (2019-03-11)
-* (foxriver76) reduce discover interval and only log newly discovered hubs
 
 ### License
 The MIT License (MIT)
