@@ -77,6 +77,9 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected the table in the configuration
+
 ### 2.0.2 (2025-11-03)
 * (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
 * (@GermanBluefox) Added state "switch" to switch activities on/off with Alexa

@@ -40,11 +40,8 @@
             "newLine": true,
             "type": "table",
             "label": "Devices (optional)",
+            "useCardFor": ["xs"],
             "xs": 12,
-            "sm": 12,
-            "md": 10,
-            "lg": 8,
-            "xl": 4,
             "items": [
                 {
                     "attr": "ip",
