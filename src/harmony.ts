@@ -521,13 +521,15 @@ export class HarmonyAdapter extends Adapter {
             });
         }
 
+        let actIdx = 0;
         for (const activity of config.activity) {
             const activityLabel = fixId(activity.label).replace('.', '_');
             this.hubs[hub].activities[activity.id] = activityLabel;
             this.hubs[hub].activitiesReverse[activityLabel] = activity.id;
-            if (activity.id === '-1') {
+            if (actIdx >= config.activity.length) {
                 return;
             }
+            actIdx++
             // create activities
             const activityChannelName = `${channelName}.${activityLabel}`;
             // create channel for activity
