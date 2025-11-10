@@ -529,7 +529,7 @@ export class HarmonyAdapter extends Adapter {
             if (actIdx >= config.activity.length) {
                 return;
             }
-            actIdx++
+            actIdx++;
             // create activities
             const activityChannelName = `${channelName}.${activityLabel}`;
             // create channel for activity
