@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "harmony",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "news": {
+      "2.0.4": {
+        "en": "Trying to fix the activities",
+        "de": "Versuchen, die Aktivitäten zu beheben",
+        "ru": "Пытаясь исправить деятельность",
+        "pt": "Tentando corrigir as atividades",
+        "nl": "Proberen de activiteiten te repareren",
+        "fr": "Essayer de réparer les activités",
+        "it": "Cercare di risolvere le attività",
+        "es": "Tratando de arreglar las actividades",
+        "pl": "Próba naprawy działalności",
+        "uk": "Спробувати виправити діяльність",
+        "zh-cn": "试图修复活动"
+      },
       "2.0.3": {
         "en": "Corrected the table in the configuration",
         "de": "Die Tabelle in der Konfiguration korrigiert",
@@ -80,19 +93,6 @@
         "pl": "zmniejsz interwał wykrywania i rejestruj tylko odkryte nowe koncentratory",
         "zh-cn": "减少发现间隔并仅记录新发现的集线器",
         "uk": "зменшити інтервал виявлення та реєструвати лише нові виявлені концентратори"
-      },
-      "1.2.1": {
-        "en": "at least version 1.0.5 of harmonyhubws is used",
-        "de": "Es wird mindestens Version 1.0.5 von harmonyhubws verwendet",
-        "ru": "по крайней мере версия 1.0.5 из harmonyhubws используется",
-        "pt": "pelo menos a versão 1.0.5 do harmonyhubws é usada",
-        "nl": "er wordt tenminste versie 1.0.5 van harmonyhubws gebruikt",
-        "fr": "au moins la version 1.0.5 de harmonyhubws est utilisée",
-        "it": "viene utilizzata almeno la versione 1.0.5 di harmonyhubws",
-        "es": "Se usa al menos la versión 1.0.5 de harmonyhubws.",
-        "pl": "używa się przynajmniej wersji 1.0.5 z harmonyhubws",
-        "zh-cn": "至少使用版本1.0.5的harmonyhubws",
-        "uk": "використовується принаймні версія harmonyhubws 1.0.5"
       }
     },
     "titleLang": {

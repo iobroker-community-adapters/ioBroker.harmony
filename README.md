@@ -77,7 +77,7 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.0.4 (2026-01-29)
 * (@brkai) Trying to fix the activities
 
 ### 2.0.3 (2025-11-04)
@@ -98,11 +98,6 @@ After sending, the state will be set to 0 again.
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
 * (mcm1957) Translations have been updated
 * (mcm1957) Dependencies have been updated
-
-### 1.3.0 (2023-11-08)
-* (mcm1957) Adapter requires nodejs 16 now.
-* (mcm1957) Adapter has been moved to iobroker-community-adapters organisation.
-* (mcm1957) Dependencies have been updated.
 
 ### License
 The MIT License (MIT)
