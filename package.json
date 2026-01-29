@@ -1,69 +1,69 @@
 {
-  "name": "iobroker.harmony",
-  "version": "2.0.3",
-  "description": "Control your harmony activities from ioBroker.",
-  "author": "Pmant <patrickmo@gmx.de>",
-  "contributors": [
-    "Pmant <patrickmo@gmx.de>",
-    "iobroker-community-adapters <mcm57@gmx.at>"
-  ],
-  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.harmony",
-  "license": "MIT",
-  "keywords": [
-    "ioBroker",
-    "harmony",
-    "hub",
-    "logitech",
-    "home automation"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/iobroker-community-adapters/ioBroker.harmony.git"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
-    "harmonyhubws": "^1.0.6",
-    "semaphore": "~1.1.0"
-  },
-  "devDependencies": {
-    "@alcalzone/release-script": "^5.0.0",
-    "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
-    "@alcalzone/release-script-plugin-license": "^4.0.0",
-    "@alcalzone/release-script-plugin-manual-review": "^4.0.0",
-    "@iobroker/adapter-dev": "^1.5.0",
-    "@iobroker/eslint-config": "^2.2.0",
-    "@iobroker/testing": "^5.2.2",
-    "@types/debug": "^4.1.12",
-    "rimraf": "^6.1.2",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2",
-    "typescript": "~5.9.3"
-  },
-  "main": "build/harmony.js",
-  "files": [
-    "admin/",
-    "build/",
-    "io-package.json"
-  ],
-  "scripts": {
-    "prebuild": "rimraf build",
-    "build": "tsc -p tsconfig.build.json ",
-    "watch": "tsc -p tsconfig.build.json --watch ",
-    "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
-    "test:package": "mocha test/package --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:ts && npm run test:package",
-    "check": "tsc --noEmit",
-    "lint": "eslint -c eslint.config.mjs",
-    "translate": "translate-adapter",
-    "release": "release-script",
-    "update-packages": "npx -y npm-check-updates --upgrade"
-  },
-  "bugs": {
-    "url": "https://github.com/iobroker-community-adapters/issues"
-  },
-  "readmeFilename": "README.md"
+    "name": "iobroker.harmony",
+    "version": "2.0.3",
+    "description": "Control your harmony activities from ioBroker.",
+    "author": "Pmant <patrickmo@gmx.de>",
+    "contributors": [
+        "Pmant <patrickmo@gmx.de>",
+        "iobroker-community-adapters <mcm57@gmx.at>"
+    ],
+    "homepage": "https://github.com/iobroker-community-adapters/ioBroker.harmony",
+    "license": "MIT",
+    "keywords": [
+        "ioBroker",
+        "harmony",
+        "hub",
+        "logitech",
+        "home automation"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iobroker-community-adapters/ioBroker.harmony.git"
+    },
+    "engines": {
+        "node": ">=20"
+    },
+    "dependencies": {
+        "@iobroker/adapter-core": "^3.3.2",
+        "harmonyhubws": "^1.0.6",
+        "semaphore": "~1.1.0"
+    },
+    "devDependencies": {
+        "@alcalzone/release-script": "^5.0.0",
+        "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
+        "@alcalzone/release-script-plugin-license": "^4.0.0",
+        "@alcalzone/release-script-plugin-manual-review": "^4.0.0",
+        "@iobroker/adapter-dev": "^1.5.0",
+        "@iobroker/eslint-config": "^2.2.0",
+        "@iobroker/testing": "^5.2.2",
+        "@types/debug": "^4.1.12",
+        "rimraf": "^6.1.2",
+        "source-map-support": "^0.5.21",
+        "ts-node": "^10.9.2",
+        "typescript": "~5.9.3"
+    },
+    "main": "build/harmony.js",
+    "files": [
+        "admin/",
+        "build/",
+        "io-package.json"
+    ],
+    "scripts": {
+        "prebuild": "rimraf build",
+        "build": "tsc -p tsconfig.build.json ",
+        "watch": "tsc -p tsconfig.build.json --watch ",
+        "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
+        "test:package": "mocha test/package.test.js --exit",
+        "test:integration": "mocha test/integration.test.js --exit",
+        "test": "npm run test:ts && npm run test:package",
+        "check": "tsc --noEmit",
+        "lint": "eslint -c eslint.config.mjs",
+        "translate": "translate-adapter",
+        "release": "release-script",
+        "update-packages": "npx -y npm-check-updates --upgrade"
+    },
+    "bugs": {
+        "url": "https://github.com/iobroker-community-adapters/issues"
+    },
+    "readmeFilename": "README.md"
 }

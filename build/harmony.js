@@ -379,7 +379,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         /* create activities */
         this.log.debug('creating activities');
         let channelName = `${hub}.activities`;
-        //create channel for activities
+        // create a channel for activities
         await this.setObjectAsync(channelName, {
             type: 'channel',
             common: {
@@ -420,16 +420,17 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.hubs[hub].activities[activity.id] = activityLabel;
             this.hubs[hub].activitiesReverse[activityLabel] = activity.id;
             if (activity.id === '-1') {
-                return;
+                // ignore power off
+                continue;
             }
             // create activities
             const activityChannelName = `${channelName}.${activityLabel}`;
-            // create channel for activity
+            // create a channel for activity
             delete activity.sequences;
             delete activity.controlGroup;
             delete activity.fixit;
             delete activity.rules;
-            //create states for activity
+            // create states for activity
             if (!Object.prototype.hasOwnProperty.call(this.hubs[hub].ioStates, activityLabel)) {
                 this.log.info(`[PROCESS] Added new activity: ${activityLabel}`);
                 await this.setObjectAsync(activityChannelName, {
@@ -460,7 +461,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             });
             delete this.hubs[hub].ioStates[activityLabel];
         }
-        /* create devices */
+        // create devices
         this.log.debug('[PROCESS] Creating devices');
         channelName = hub;
         for (const device of config.device) {
@@ -470,7 +471,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.hubs[hub].devices[device.id] = deviceLabel;
             this.hubs[hub].devicesReverse[deviceLabel] = device.id;
             delete device.controlGroup;
-            // create channel for device
+            // create a channel for a device
             if (!Object.prototype.hasOwnProperty.call(this.hubs[hub].ioChannels, deviceLabel)) {
                 this.log.info(`[PROCESS] Added new device: ${deviceLabel}`);
                 await this.setObjectAsync(deviceChannelName, {
@@ -523,9 +524,9 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.log.info(`[PROCESS] Synced hub config for ${hubObj.friendlyName} (${hubObj.ip})`);
     }
     async processDigest(hub, activityId, activityStatus) {
-        // set hub activity to current activity label
+        // set hub activity to the current activity label
         await this.setCurrentActivity(hub, activityId);
-        // Set hub status to current activity status
+        // Set hub status to the current activity status
         await this.setCurrentStatus(hub, activityStatus);
         if (activityId !== '-1') {
             // if activityId is not powerOff

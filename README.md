@@ -77,6 +77,9 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@brkai) Trying to fix the activities
+
 ### 2.0.3 (2025-11-04)
 * (@GermanBluefox) Corrected the table in the configuration
 
@@ -87,7 +90,7 @@ After sending, the state will be set to 0 again.
 * (mcm1957) Dependencies have been updated.
 
 ### 1.5.0 (2024-06-02)
-* (WolfspiritM) Multiple subnets can be entered as comma separated list now. (#147)
+* (WolfspiritM) Multiple subnets can be entered as a comma-separated list now. (#147)
 * (mcm1957) Testing for node.js 22 has been added.
 * (mcm1957) Dependencies have been updated.
 
@@ -104,7 +107,7 @@ After sending, the state will be set to 0 again.
 ### License
 The MIT License (MIT)
 
-Copyright (c) 2023-2025 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
+Copyright (c) 2023-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2015-2019 Pmant <patrickmo@gmx.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
