@@ -1,6 +1,6 @@
 # ioBroker Adapter Development with GitHub Copilot
 
-**Version:** 0.5.6  
+**Version:** 0.5.7  
 **Template Source:** https://github.com/DrozmotiX/ioBroker-Copilot-Instructions
 
 This file contains instructions and best practices for GitHub Copilot when working on ioBroker adapter development.
@@ -101,18 +101,19 @@ npm install --save-dev eslint @iobroker/eslint-config
 ```json
 {
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint . --fix"
   }
 }
 ```
 
 #### Best Practices
-1. ✅ Run ESLint before committing
+1. ✅ Run ESLint before committing — fix ALL warnings, not just errors
 2. ✅ Use `lint:fix` for auto-fixable issues
 3. ✅ Don't disable rules without documentation
 4. ✅ Lint all relevant files (main code, tests, build scripts)
 5. ✅ Keep `@iobroker/eslint-config` up to date
+6. ✅ **ESLint warnings are treated as errors in CI** (`--max-warnings 0`). The `lint` script above already includes this flag — run `npm run lint` to match CI behavior locally
 
 #### Common Issues
 - **Unused variables**: Remove or prefix with underscore (`_variable`)
@@ -481,10 +482,69 @@ Use JSON-Config format for modern ioBroker admin interfaces.
 
 1. Make your changes to labels/help texts
 2. Run automatic translation: `npm run translate`
-3. Run validation: `node scripts/validate-translations.js`
-4. Remove orphaned keys manually from all translation files
-5. Add missing translations in native languages
-6. Run: `npm run lint && npm run test`
+3. Create validation script (`scripts/validate-translations.js`):
+
+```javascript
+const fs = require('fs');
+const path = require('path');
+const jsonConfig = JSON.parse(fs.readFileSync('admin/jsonConfig.json', 'utf8'));
+
+function extractTexts(obj, texts = new Set()) {
+    if (typeof obj === 'object' && obj !== null) {
+        if (obj.label) texts.add(obj.label);
+        if (obj.help) texts.add(obj.help);
+        for (const key in obj) {
+            extractTexts(obj[key], texts);
+        }
+    }
+    return texts;
+}
+
+const requiredTexts = extractTexts(jsonConfig);
+const languages = ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru', 'uk', 'zh-cn'];
+let hasErrors = false;
+
+languages.forEach(lang => {
+    const translationPath = path.join('admin', 'i18n', lang, 'translations.json');
+    const translations = JSON.parse(fs.readFileSync(translationPath, 'utf8'));
+    const translationKeys = new Set(Object.keys(translations));
+    
+    const missing = Array.from(requiredTexts).filter(text => !translationKeys.has(text));
+    const orphaned = Array.from(translationKeys).filter(key => !requiredTexts.has(key));
+    
+    console.log(`\n=== ${lang} ===`);
+    if (missing.length > 0) {
+        console.error('❌ Missing keys:', missing);
+        hasErrors = true;
+    }
+    if (orphaned.length > 0) {
+        console.error('❌ Orphaned keys (REMOVE THESE):', orphaned);
+        hasErrors = true;
+    }
+    if (missing.length === 0 && orphaned.length === 0) {
+        console.log('✅ All keys match!');
+    }
+});
+
+process.exit(hasErrors ? 1 : 0);
+```
+
+4. Run validation: `node scripts/validate-translations.js`
+5. Remove orphaned keys manually from all translation files
+6. Add missing translations in native languages
+7. Run: `npm run lint && npm run test`
+
+#### Add Validation to package.json
+
+```json
+{
+  "scripts": {
+    "translate": "translate-adapter",
+    "validate:translations": "node scripts/validate-translations.js",
+    "pretest": "npm run lint && npm run validate:translations"
+  }
+}
+```
 
 #### Translation Checklist
 
@@ -606,9 +666,11 @@ jobs:
     
   adapter-tests:
     needs: [check-and-lint]  # Wait for linting to pass
+    # Run adapter unit tests
     
   integration-tests:
     needs: [check-and-lint, adapter-tests]  # Wait for both
+    # Run integration tests
 ```
 
 **Key Points:**
