@@ -77,6 +77,10 @@ After sending, the state will be set to 0 again.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires admin >= 7.7.22 now
+
 ### 2.0.5 (2026-02-06)
 * (@GermanBluefox) Corrected the type of value
 
