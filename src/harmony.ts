@@ -27,6 +27,8 @@ interface HubData {
         status: number;
     } | null;
     connected: boolean;
+    friendlyName: string;
+    ip: string;
     activities: { [activityId: string]: string };
     activitiesReverse: { [activityLabel: string]: string };
     devices: { [deviceId: string]: string };
@@ -279,6 +281,8 @@ export class HarmonyAdapter extends Adapter {
         this.hubs[hub] = {
             client: null,
             connected: false,
+            friendlyName: hub,
+            ip: '',
             activities: {},
             activitiesReverse: {},
             devices: {},
@@ -346,6 +350,10 @@ export class HarmonyAdapter extends Adapter {
         if (!this.hubs[hub] || this.hubs[hub].client !== null) {
             return;
         }
+
+        // Store friendly name and IP for admin tab display
+        this.hubs[hub].friendlyName = hubObj.friendlyName || hub;
+        this.hubs[hub].ip = hubObj.ip || '';
 
         const client = new HarmonyWS(hubObj.ip);
         this.hubs[hub].client = client;

@@ -78,7 +78,8 @@ class MessageHandler {
         for (const [name, hub] of Object.entries(this.adapter.hubs)) {
             hubs.push({
                 name,
-                ip: '',
+                friendlyName: hub.friendlyName || name,
+                ip: hub.ip || '',
                 uuid: '',
                 firmware: '',
                 hubType: '',

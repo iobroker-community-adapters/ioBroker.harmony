@@ -106,7 +106,8 @@ export class MessageHandler {
         for (const [name, hub] of Object.entries(this.adapter.hubs as Record<string, any>)) {
             hubs.push({
                 name,
-                ip: '',
+                friendlyName: hub.friendlyName || name,
+                ip: hub.ip || '',
                 uuid: '',
                 firmware: '',
                 hubType: '',

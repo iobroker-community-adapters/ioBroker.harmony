@@ -109,6 +109,7 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
     const hubData = useMemo(() =>
         hubs.map((h) => ({
             name: h.name,
+            friendlyName: h.friendlyName || h.name,
             connected: h.connected,
             config: (h.name === activeHub && currentConfig) ? currentConfig : (configs[h.name] ?? null),
         })),

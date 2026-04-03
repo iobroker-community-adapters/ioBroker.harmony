@@ -29,7 +29,7 @@ export type TreeSelection =
     | { type: 'device'; hubName: string; deviceId: string };
 
 interface TreeNavProps {
-    hubs: Array<{ name: string; connected: boolean; config: HarmonyConfig | null }>;
+    hubs: Array<{ name: string; friendlyName: string; connected: boolean; config: HarmonyConfig | null }>;
     selection: TreeSelection | null;
     onSelect: (sel: TreeSelection) => void;
 }
@@ -89,7 +89,7 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                     }
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary={hub.name}
+                                    primary={hub.friendlyName || hub.name}
                                     primaryTypographyProps={{ fontWeight: 600, fontSize: 14 }}
                                 />
                             </ListItemButton>

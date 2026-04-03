@@ -246,6 +246,8 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.hubs[hub] = {
             client: null,
             connected: false,
+            friendlyName: hub,
+            ip: '',
             activities: {},
             activitiesReverse: {},
             devices: {},
@@ -312,6 +314,9 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         if (!this.hubs[hub] || this.hubs[hub].client !== null) {
             return;
         }
+        // Store friendly name and IP for admin tab display
+        this.hubs[hub].friendlyName = hubObj.friendlyName || hub;
+        this.hubs[hub].ip = hubObj.ip || '';
         const client = new harmonyhubws_1.default(hubObj.ip);
         this.hubs[hub].client = client;
         client.on('online', async () => {

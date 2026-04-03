@@ -7,6 +7,7 @@
 /** Summary information for a discovered Harmony Hub. */
 export interface HarmonyHubInfo {
     name: string;
+    friendlyName: string;
     ip: string;
     uuid: string;
     firmware: string;
