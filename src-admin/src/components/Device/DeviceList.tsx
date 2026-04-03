@@ -13,6 +13,7 @@ import {
 import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyDevice } from '../../types/harmony';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
+import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 interface DeviceListProps {
     devices: HarmonyDevice[];
@@ -62,24 +63,7 @@ export function DeviceList({ devices, onSelectDevice }: DeviceListProps): React.
                                         onClick={(): void => onSelectDevice(dev.id)}
                                     >
                                         <TableCell>
-                                            <Box
-                                                sx={{
-                                                    width: 28,
-                                                    height: 28,
-                                                    borderRadius: '50%',
-                                                    bgcolor: 'grey.800',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    verticalAlign: 'middle',
-                                                }}
-                                            >
-                                                <img
-                                                    src={getDeviceIconSrc(dev.type)}
-                                                    alt={dev.label}
-                                                    style={{ width: 18, height: 18, objectFit: 'contain' }}
-                                                />
-                                            </Box>
+                                            <HarmonyIcon src={getDeviceIconSrc(dev.type)} alt={dev.label} size={28} />
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight={600} noWrap>

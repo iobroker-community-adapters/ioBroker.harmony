@@ -17,6 +17,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyActivity } from '../../types/harmony';
 import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
+import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 interface ActivityListProps {
     activities: HarmonyActivity[];
@@ -103,11 +104,7 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
                                             )}
                                         </TableCell>
                                         <TableCell>
-                                            <img
-                                                src={getActivityIconSrc(act.type)}
-                                                alt={act.label}
-                                                style={{ width: 24, height: 24, objectFit: 'contain', verticalAlign: 'middle' }}
-                                            />
+                                            <HarmonyIcon src={getActivityIconSrc(act.type)} alt={act.label} size={28} />
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight={600} noWrap>

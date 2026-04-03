@@ -13,6 +13,7 @@ import Grid2 from '@mui/material/Grid2';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { I18n } from '@iobroker/adapter-react-v5';
+import { HarmonyIcon } from './HarmonyIcon';
 
 interface IconOption {
     id: string;
@@ -86,11 +87,6 @@ export function getIconSrc(iconId: string): string | undefined {
     return opt ? `./custom/icons/${opt.file}` : undefined;
 }
 
-/** Whether the icon is a device icon (white on transparent, needs dark bg) */
-function isDeviceIcon(option: IconOption): boolean {
-    return option.id.startsWith('device_');
-}
-
 interface IconPickerProps {
     open: boolean;
     value: string;
@@ -153,7 +149,6 @@ export function IconPicker({ open, value, type, onSelect, onClose }: IconPickerP
                 <Grid2 container spacing={1.5}>
                     {filtered.map((option) => {
                         const isActive = value === option.id;
-                        const needsDarkBg = isDeviceIcon(option);
                         return (
                             <Grid2 key={option.id} size={{ xs: 4, sm: 3 }}>
                                 <Box
@@ -177,32 +172,9 @@ export function IconPicker({ open, value, type, onSelect, onClose }: IconPickerP
                                         },
                                     }}
                                 >
-                                    {needsDarkBg ? (
-                                        <Box
-                                            sx={{
-                                                width: 40,
-                                                height: 40,
-                                                borderRadius: '50%',
-                                                bgcolor: 'grey.800',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                mb: 0.5,
-                                            }}
-                                        >
-                                            <img
-                                                src={`./custom/icons/${option.file}`}
-                                                alt={option.label}
-                                                style={{ width: 24, height: 24, objectFit: 'contain' }}
-                                            />
-                                        </Box>
-                                    ) : (
-                                        <img
-                                            src={`./custom/icons/${option.file}`}
-                                            alt={option.label}
-                                            style={{ width: 32, height: 32, objectFit: 'contain', marginBottom: 4 }}
-                                        />
-                                    )}
+                                    <Box sx={{ mb: 0.5 }}>
+                                        <HarmonyIcon src={`./custom/icons/${option.file}`} alt={option.label} size={40} />
+                                    </Box>
                                     <Typography
                                         variant="caption"
                                         sx={{

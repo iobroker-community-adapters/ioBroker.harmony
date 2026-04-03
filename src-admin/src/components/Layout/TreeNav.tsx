@@ -19,6 +19,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyConfig } from '../../types/harmony';
 import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
+import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 export type TreeSelection =
     | { type: 'hub'; hubName: string }
@@ -113,12 +114,8 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                         onClick={(): void => onSelect({ type: 'activity', hubName: hub.name, activityId: act.id })}
                                         sx={{ pl: 7 }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                            <img
-                                                src={getActivityIconSrc(act.type)}
-                                                alt={act.label}
-                                                style={{ width: 20, height: 20, objectFit: 'contain' }}
-                                            />
+                                        <ListItemIcon sx={{ minWidth: 36 }}>
+                                            <HarmonyIcon src={getActivityIconSrc(act.type)} alt={act.label} size={28} />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={act.label}
@@ -152,24 +149,8 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                         onClick={(): void => onSelect({ type: 'device', hubName: hub.name, deviceId: dev.id })}
                                         sx={{ pl: 7 }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                            <Box
-                                                sx={{
-                                                    width: 22,
-                                                    height: 22,
-                                                    borderRadius: '50%',
-                                                    bgcolor: 'grey.800',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                <img
-                                                    src={getDeviceIconSrc(dev.type)}
-                                                    alt={dev.label}
-                                                    style={{ width: 14, height: 14, objectFit: 'contain' }}
-                                                />
-                                            </Box>
+                                        <ListItemIcon sx={{ minWidth: 36 }}>
+                                            <HarmonyIcon src={getDeviceIconSrc(dev.type)} alt={dev.label} size={28} />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={dev.label}
