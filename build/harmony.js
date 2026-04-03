@@ -17,6 +17,7 @@ const index_js_1 = require("./discover/lib/index.js");
 const semaphore_1 = __importDefault(require("semaphore"));
 // @ts-expect-error -- no types available
 const harmonyhubws_1 = __importDefault(require("harmonyhubws"));
+const message_handler_js_1 = require("./lib/message-handler.js");
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id) => id.replace(FORBIDDEN_CHARS, '_');
 // Activity status state mappings
@@ -33,6 +34,11 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             name: 'harmony',
             ready: () => this.main(),
             stateChange: (id, state) => this.onStateChange(id, state),
+            message: (obj) => {
+                if (this.messageHandler) {
+                    this.messageHandler.handle(obj);
+                }
+            },
             unload: async (callback) => {
                 var _a;
                 try {
@@ -54,6 +60,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.manualDiscoverHubs = [];
         this.subnet = [];
         this.discoverInterval = 0;
+        this.messageHandler = null;
     }
     onStateChange(id, state) {
         if (!id || !state || state.ack) {
@@ -183,6 +190,8 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.subscribeStates('*');
         this.log.debug(`[START] Subnet: ${this.subnet.join(', ')}, Discovery interval: ${this.discoverInterval}`);
         this.discoverStart();
+        this.messageHandler = new message_handler_js_1.MessageHandler(this);
+        this.log.info('Message handler initialized for admin tab');
     }
     discoverStart() {
         if (this.discover) {
