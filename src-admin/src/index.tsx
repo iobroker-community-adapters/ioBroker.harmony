@@ -4,7 +4,7 @@ import App from './App';
 import pkg from '../package.json';
 
 console.log('Harmony admin: version ' + pkg.version);
-const root = document.getElementById('harmony-root');
+const root = document.getElementById('root');
 if (root) {
     ReactDOM.createRoot(root).render(<App />);
 }

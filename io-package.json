@@ -150,7 +150,7 @@
     "singletonHost": true,
     "adminUI": {
       "config": "json",
-      "tab": "materialize"
+      "tab": "html"
     },
     "adminTab": {
       "singleton": true,
