@@ -115,5 +115,17 @@
   "next": "Vorwärts",
   "ir": "IR",
   "ip": "IP",
-  "bluetooth": "Bluetooth"
+  "bluetooth": "Bluetooth",
+  "editCommand": "Befehl bearbeiten",
+  "addCommand": "Befehl hinzufuegen",
+  "hubCommands": "Hub-Befehle",
+  "irDatabase": "IR-Datenbank",
+  "manual": "Manuell",
+  "selectDevice": "Geraet auswaehlen",
+  "commandName": "Befehlsname",
+  "label": "Bezeichnung",
+  "actionPreview": "Aktionsvorschau",
+  "rawAction": "Rohe Aktion (JSON)",
+  "rawActionHelp": "Erweitert: Rohe Aktion direkt bearbeiten",
+  "group": "Gruppe"
 }

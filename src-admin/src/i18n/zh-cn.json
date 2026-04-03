@@ -115,5 +115,17 @@
   "next": "下一步",
   "ir": "红外",
   "ip": "IP",
-  "bluetooth": "蓝牙"
+  "bluetooth": "蓝牙",
+  "editCommand": "Edit Command",
+  "addCommand": "Add Command",
+  "hubCommands": "Hub Commands",
+  "irDatabase": "IR Database",
+  "manual": "Manual",
+  "selectDevice": "Select device",
+  "commandName": "Command name",
+  "label": "Label",
+  "actionPreview": "Action Preview",
+  "rawAction": "Raw Action JSON",
+  "rawActionHelp": "Advanced: edit the raw action JSON directly",
+  "group": "Group"
 }

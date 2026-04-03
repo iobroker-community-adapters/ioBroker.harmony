@@ -44,6 +44,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyDevice, HarmonyActivity, PowerAction, CommandFunction } from '../../types/harmony';
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
+import { CommandEditor } from '../Common/CommandEditor';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
 import { getRoleLabel } from '../../utils/activityTypes';
 import { getCommandIconSrc } from '../../utils/commandIcons';
@@ -72,6 +73,8 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
     const [iconPickerOpen, setIconPickerOpen] = useState(false);
     const [testingCmd, setTestingCmd] = useState<string | null>(null);
     const [testResult, setTestResult] = useState<Record<string, 'success' | 'error'>>({});
+    const [commandEditorOpen, setCommandEditorOpen] = useState(false);
+    const [commandEditorTarget, setCommandEditorTarget] = useState<{ groupIdx: number; funcIdx: number | null; command: CommandFunction | null } | null>(null);
 
     const handleField = <K extends keyof HarmonyDevice>(key: K, value: HarmonyDevice[K]): void => {
         onUpdate({ ...device, [key]: value });
@@ -223,16 +226,31 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
         };
 
         const handleAddCommand = (groupIdx: number): void => {
+            setCommandEditorTarget({ groupIdx, funcIdx: null, command: null });
+            setCommandEditorOpen(true);
+        };
+
+        const handleEditCommand = (groupIdx: number, funcIdx: number, fn: CommandFunction): void => {
+            setCommandEditorTarget({ groupIdx, funcIdx, command: fn });
+            setCommandEditorOpen(true);
+        };
+
+        const handleCommandEditorSave = (cmd: CommandFunction): void => {
+            if (!commandEditorTarget) return;
+            const { groupIdx, funcIdx } = commandEditorTarget;
             const updatedGroups = (device.controlGroup || []).map((cg, gi) => {
                 if (gi !== groupIdx) return cg;
-                const newFn: CommandFunction = {
-                    name: `NewCommand_${Date.now()}`,
-                    label: 'New Command',
-                    action: '{}',
+                if (funcIdx === null) {
+                    return { ...cg, function: [...cg.function, cmd] };
+                }
+                return {
+                    ...cg,
+                    function: cg.function.map((fn, fi) => fi === funcIdx ? cmd : fn),
                 };
-                return { ...cg, function: [...cg.function, newFn] };
             });
             onUpdate({ ...device, controlGroup: updatedGroups });
+            setCommandEditorOpen(false);
+            setCommandEditorTarget(null);
         };
 
         const handleTestCommand = async (commandName: string): Promise<void> => {
@@ -351,16 +369,16 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                                         </Tooltip>
                                                     )}
                                                     {!isEditing && (
-                                                        <Tooltip title="Edit label">
+                                                        <Tooltip title={I18n.t('editCommand')}>
                                                             <IconButton
                                                                 size="small"
-                                                                onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
+                                                                onClick={(): void => handleEditCommand(gi, fi, fn)}
                                                             >
                                                                 <EditIcon fontSize="small" />
                                                             </IconButton>
                                                         </Tooltip>
                                                     )}
-                                                    <Tooltip title="Delete command">
+                                                    <Tooltip title={I18n.t('delete')}>
                                                         <IconButton
                                                             size="small"
                                                             color="error"
@@ -382,7 +400,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                                 onClick={(): void => handleAddCommand(gi)}
                                                 sx={{ textTransform: 'none' }}
                                             >
-                                                Add Command
+                                                {I18n.t('addCommand')}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -399,12 +417,12 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
 
                 {/* Delete confirmation dialog */}
                 <Dialog open={!!confirmDelete} onClose={(): void => setConfirmDelete(null)}>
-                    <DialogTitle>Delete Command</DialogTitle>
+                    <DialogTitle>{I18n.t('delete')}</DialogTitle>
                     <DialogContent>
                         <Typography>Are you sure you want to delete this command?</Typography>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={(): void => setConfirmDelete(null)}>Cancel</Button>
+                        <Button onClick={(): void => setConfirmDelete(null)}>{I18n.t('cancel')}</Button>
                         <Button
                             color="error"
                             variant="contained"
@@ -412,10 +430,21 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                 if (confirmDelete) handleDeleteCommand(confirmDelete.groupIdx, confirmDelete.funcIdx);
                             }}
                         >
-                            Delete
+                            {I18n.t('delete')}
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                {/* Command Editor Dialog */}
+                <CommandEditor
+                    open={commandEditorOpen}
+                    command={commandEditorTarget?.command}
+                    allDevices={[device]}
+                    hubName={hubName || ''}
+                    testCommand={testCommand}
+                    onSave={handleCommandEditorSave}
+                    onClose={(): void => { setCommandEditorOpen(false); setCommandEditorTarget(null); }}
+                />
             </Box>
         );
     };
