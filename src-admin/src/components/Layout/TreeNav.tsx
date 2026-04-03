@@ -63,8 +63,14 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
             <List dense disablePadding>
                 {hubs.map((hub) => {
                     const config = hub.config;
-                    const activities = config ? config.activity.filter((a) => a.id !== '-1') : [];
-                    const devices = config ? config.device : [];
+                    const activities = config
+                        ? [...config.activity]
+                            .filter((a) => a.id !== '-1')
+                            .sort((a, b) => (a.activityOrder || 0) - (b.activityOrder || 0))
+                        : [];
+                    const devices = config
+                        ? [...config.device].sort((a, b) => a.label.localeCompare(b.label))
+                        : [];
                     const isExpanded = expanded[hub.name] ?? true;
 
                     return (
