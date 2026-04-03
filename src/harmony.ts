@@ -13,6 +13,7 @@ import createSemaphore from 'semaphore';
 // @ts-expect-error -- no types available
 import HarmonyWS from 'harmonyhubws';
 import type { HarmonyAdapterConfig } from './types';
+import { MessageHandler } from './lib/message-handler.js';
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
 const fixId = (id: string): string => id.replace(FORBIDDEN_CHARS, '_');
 
@@ -55,6 +56,7 @@ export class HarmonyAdapter extends Adapter {
     private manualDiscoverHubs: { ip: string }[] = [];
     private subnet: string[] = [];
     private discoverInterval: number = 0;
+    private messageHandler: MessageHandler | null = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -62,6 +64,11 @@ export class HarmonyAdapter extends Adapter {
             name: 'harmony',
             ready: () => this.main(),
             stateChange: (id, state): void => this.onStateChange(id, state),
+            message: (obj: ioBroker.Message): void => {
+                if (this.messageHandler) {
+                    this.messageHandler.handle(obj);
+                }
+            },
             unload: async (callback: () => void): Promise<void> => {
                 try {
                     this.log.info('[END] Terminating');
@@ -209,6 +216,8 @@ export class HarmonyAdapter extends Adapter {
         this.subscribeStates('*');
         this.log.debug(`[START] Subnet: ${this.subnet.join(', ')}, Discovery interval: ${this.discoverInterval}`);
         this.discoverStart();
+        this.messageHandler = new MessageHandler(this);
+        this.log.info('Message handler initialized for admin tab');
     }
 
     discoverStart(): void {
