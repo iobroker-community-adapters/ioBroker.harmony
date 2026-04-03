@@ -68,9 +68,7 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                             .filter((a) => a.id !== '-1')
                             .sort((a, b) => (a.activityOrder || 0) - (b.activityOrder || 0))
                         : [];
-                    const devices = config
-                        ? [...config.device].sort((a, b) => a.label.localeCompare(b.label))
-                        : [];
+                    const devices = config ? config.device : [];
                     const isExpanded = expanded[hub.name] ?? true;
 
                     return (
