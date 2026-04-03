@@ -24,6 +24,9 @@ class MessageHandler {
                 case 'getStateDigest':
                     response = await this.getStateDigest(obj.message);
                     break;
+                case 'getDiscoveryInfo':
+                    response = await this.getDiscoveryInfo(obj.message);
+                    break;
                 case 'testCommand':
                     response = await this.testCommand(obj.message);
                     break;
@@ -124,6 +127,36 @@ class MessageHandler {
                 resolve({ success: true, data: state });
             });
         });
+    }
+    async getDiscoveryInfo(msg) {
+        if (!(msg === null || msg === void 0 ? void 0 : msg.hubName))
+            return { success: false, error: 'hubName required' };
+        const hub = this.adapter.hubs[msg.hubName];
+        if (!(hub === null || hub === void 0 ? void 0 : hub.client)) {
+            // Return basic info from stored data if client not available
+            return {
+                success: true,
+                data: {
+                    friendlyName: (hub === null || hub === void 0 ? void 0 : hub.friendlyName) || msg.hubName,
+                    ip: (hub === null || hub === void 0 ? void 0 : hub.ip) || '',
+                },
+            };
+        }
+        // Try to get full discovery info via WebSocket
+        try {
+            const result = await this.writer.sendHubQuery(msg.hubName, 'connect.discoveryinfo?get', {});
+            return { success: true, data: result };
+        }
+        catch {
+            // Fallback to basic stored info
+            return {
+                success: true,
+                data: {
+                    friendlyName: hub.friendlyName || msg.hubName,
+                    ip: hub.ip || '',
+                },
+            };
+        }
     }
     async searchIRDB(msg) {
         if (!(msg === null || msg === void 0 ? void 0 : msg.query))

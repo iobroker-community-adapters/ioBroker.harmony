@@ -28,6 +28,9 @@ export class MessageHandler {
                 case 'getStateDigest':
                     response = await this.getStateDigest(obj.message as { hubName: string });
                     break;
+                case 'getDiscoveryInfo':
+                    response = await this.getDiscoveryInfo(obj.message as { hubName: string });
+                    break;
                 case 'testCommand':
                     response = await this.testCommand(obj.message as { hubName: string; deviceId: string; command: string; type: string });
                     break;
@@ -154,6 +157,36 @@ export class MessageHandler {
                 resolve({ success: true, data: state });
             });
         });
+    }
+
+    private async getDiscoveryInfo(msg: { hubName: string }): Promise<MessageResponse> {
+        if (!msg?.hubName) return { success: false, error: 'hubName required' };
+        const hub = this.adapter.hubs[msg.hubName];
+        if (!hub?.client) {
+            // Return basic info from stored data if client not available
+            return {
+                success: true,
+                data: {
+                    friendlyName: hub?.friendlyName || msg.hubName,
+                    ip: hub?.ip || '',
+                },
+            };
+        }
+
+        // Try to get full discovery info via WebSocket
+        try {
+            const result = await this.writer.sendHubQuery(msg.hubName, 'connect.discoveryinfo?get', {});
+            return { success: true, data: result };
+        } catch {
+            // Fallback to basic stored info
+            return {
+                success: true,
+                data: {
+                    friendlyName: hub.friendlyName || msg.hubName,
+                    ip: hub.ip || '',
+                },
+            };
+        }
     }
 
     private async searchIRDB(msg: { query: string }): Promise<MessageResponse> {

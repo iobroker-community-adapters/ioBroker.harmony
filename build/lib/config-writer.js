@@ -16,6 +16,12 @@ class ConfigWriter {
         this.adapter = adapter;
     }
     /**
+     * Send a query to the hub and return the result. Used by message-handler for read operations.
+     */
+    async sendHubQuery(hubName, cmd, params) {
+        return this.sendCommand(hubName, cmd, params, 10000);
+    }
+    /**
      * Send a raw command to the hub's WebSocket and wait for the matching response.
      */
     sendCommand(hubName, cmd, params, timeout = 30000) {
