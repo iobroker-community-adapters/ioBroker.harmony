@@ -6,17 +6,11 @@
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-    <style>
-        body { margin: 0; padding: 0; background: transparent; }
-        #harmony-root { width: 100%; min-height: 100vh; }
-    </style>
+    <link rel="stylesheet" href="custom/index.css">
+    <style>body { margin: 0; padding: 0; background: transparent; } #harmony-root { width: 100%; min-height: 100vh; }</style>
 </head>
 <body>
-    <div id="harmony-root">
-        <div style="padding:32px;text-align:center;color:#888;">
-            <h4>Harmony Config</h4>
-            <p>Loading admin interface...</p>
-        </div>
-    </div>
+    <div id="harmony-root"></div>
+    <script type="module" src="custom/index.js"></script>
 </body>
 </html>

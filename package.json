@@ -60,6 +60,8 @@
     "lint": "eslint -c eslint.config.mjs",
     "translate": "translate-adapter",
     "release": "release-script",
+    "build:admin": "cd src-admin && npm install && npm run build",
+    "build:all": "npm run build && npm run build:admin",
     "update-packages": "npx -y npm-check-updates --upgrade"
   },
   "bugs": {
