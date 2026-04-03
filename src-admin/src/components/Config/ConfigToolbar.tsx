@@ -1,4 +1,16 @@
 import React, { useState } from 'react';
+import {
+    Box,
+    Button,
+    Badge,
+    Toolbar,
+    Divider,
+} from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import UndoIcon from '@mui/icons-material/Undo';
+import CancelIcon from '@mui/icons-material/Cancel';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { ConfirmDialog } from '../Common/ConfirmDialog';
 
 interface ConfigToolbarProps {
@@ -32,56 +44,72 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
         onCancel();
     };
 
-    const btnBase: React.CSSProperties = {
-        padding: '6px 14px', border: '1px solid #ccc', borderRadius: 4,
-        background: '#fff', cursor: 'pointer', fontSize: 13, position: 'relative',
-    };
-
-    const btnPrimary: React.CSSProperties = {
-        ...btnBase, background: '#1976d2', color: '#fff', border: 'none',
-    };
-
-    const disabledStyle: React.CSSProperties = { opacity: 0.5, cursor: 'default' };
-
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: '1px solid #e0e0e0', marginBottom: 12, flexWrap: 'wrap' }}>
-            <button
-                style={{ ...btnPrimary, ...((!isDirty || saving) ? disabledStyle : {}) }}
-                disabled={!isDirty || saving}
-                onClick={(): void => { setConfirmSave(true); }}
+        <>
+            <Toolbar
+                variant="dense"
+                disableGutters
+                sx={{
+                    gap: 1,
+                    mb: 1.5,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    pb: 1,
+                    flexWrap: 'wrap',
+                }}
             >
-                {saving ? 'Saving...' : 'Save'}
-            </button>
+                <Badge badgeContent={changeCount} color="warning" invisible={changeCount === 0}>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<SaveIcon />}
+                        disabled={!isDirty || saving}
+                        onClick={(): void => { setConfirmSave(true); }}
+                    >
+                        {saving ? 'Saving...' : 'Save'}
+                    </Button>
+                </Badge>
 
-            <button
-                style={{ ...btnBase, ...(!canUndo ? disabledStyle : {}) }}
-                disabled={!canUndo}
-                onClick={onUndo}
-            >
-                Undo
-            </button>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<UndoIcon />}
+                    disabled={!canUndo}
+                    onClick={onUndo}
+                >
+                    Undo
+                </Button>
 
-            <button
-                style={{ ...btnBase, ...(!isDirty ? disabledStyle : {}) }}
-                disabled={!isDirty}
-                onClick={(): void => { setConfirmCancel(true); }}
-            >
-                Cancel
-            </button>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<CancelIcon />}
+                    disabled={!isDirty}
+                    onClick={(): void => { setConfirmCancel(true); }}
+                >
+                    Cancel
+                </Button>
 
-            <div style={{ flex: 1 }} />
+                <Box sx={{ flex: 1 }} />
 
-            <button style={btnBase} onClick={onExport}>Export</button>
-            <button style={btnBase} onClick={onImport}>Import</button>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<FileDownloadIcon />}
+                    onClick={onExport}
+                >
+                    Export
+                </Button>
 
-            {changeCount > 0 && (
-                <span style={{
-                    background: '#ff9800', color: '#fff', borderRadius: 12,
-                    padding: '2px 10px', fontSize: 12, fontWeight: 600,
-                }}>
-                    {changeCount}
-                </span>
-            )}
+                <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<FileUploadIcon />}
+                    onClick={onImport}
+                >
+                    Import
+                </Button>
+            </Toolbar>
 
             <ConfirmDialog
                 open={confirmSave}
@@ -102,6 +130,6 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                 onConfirm={handleCancel}
                 onCancel={(): void => { setConfirmCancel(false); }}
             />
-        </div>
+        </>
     );
 }

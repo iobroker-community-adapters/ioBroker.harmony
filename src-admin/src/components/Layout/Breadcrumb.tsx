@@ -1,4 +1,5 @@
 import React from 'react';
+import { Breadcrumbs, Link, Typography } from '@mui/material';
 import type { TreeSelection } from './TreeNav';
 
 interface BreadcrumbProps {
@@ -8,7 +9,11 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ selection, hubConfigs }: BreadcrumbProps): React.JSX.Element {
     if (!selection) {
-        return <div style={{ fontSize: 13, color: '#666', padding: '4px 0' }}>No selection</div>;
+        return (
+            <Typography variant="caption" color="text.secondary" sx={{ py: 0.5 }}>
+                No selection
+            </Typography>
+        );
     }
 
     const parts: string[] = [selection.hubName];
@@ -34,8 +39,18 @@ export function Breadcrumb({ selection, hubConfigs }: BreadcrumbProps): React.JS
     }
 
     return (
-        <div style={{ fontSize: 13, color: '#666', padding: '4px 0' }}>
-            {parts.join(' \u203A ')}
-        </div>
+        <Breadcrumbs separator=">" sx={{ py: 0.5, mb: 1 }}>
+            {parts.map((part, i) =>
+                i < parts.length - 1 ? (
+                    <Link key={i} underline="hover" color="inherit" sx={{ fontSize: 13, cursor: 'default' }}>
+                        {part}
+                    </Link>
+                ) : (
+                    <Typography key={i} color="text.primary" sx={{ fontSize: 13 }}>
+                        {part}
+                    </Typography>
+                )
+            )}
+        </Breadcrumbs>
     );
 }

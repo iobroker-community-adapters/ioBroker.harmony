@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="../../js/translate.js"></script>
-    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-    <link rel="stylesheet" href="custom/index.css">
-    <style>body { margin: 0; padding: 0; background: transparent; } #harmony-root { width: 100%; min-height: 100vh; }</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="shortcut icon" href="favicon.png" />
+    <style>
+        html, body, #harmony-root { height: 100%; width: 100%; overflow: hidden; margin: 0; padding: 0; }
+    </style>
 </head>
 <body>
-    <div id="harmony-root"></div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="harmony-root" style="height: 100%; width: 100%;"></div>
     <script type="module" src="custom/index.js"></script>
 </body>
 </html>

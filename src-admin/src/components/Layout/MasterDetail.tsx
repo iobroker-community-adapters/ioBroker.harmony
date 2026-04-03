@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Box, Divider } from '@mui/material';
 
 interface MasterDetailProps {
     master: React.ReactNode;
     detail: React.ReactNode;
-    isMobile: boolean;
 }
 
 const STORAGE_KEY = 'harmony-splitter-width';
@@ -22,7 +22,7 @@ function getStoredWidth(): number {
     return DEFAULT_WIDTH;
 }
 
-export function MasterDetail({ master, detail, isMobile }: MasterDetailProps): React.JSX.Element {
+export function MasterDetail({ master, detail }: MasterDetailProps): React.JSX.Element {
     const [width, setWidth] = useState(getStoredWidth);
     const dragging = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -53,27 +53,39 @@ export function MasterDetail({ master, detail, isMobile }: MasterDetailProps): R
         };
     }, [width]);
 
-    if (isMobile) {
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-                {master}
-                <div style={{ flex: 1, overflow: 'auto', padding: 16 }}>{detail}</div>
-            </div>
-        );
-    }
-
     return (
-        <div ref={containerRef} style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-            <div style={{ width, minWidth: MIN_WIDTH, maxWidth: MAX_WIDTH, overflow: 'auto', borderRight: '1px solid #e0e0e0' }}>
+        <Box
+            ref={containerRef}
+            sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}
+        >
+            <Box
+                sx={{
+                    width,
+                    minWidth: MIN_WIDTH,
+                    maxWidth: MAX_WIDTH,
+                    overflow: 'auto',
+                    borderRight: 1,
+                    borderColor: 'divider',
+                }}
+            >
                 {master}
-            </div>
-            <div
+            </Box>
+            <Divider
+                orientation="vertical"
+                flexItem
                 onMouseDown={onMouseDown}
-                style={{ width: 4, cursor: 'col-resize', background: 'transparent', transition: 'background 0.15s' }}
-                onMouseEnter={(e): void => { (e.target as HTMLElement).style.background = '#1976d2'; }}
-                onMouseLeave={(e): void => { if (!dragging.current) (e.target as HTMLElement).style.background = 'transparent'; }}
+                sx={{
+                    cursor: 'col-resize',
+                    width: 4,
+                    borderWidth: 0,
+                    '&:hover': {
+                        bgcolor: 'primary.main',
+                    },
+                }}
             />
-            <div style={{ flex: 1, overflow: 'auto', padding: 16 }}>{detail}</div>
-        </div>
+            <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+                {detail}
+            </Box>
+        </Box>
     );
 }

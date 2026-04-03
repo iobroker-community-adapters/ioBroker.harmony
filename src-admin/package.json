@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@iobroker/adapter-react-v5": "^8.1.6",
+    "@mui/icons-material": "^6.5.0",
+    "@mui/material": "^6.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

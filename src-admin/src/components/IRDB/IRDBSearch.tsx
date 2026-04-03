@@ -1,5 +1,19 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useHarmonyApi } from '../../hooks/useHarmonyApi';
+import {
+    Box,
+    TextField,
+    Typography,
+    List,
+    ListItemButton,
+    ListItemText,
+    Button,
+    CircularProgress,
+    Alert,
+    Breadcrumbs,
+    Link,
+    Chip,
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface IRDBManufacturer {
     name: string;
@@ -18,10 +32,27 @@ interface IRDBSearchProps {
     onSelectCodeSet: (manufacturer: string, deviceType: string, model: string, codes: Array<{ name: string; functionCode: string }>) => void;
 }
 
+// Declare global sendTo for fallback (used when socket is not available)
+declare function sendTo(
+    namespace: string, command: string, payload: unknown,
+    callback: (response: { success: boolean; data?: unknown; error?: string }) => void,
+): void;
+
 type SearchLevel = 'search' | 'manufacturer' | 'deviceType' | 'codeSet';
 
+function apiCall<T>(command: string, payload: unknown = {}): Promise<{ success: boolean; data?: T; error?: string }> {
+    return new Promise((resolve) => {
+        if (typeof sendTo !== 'function') {
+            resolve({ success: false, error: 'sendTo not available' });
+            return;
+        }
+        sendTo('harmony.0', command, payload, (response) => {
+            resolve(response as { success: boolean; data?: T; error?: string });
+        });
+    });
+}
+
 export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Element {
-    const api = useHarmonyApi();
     const [level, setLevel] = useState<SearchLevel>('search');
     const [query, setQuery] = useState('');
     const [manufacturers, setManufacturers] = useState<IRDBManufacturer[]>([]);
@@ -40,14 +71,14 @@ export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Elem
         }
         setLoading(true);
         setError('');
-        const res = await api.searchIRDB(q);
+        const res = await apiCall<IRDBManufacturer[]>('searchIRDB', { query: q });
         setLoading(false);
         if (res.success && res.data) {
-            setManufacturers(res.data as IRDBManufacturer[]);
+            setManufacturers(res.data);
         } else {
             setError(res.error || 'Search failed');
         }
-    }, [api]);
+    }, []);
 
     const handleQueryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -61,28 +92,28 @@ export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Elem
         setLevel('manufacturer');
         setLoading(true);
         setError('');
-        const res = await api.getIRDBDeviceTypes(name);
+        const res = await apiCall<string[]>('getIRDBDeviceTypes', { manufacturer: name });
         setLoading(false);
         if (res.success && res.data) {
             setDeviceTypes(res.data);
         } else {
             setError(res.error || 'Failed to load device types');
         }
-    }, [api]);
+    }, []);
 
     const selectDeviceType = useCallback(async (dt: string) => {
         setSelectedDeviceType(dt);
         setLevel('deviceType');
         setLoading(true);
         setError('');
-        const res = await api.getIRDBCodeSets(selectedManufacturer, dt);
+        const res = await apiCall<IRDBCodeSet[]>('getIRDBCodeSets', { manufacturer: selectedManufacturer, deviceType: dt });
         setLoading(false);
         if (res.success && res.data) {
-            setCodeSets(res.data as IRDBCodeSet[]);
+            setCodeSets(res.data);
         } else {
             setError(res.error || 'Failed to load code sets');
         }
-    }, [api, selectedManufacturer]);
+    }, [selectedManufacturer]);
 
     const selectCodeSet = useCallback((cs: IRDBCodeSet) => {
         setLevel('codeSet');
@@ -101,120 +132,134 @@ export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Elem
         }
     }, [level]);
 
-    const breadcrumbStyle: React.CSSProperties = {
-        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, fontSize: 13, color: '#666',
-    };
-
-    const backBtnStyle: React.CSSProperties = {
-        background: 'none', border: 'none', color: '#1976d2', cursor: 'pointer',
-        fontSize: 13, padding: '2px 6px', borderRadius: 4,
-    };
-
-    const listItemStyle: React.CSSProperties = {
-        padding: '10px 12px', borderBottom: '1px solid #f0f0f0', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    };
-
     return (
-        <div>
+        <Box>
             {level !== 'search' && (
-                <div style={breadcrumbStyle}>
-                    <button style={backBtnStyle} onClick={goBack}>&larr; Back</button>
-                    <span>{selectedManufacturer}</span>
-                    {selectedDeviceType && <span> / {selectedDeviceType}</span>}
-                </div>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                    <Button size="small" startIcon={<ArrowBackIcon />} onClick={goBack}>
+                        Back
+                    </Button>
+                    <Breadcrumbs separator="/">
+                        <Typography variant="body2">{selectedManufacturer}</Typography>
+                        {selectedDeviceType && <Typography variant="body2">{selectedDeviceType}</Typography>}
+                    </Breadcrumbs>
+                </Box>
             )}
 
             {error && (
-                <div style={{ padding: 8, marginBottom: 12, background: '#fff3f3', color: '#c62828', borderRadius: 4, fontSize: 13 }}>
-                    {error}
-                </div>
+                <Alert severity="error" sx={{ mb: 1.5 }}>{error}</Alert>
             )}
 
             {level === 'search' && (
-                <div>
-                    <input
-                        type="text"
+                <Box>
+                    <TextField
                         value={query}
                         onChange={handleQueryChange}
                         placeholder="Search manufacturer (e.g. Samsung, Sony...)"
-                        style={{
-                            width: '100%', padding: '10px 12px', border: '1px solid #ccc', borderRadius: 4,
-                            fontSize: 14, boxSizing: 'border-box', marginBottom: 12,
-                        }}
+                        fullWidth
+                        size="small"
+                        sx={{ mb: 1.5 }}
                     />
-                    {loading && <div style={{ padding: 8, color: '#888', fontSize: 13 }}>Searching...</div>}
-                    <div style={{ maxHeight: 300, overflowY: 'auto', border: manufacturers.length ? '1px solid #e0e0e0' : 'none', borderRadius: 4 }}>
-                        {manufacturers.map((m) => (
-                            <div
-                                key={m.name}
-                                style={listItemStyle}
-                                onClick={(): void => { selectManufacturer(m.name); }}
-                                onMouseEnter={(e): void => { (e.currentTarget as HTMLElement).style.background = '#f5f5f5'; }}
-                                onMouseLeave={(e): void => { (e.currentTarget as HTMLElement).style.background = ''; }}
-                            >
-                                <span style={{ fontWeight: 500 }}>{m.name}</span>
-                                <span style={{ color: '#999', fontSize: 12 }}>{m.deviceTypes.length} type{m.deviceTypes.length !== 1 ? 's' : ''}</span>
-                            </div>
-                        ))}
-                    </div>
-                    {!loading && query.length >= 2 && manufacturers.length === 0 && (
-                        <div style={{ padding: 12, color: '#888', fontSize: 13, textAlign: 'center' }}>No manufacturers found</div>
+                    {loading && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}>
+                            <CircularProgress size={16} />
+                            <Typography variant="body2" color="text.secondary">Searching...</Typography>
+                        </Box>
                     )}
-                </div>
+                    <List dense disablePadding>
+                        {manufacturers.map((m) => (
+                            <ListItemButton
+                                key={m.name}
+                                onClick={(): void => { selectManufacturer(m.name); }}
+                                divider
+                            >
+                                <ListItemText
+                                    primary={m.name}
+                                    primaryTypographyProps={{ fontWeight: 500 }}
+                                />
+                                <Chip
+                                    label={`${m.deviceTypes.length} type${m.deviceTypes.length !== 1 ? 's' : ''}`}
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                    {!loading && query.length >= 2 && manufacturers.length === 0 && (
+                        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', p: 1.5 }}>
+                            No manufacturers found
+                        </Typography>
+                    )}
+                </Box>
             )}
 
             {level === 'manufacturer' && (
-                <div>
-                    <h4 style={{ margin: '0 0 12px', fontSize: 14 }}>Select device type</h4>
-                    {loading && <div style={{ padding: 8, color: '#888', fontSize: 13 }}>Loading...</div>}
-                    <div style={{ border: deviceTypes.length ? '1px solid #e0e0e0' : 'none', borderRadius: 4 }}>
-                        {deviceTypes.map((dt) => (
-                            <div
-                                key={dt}
-                                style={listItemStyle}
-                                onClick={(): void => { selectDeviceType(dt); }}
-                                onMouseEnter={(e): void => { (e.currentTarget as HTMLElement).style.background = '#f5f5f5'; }}
-                                onMouseLeave={(e): void => { (e.currentTarget as HTMLElement).style.background = ''; }}
-                            >
-                                <span style={{ fontWeight: 500 }}>{dt}</span>
-                            </div>
-                        ))}
-                    </div>
-                    {!loading && deviceTypes.length === 0 && (
-                        <div style={{ padding: 12, color: '#888', fontSize: 13, textAlign: 'center' }}>No device types available</div>
+                <Box>
+                    <Typography variant="subtitle2" gutterBottom>Select device type</Typography>
+                    {loading && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}>
+                            <CircularProgress size={16} />
+                            <Typography variant="body2" color="text.secondary">Loading...</Typography>
+                        </Box>
                     )}
-                </div>
+                    <List dense disablePadding>
+                        {deviceTypes.map((dt) => (
+                            <ListItemButton
+                                key={dt}
+                                onClick={(): void => { selectDeviceType(dt); }}
+                                divider
+                            >
+                                <ListItemText primary={dt} primaryTypographyProps={{ fontWeight: 500 }} />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                    {!loading && deviceTypes.length === 0 && (
+                        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', p: 1.5 }}>
+                            No device types available
+                        </Typography>
+                    )}
+                </Box>
             )}
 
             {level === 'deviceType' && (
-                <div>
-                    <h4 style={{ margin: '0 0 12px', fontSize: 14 }}>Select code set</h4>
-                    {loading && <div style={{ padding: 8, color: '#888', fontSize: 13 }}>Loading...</div>}
-                    <div style={{ border: codeSets.length ? '1px solid #e0e0e0' : 'none', borderRadius: 4 }}>
-                        {codeSets.map((cs, i) => (
-                            <div
-                                key={`${cs.model}-${i}`}
-                                style={listItemStyle}
-                                onClick={(): void => { selectCodeSet(cs); }}
-                                onMouseEnter={(e): void => { (e.currentTarget as HTMLElement).style.background = '#f5f5f5'; }}
-                                onMouseLeave={(e): void => { (e.currentTarget as HTMLElement).style.background = ''; }}
-                            >
-                                <div>
-                                    <span style={{ fontWeight: 500 }}>{cs.model}</span>
-                                    <span style={{ color: '#999', fontSize: 12, marginLeft: 8 }}>{cs.protocol}</span>
-                                </div>
-                                <span style={{ color: '#999', fontSize: 12 }}>{cs.functions.length} commands</span>
-                            </div>
-                        ))}
-                    </div>
-                    {!loading && codeSets.length === 0 && (
-                        <div style={{ padding: 12, color: '#888', fontSize: 13, textAlign: 'center' }}>
-                            No code sets found for {selectedManufacturer} {selectedDeviceType}
-                        </div>
+                <Box>
+                    <Typography variant="subtitle2" gutterBottom>Select code set</Typography>
+                    {loading && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}>
+                            <CircularProgress size={16} />
+                            <Typography variant="body2" color="text.secondary">Loading...</Typography>
+                        </Box>
                     )}
-                </div>
+                    <List dense disablePadding>
+                        {codeSets.map((cs, i) => (
+                            <ListItemButton
+                                key={`${cs.model}-${i}`}
+                                onClick={(): void => { selectCodeSet(cs); }}
+                                divider
+                            >
+                                <ListItemText
+                                    primary={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant="body2" fontWeight={500}>{cs.model}</Typography>
+                                            <Chip label={cs.protocol} size="small" variant="outlined" />
+                                        </Box>
+                                    }
+                                />
+                                <Chip
+                                    label={`${cs.functions.length} cmds`}
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                    {!loading && codeSets.length === 0 && (
+                        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', p: 1.5 }}>
+                            No code sets found for {selectedManufacturer} {selectedDeviceType}
+                        </Typography>
+                    )}
+                </Box>
             )}
-        </div>
+        </Box>
     );
 }

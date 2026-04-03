@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useHarmonyApi } from '../../hooks/useHarmonyApi';
+import { Button, CircularProgress } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 type TestState = 'idle' | 'testing' | 'success' | 'fail';
 
@@ -10,8 +13,12 @@ interface IRTestButtonProps {
     label: string;
 }
 
+declare function sendTo(
+    namespace: string, command: string, payload: unknown,
+    callback: (response: { success: boolean; data?: unknown; error?: string }) => void,
+): void;
+
 export function IRTestButton({ hubName, deviceId, command, label }: IRTestButtonProps): React.JSX.Element {
-    const api = useHarmonyApi();
     const [state, setState] = useState<TestState>('idle');
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -24,43 +31,44 @@ export function IRTestButton({ hubName, deviceId, command, label }: IRTestButton
     const handleClick = useCallback(async () => {
         if (state === 'testing') return;
         setState('testing');
-        const res = await api.testCommand(hubName, deviceId, command);
+        const res = await new Promise<{ success: boolean }>((resolve) => {
+            if (typeof sendTo !== 'function') {
+                resolve({ success: false });
+                return;
+            }
+            sendTo('harmony.0', 'testCommand', { hubName, deviceId, command, type: 'IRCommand' }, (r) => {
+                resolve(r);
+            });
+        });
         const nextState: TestState = res.success ? 'success' : 'fail';
         setState(nextState);
         timerRef.current = setTimeout(() => setState('idle'), 2000);
-    }, [api, hubName, deviceId, command, state]);
+    }, [hubName, deviceId, command, state]);
 
-    const stateStyles: Record<TestState, React.CSSProperties> = {
-        idle: { background: '#1976d2', color: '#fff', border: 'none' },
-        testing: { background: '#90caf9', color: '#fff', border: 'none', cursor: 'wait' },
-        success: { background: '#4caf50', color: '#fff', border: 'none' },
-        fail: { background: '#ef5350', color: '#fff', border: 'none' },
+    const colorMap: Record<TestState, 'primary' | 'success' | 'error' | 'inherit'> = {
+        idle: 'primary',
+        testing: 'inherit',
+        success: 'success',
+        fail: 'error',
     };
 
-    const stateIcons: Record<TestState, string> = {
-        idle: '\u25B6',
-        testing: '\u23F3',
-        success: '\u2713',
-        fail: '\u2717',
+    const iconMap: Record<TestState, React.JSX.Element> = {
+        idle: <PlayArrowIcon fontSize="small" />,
+        testing: <CircularProgress size={16} />,
+        success: <CheckIcon fontSize="small" />,
+        fail: <CloseIcon fontSize="small" />,
     };
 
     return (
-        <button
-            onClick={handleClick}
+        <Button
+            variant="contained"
+            size="small"
+            color={colorMap[state]}
             disabled={state === 'testing'}
-            style={{
-                ...stateStyles[state],
-                padding: '6px 14px',
-                borderRadius: 4,
-                cursor: state === 'testing' ? 'wait' : 'pointer',
-                fontSize: 13,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-            }}
+            onClick={handleClick}
+            startIcon={iconMap[state]}
         >
-            <span>{stateIcons[state]}</span>
-            <span>{label}</span>
-        </button>
+            {label}
+        </Button>
     );
 }
