@@ -79,6 +79,14 @@ After sending, the state will be set to 0 again.
 -->
 
 ### **WORK IN PROGRESS**
+- (Eistee82) Added Harmony Config admin tab for hub configuration
+- (Eistee82) Support for reading and writing hub configuration locally
+- (Eistee82) Setup wizard for adding new devices with IR code database
+- (Eistee82) Activity editor with roles, power sequences, and FixIt rules
+- (Eistee82) Device editor with commands, control groups, and power features
+- (Eistee82) Config export/import (JSON backup/restore)
+- (Eistee82) Responsive design (desktop and mobile)
+- (Eistee82) 11 language translations
 - (copilot) Adapter requires admin >= 7.7.22 now
 
 ### 2.0.5 (2026-02-06)
