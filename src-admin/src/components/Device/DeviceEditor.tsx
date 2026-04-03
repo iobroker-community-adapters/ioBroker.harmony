@@ -45,6 +45,7 @@ function transportLabel(transport: number): string {
 
 export function DeviceEditor({ device, allActivities, onUpdate }: DeviceEditorProps): React.JSX.Element {
     const [activeTab, setActiveTab] = useState(0);
+    const [editingCmd, setEditingCmd] = useState<{ groupIdx: number; funcIdx: number; label: string } | null>(null);
 
     const handleField = <K extends keyof HarmonyDevice>(key: K, value: HarmonyDevice[K]): void => {
         onUpdate({ ...device, [key]: value });
@@ -130,7 +131,6 @@ export function DeviceEditor({ device, allActivities, onUpdate }: DeviceEditorPr
 
     // ---- Commands Tab (FULLY EDITABLE) ----
     const renderCommands = (): React.JSX.Element => {
-        const [editingCmd, setEditingCmd] = useState<{ groupIdx: number; funcIdx: number; label: string } | null>(null);
 
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (device.controlGroup || []).map((cg, gi) => {

@@ -61,6 +61,7 @@ const ROLE_OPTIONS = [
 
 export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEditorProps): React.JSX.Element {
     const [activeTab, setActiveTab] = useState(0);
+    const [editingCmd, setEditingCmd] = useState<{ groupIdx: number; funcIdx: number; label: string } | null>(null);
 
     const handleField = <K extends keyof HarmonyActivity>(key: K, value: HarmonyActivity[K]): void => {
         onUpdate({ ...activity, [key]: value });
@@ -376,8 +377,6 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
 
     // ---- Commands Tab (FULLY EDITABLE) ----
     const renderCommands = (): React.JSX.Element => {
-        const [editingCmd, setEditingCmd] = useState<{ groupIdx: number; funcIdx: number; label: string } | null>(null);
-
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (activity.controlGroup || []).map((cg, gi) => {
                 if (gi !== groupIdx) return cg;
