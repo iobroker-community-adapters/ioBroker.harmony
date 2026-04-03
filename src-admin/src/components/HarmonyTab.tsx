@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import type { Theme } from '@mui/material/styles';
 import type { AdminConnection } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 import { useConfig } from '../hooks/useConfig';
 import { MasterDetail } from './Layout/MasterDetail';
 import { TreeNav, type TreeSelection } from './Layout/TreeNav';
@@ -254,7 +255,7 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
         return (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 2 }}>
                 <CircularProgress size={24} />
-                <Typography>Loading Harmony hubs...</Typography>
+                <Typography>{I18n.t('loading')}</Typography>
             </Box>
         );
     }
@@ -270,7 +271,7 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
     if (hubs.length === 0) {
         return (
             <Box sx={{ p: 4, textAlign: 'center' }}>
-                <Typography color="text.secondary">No hubs found.</Typography>
+                <Typography color="text.secondary">{I18n.t('noHubs')}</Typography>
             </Box>
         );
     }

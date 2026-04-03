@@ -10,6 +10,7 @@ import {
     TableContainer,
     Chip,
 } from '@mui/material';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyDevice } from '../../types/harmony';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
 
@@ -31,11 +32,11 @@ export function DeviceList({ devices, onSelectDevice }: DeviceListProps): React.
     return (
         <Box>
             <Typography variant="h6" gutterBottom>
-                Devices ({devices.length})
+                {I18n.t('devices')} ({devices.length})
             </Typography>
             {devices.length === 0 ? (
                 <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
-                    No devices configured.
+                    {I18n.t('noDevices')}
                 </Typography>
             ) : (
                 <TableContainer>
@@ -43,11 +44,11 @@ export function DeviceList({ devices, onSelectDevice }: DeviceListProps): React.
                         <TableHead>
                             <TableRow>
                                 <TableCell width={40} />
-                                <TableCell>Name</TableCell>
-                                <TableCell>Manufacturer</TableCell>
-                                <TableCell>Model</TableCell>
-                                <TableCell align="right">Commands</TableCell>
-                                <TableCell>Transport</TableCell>
+                                <TableCell>{I18n.t('name')}</TableCell>
+                                <TableCell>{I18n.t('manufacturer')}</TableCell>
+                                <TableCell>{I18n.t('model')}</TableCell>
+                                <TableCell align="right">{I18n.t('commands')}</TableCell>
+                                <TableCell>{I18n.t('transport')}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

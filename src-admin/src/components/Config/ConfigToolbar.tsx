@@ -11,6 +11,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { I18n } from '@iobroker/adapter-react-v5';
 import { ConfirmDialog } from '../Common/ConfirmDialog';
 
 interface ConfigToolbarProps {
@@ -66,7 +67,7 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                         disabled={!isDirty || saving}
                         onClick={(): void => { setConfirmSave(true); }}
                     >
-                        {saving ? 'Saving...' : 'Save'}
+                        {saving ? I18n.t('saving') : I18n.t('save')}
                     </Button>
                 </Badge>
 
@@ -77,7 +78,7 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                     disabled={!canUndo}
                     onClick={onUndo}
                 >
-                    Undo
+                    {I18n.t('undo')}
                 </Button>
 
                 <Button
@@ -87,7 +88,7 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                     disabled={!isDirty}
                     onClick={(): void => { setConfirmCancel(true); }}
                 >
-                    Cancel
+                    {I18n.t('cancel')}
                 </Button>
 
                 <Box sx={{ flex: 1 }} />
@@ -98,7 +99,7 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                     startIcon={<FileDownloadIcon />}
                     onClick={onExport}
                 >
-                    Export
+                    {I18n.t('export')}
                 </Button>
 
                 <Button
@@ -107,26 +108,26 @@ export function ConfigToolbar({ isDirty, changeCount, canUndo, onSave, onCancel,
                     startIcon={<FileUploadIcon />}
                     onClick={onImport}
                 >
-                    Import
+                    {I18n.t('import')}
                 </Button>
             </Toolbar>
 
             <ConfirmDialog
                 open={confirmSave}
-                title="Save Configuration"
-                message={`Apply ${changeCount} change(s) to the hub? This will overwrite the current hub configuration.`}
-                confirmLabel="Save"
-                cancelLabel="Cancel"
+                title={I18n.t('confirmSave')}
+                message={I18n.t('confirmSaveMsg')}
+                confirmLabel={I18n.t('save')}
+                cancelLabel={I18n.t('cancel')}
                 onConfirm={(): void => { void handleSave(); }}
                 onCancel={(): void => { setConfirmSave(false); }}
             />
 
             <ConfirmDialog
                 open={confirmCancel}
-                title="Discard Changes"
-                message={`Discard ${changeCount} unsaved change(s)? This cannot be undone.`}
-                confirmLabel="Discard"
-                cancelLabel="Keep Editing"
+                title={I18n.t('confirmDiscard')}
+                message={I18n.t('confirmDiscardMsg')}
+                confirmLabel={I18n.t('delete')}
+                cancelLabel={I18n.t('cancel')}
                 onConfirm={handleCancel}
                 onCancel={(): void => { setConfirmCancel(false); }}
             />

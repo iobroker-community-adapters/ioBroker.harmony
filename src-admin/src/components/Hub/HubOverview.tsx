@@ -9,6 +9,7 @@ import {
 import Grid2 from '@mui/material/Grid2';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyConfig } from '../../types/harmony';
 
 interface HubOverviewProps {
@@ -28,16 +29,16 @@ export function HubOverview({ hubName, connected, config, themeType }: HubOvervi
 
     const cards = [
         {
-            label: 'Status',
-            value: connected ? 'Connected' : 'Offline',
+            label: I18n.t('status'),
+            value: connected ? I18n.t('connected') : I18n.t('offline'),
             icon: connected
                 ? <CheckCircleIcon color="success" />
                 : <ErrorIcon color="error" />,
         },
-        { label: 'Activities', value: String(activities.length) },
-        { label: 'Devices', value: String(devices.length) },
-        { label: 'Commands', value: String(totalCommands) },
-        { label: 'Locale', value: config?.global?.locale || '-' },
+        { label: I18n.t('activities'), value: String(activities.length) },
+        { label: I18n.t('devices'), value: String(devices.length) },
+        { label: I18n.t('commands'), value: String(totalCommands) },
+        { label: I18n.t('locale'), value: config?.global?.locale || '-' },
     ];
 
     return (

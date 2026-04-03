@@ -15,6 +15,7 @@ import RouterIcon from '@mui/icons-material/Router';
 import DevicesIcon from '@mui/icons-material/Devices';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyConfig } from '../../types/harmony';
 import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
@@ -99,7 +100,7 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                         <RouterIcon fontSize="small" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={`Activities (${activities.length})`}
+                                        primary={`${I18n.t('activities')} (${activities.length})`}
                                         primaryTypographyProps={{ fontWeight: 500, fontSize: 13 }}
                                     />
                                 </ListItemButton>
@@ -138,7 +139,7 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                         <DevicesIcon fontSize="small" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={`Devices (${devices.length})`}
+                                        primary={`${I18n.t('devices')} (${devices.length})`}
                                         primaryTypographyProps={{ fontWeight: 500, fontSize: 13 }}
                                     />
                                 </ListItemButton>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert } from '@mui/material';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 interface UnsavedBannerProps {
     changeCount: number;
@@ -11,7 +12,7 @@ export function UnsavedBanner({ changeCount, visible }: UnsavedBannerProps): Rea
 
     return (
         <Alert severity="warning" sx={{ mb: 1.5 }}>
-            {changeCount} unsaved change{changeCount !== 1 ? 's' : ''}
+            {changeCount} {I18n.t('unsavedChanges')}
         </Alert>
     );
 }

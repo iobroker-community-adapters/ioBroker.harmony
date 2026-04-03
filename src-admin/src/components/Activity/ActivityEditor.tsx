@@ -44,6 +44,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFunction } from '../../types/harmony';
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
 import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityIconSrc, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
@@ -92,7 +93,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
             <Grid2 container spacing={2} sx={{ maxWidth: 640 }}>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Activity Name"
+                        label={I18n.t('name')}
                         value={activity.label}
                         onChange={(e): void => handleField('label', e.target.value)}
                         fullWidth
@@ -101,7 +102,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Type"
+                        label={I18n.t('type')}
                         value={activity.type}
                         onChange={(e): void => handleField('type', e.target.value)}
                         fullWidth
@@ -112,7 +113,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                             <MenuItem key={value} value={value}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <img
-                                        src={`./icons/${info.file}`}
+                                        src={`./custom/icons/${info.file}`}
                                         alt={info.label}
                                         style={{ width: 20, height: 20, objectFit: 'contain' }}
                                     />
@@ -124,7 +125,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Order"
+                        label={I18n.t('order')}
                         type="number"
                         value={activity.activityOrder ?? 0}
                         onChange={(e): void => handleField('activityOrder', Number(e.target.value))}
@@ -134,7 +135,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                        Icon
+                        {I18n.t('icon')}
                     </Typography>
                     <Box
                         onClick={(): void => setIconPickerOpen(true)}
@@ -167,16 +168,16 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                     style={{ width: 24, height: 24, objectFit: 'contain' }}
                                 />
                                 <Typography variant="body2" color="text.secondary">
-                                    {activity.icon || 'Choose icon...'}
+                                    {activity.icon || I18n.t('chooseIcon')}
                                 </Typography>
                             </>
                         )}
-                        <Button size="small" sx={{ ml: 'auto' }}>Change</Button>
+                        <Button size="small" sx={{ ml: 'auto' }}>{I18n.t('changeIcon')}</Button>
                     </Box>
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Display Name"
+                        label={I18n.t('name')}
                         value={activity.activityTypeDisplayName || ''}
                         onChange={(e): void => handleField('activityTypeDisplayName', e.target.value)}
                         fullWidth
@@ -187,6 +188,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                     <TextField
                         label="ID"
                         value={activity.id}
+
                         fullWidth
                         size="small"
                         slotProps={{ input: { readOnly: true } }}
@@ -254,7 +256,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                         onClick={(): void => setAddDeviceOpen(true)}
                         disabled={availableDevices.length === 0}
                     >
-                        Add Device
+                        {I18n.t('addDevice')}
                     </Button>
                 </Box>
 
@@ -346,7 +348,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                     fullWidth
                                                 >
                                                     <MenuItem value="">
-                                                        <em>No Role</em>
+                                                        <em>{I18n.t('noRole')}</em>
                                                     </MenuItem>
                                                     {ROLE_OPTIONS.filter(Boolean).map((r) => (
                                                         <MenuItem key={r} value={r}>{getRoleLabel(r)}</MenuItem>
@@ -358,9 +360,9 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                     size="small"
                                                     fullWidth
                                                 >
-                                                    <MenuItem value="On">Power On</MenuItem>
-                                                    <MenuItem value="Off">Power Off</MenuItem>
-                                                    <MenuItem value="Toggle">Toggle</MenuItem>
+                                                    <MenuItem value="On">{I18n.t('powerOn')}</MenuItem>
+                                                    <MenuItem value="Off">{I18n.t('powerOff')}</MenuItem>
+                                                    <MenuItem value="Toggle">{I18n.t('powerToggle')}</MenuItem>
                                                 </Select>
                                                 <TextField
                                                     value={rule.Input || ''}
@@ -368,7 +370,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                     size="small"
                                                     placeholder="Input source (e.g. HDMI1)"
                                                     fullWidth
-                                                    label="Input"
+                                                    label={I18n.t('input')}
                                                 />
                                                 <FormControlLabel
                                                     control={
@@ -378,7 +380,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                             size="small"
                                                         />
                                                     }
-                                                    label={<Typography variant="body2">Relative power</Typography>}
+                                                    label={<Typography variant="body2">{I18n.t('relativePower')}</Typography>}
                                                 />
                                                 <FormControlLabel
                                                     control={
@@ -388,7 +390,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                             size="small"
                                                         />
                                                     }
-                                                    label={<Typography variant="body2">Manual power</Typography>}
+                                                    label={<Typography variant="body2">{I18n.t('manualPower')}</Typography>}
                                                 />
                                             </Box>
                                         </Collapse>
@@ -550,9 +552,9 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                             size="small"
                                             fullWidth
                                         >
-                                            <MenuItem value="On">Power On</MenuItem>
-                                            <MenuItem value="Off">Power Off</MenuItem>
-                                            <MenuItem value="Toggle">Toggle</MenuItem>
+                                            <MenuItem value="On">{I18n.t('powerOn')}</MenuItem>
+                                            <MenuItem value="Off">{I18n.t('powerOff')}</MenuItem>
+                                            <MenuItem value="Toggle">{I18n.t('powerToggle')}</MenuItem>
                                         </Select>
                                     </Grid2>
                                     <Grid2 size={{ xs: 6, sm: 3 }}>
@@ -560,8 +562,8 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                             value={rule.Input || ''}
                                             onChange={(e): void => handleFixitChange(deviceId, 'Input', e.target.value)}
                                             size="small"
-                                            placeholder="Input"
-                                            label="Input"
+                                            placeholder={I18n.t('input')}
+                                            label={I18n.t('input')}
                                             fullWidth
                                         />
                                     </Grid2>
@@ -574,7 +576,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                     size="small"
                                                 />
                                             }
-                                            label={<Typography variant="caption">Relative</Typography>}
+                                            label={<Typography variant="caption">{I18n.t('relativePower')}</Typography>}
                                         />
                                     </Grid2>
                                     <Grid2 size={{ xs: 6, sm: 3 }}>
@@ -586,7 +588,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                     size="small"
                                                 />
                                             }
-                                            label={<Typography variant="caption">Manual</Typography>}
+                                            label={<Typography variant="caption">{I18n.t('manualPower')}</Typography>}
                                         />
                                     </Grid2>
                                 </Grid2>
@@ -782,11 +784,11 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 onChange={(_, val): void => setActiveTab(val)}
                 sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
             >
-                <Tab label="Overview" />
-                <Tab label="Devices & Roles" />
-                <Tab label="Power Sequences" />
-                <Tab label="FixIt Rules" />
-                <Tab label="Commands" />
+                <Tab label={I18n.t('overview')} />
+                <Tab label={I18n.t('devicesAndRoles')} />
+                <Tab label={I18n.t('powerSequences')} />
+                <Tab label={I18n.t('fixitRules')} />
+                <Tab label={I18n.t('commands')} />
             </Tabs>
             {tabContent[activeTab]()}
         </Box>

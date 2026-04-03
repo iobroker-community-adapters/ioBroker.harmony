@@ -14,6 +14,7 @@ import {
     Chip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 interface IRDBManufacturer {
     name: string;
@@ -137,7 +138,7 @@ export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Elem
             {level !== 'search' && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
                     <Button size="small" startIcon={<ArrowBackIcon />} onClick={goBack}>
-                        Back
+                        {I18n.t('back')}
                     </Button>
                     <Breadcrumbs separator="/">
                         <Typography variant="body2">{selectedManufacturer}</Typography>
@@ -155,7 +156,7 @@ export function IRDBSearch({ onSelectCodeSet }: IRDBSearchProps): React.JSX.Elem
                     <TextField
                         value={query}
                         onChange={handleQueryChange}
-                        placeholder="Search manufacturer (e.g. Samsung, Sony...)"
+                        placeholder={I18n.t('searchManufacturer')}
                         fullWidth
                         size="small"
                         sx={{ mb: 1.5 }}

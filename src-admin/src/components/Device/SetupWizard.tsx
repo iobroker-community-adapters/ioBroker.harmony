@@ -25,6 +25,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import DevicesIcon from '@mui/icons-material/Devices';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { I18n } from '@iobroker/adapter-react-v5';
 import { IRDBSearch } from '../IRDB/IRDBSearch';
 import { IRTestButton } from '../IRDB/IRTestButton';
 import { IRCodeInput } from '../IRDB/IRCodeInput';
@@ -99,7 +100,7 @@ export function SetupWizard({ hubName, onComplete, onCancel }: SetupWizardProps)
 
     return (
         <Dialog open onClose={onCancel} maxWidth="sm" fullWidth>
-            <DialogTitle>Setup New Device</DialogTitle>
+            <DialogTitle>{I18n.t('addDevice')}</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={step} alternativeLabel sx={{ mb: 3 }}>
                     {STEPS.map((label) => (
@@ -113,7 +114,7 @@ export function SetupWizard({ hubName, onComplete, onCancel }: SetupWizardProps)
                 {step === 0 && (
                     <Box>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                            What type of device are you adding?
+                            {I18n.t('selectDeviceType')}
                         </Typography>
                         <Grid2 container spacing={1}>
                             {DEVICE_TYPES.map((dt) => {
@@ -200,7 +201,7 @@ export function SetupWizard({ hubName, onComplete, onCancel }: SetupWizardProps)
                             Give your device a friendly name.
                         </Typography>
                         <TextField
-                            label="Device Name"
+                            label={I18n.t('deviceName')}
                             value={deviceName}
                             onChange={(e): void => setDeviceName(e.target.value)}
                             placeholder="e.g. Living Room TV"
@@ -229,22 +230,22 @@ export function SetupWizard({ hubName, onComplete, onCancel }: SetupWizardProps)
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Cancel</Button>
+                <Button onClick={onCancel}>{I18n.t('cancel')}</Button>
                 <Box sx={{ flex: 1 }} />
                 {step > 0 && step < 4 && (
-                    <Button onClick={(): void => setStep(step - 1)}>Back</Button>
+                    <Button onClick={(): void => setStep(step - 1)}>{I18n.t('back')}</Button>
                 )}
                 {step === 1 && codes.length > 0 && (
-                    <Button variant="contained" onClick={(): void => setStep(2)}>Next</Button>
+                    <Button variant="contained" onClick={(): void => setStep(2)}>{I18n.t('next')}</Button>
                 )}
                 {step === 2 && (
-                    <Button variant="contained" onClick={(): void => setStep(3)}>Next</Button>
+                    <Button variant="contained" onClick={(): void => setStep(3)}>{I18n.t('next')}</Button>
                 )}
                 {step === 3 && (
                     <Button variant="contained" onClick={(): void => setStep(4)}>Review</Button>
                 )}
                 {step === 4 && (
-                    <Button variant="contained" onClick={handleFinish}>Complete Setup</Button>
+                    <Button variant="contained" onClick={handleFinish}>{I18n.t('finish')}</Button>
                 )}
             </DialogActions>
         </Dialog>

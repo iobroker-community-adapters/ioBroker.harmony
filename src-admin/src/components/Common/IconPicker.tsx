@@ -12,6 +12,7 @@ import {
 import Grid2 from '@mui/material/Grid2';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 interface IconOption {
     id: string;
@@ -82,7 +83,7 @@ export function getIconById(iconId: string): IconOption | undefined {
 /** Returns the PNG path for a given icon ID */
 export function getIconSrc(iconId: string): string | undefined {
     const opt = ALL_ICONS.find((o) => o.id === iconId);
-    return opt ? `./icons/${opt.file}` : undefined;
+    return opt ? `./custom/icons/${opt.file}` : undefined;
 }
 
 /** Whether the icon is a device icon (white on transparent, needs dark bg) */
@@ -124,7 +125,7 @@ export function IconPicker({ open, value, type, onSelect, onClose }: IconPickerP
         >
             <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
                 <Typography variant="h6" component="span">
-                    Choose {type === 'activity' ? 'Activity' : 'Device'} Icon
+                    {I18n.t('chooseIcon')} - {type === 'activity' ? I18n.t('activityIcons') : I18n.t('deviceIcons')}
                 </Typography>
                 <IconButton onClick={onClose} size="small">
                     <CloseIcon />
@@ -132,7 +133,7 @@ export function IconPicker({ open, value, type, onSelect, onClose }: IconPickerP
             </DialogTitle>
             <DialogContent>
                 <TextField
-                    placeholder="Search icons..."
+                    placeholder={I18n.t('filterIcons')}
                     value={search}
                     onChange={(e): void => setSearch(e.target.value)}
                     fullWidth
@@ -190,14 +191,14 @@ export function IconPicker({ open, value, type, onSelect, onClose }: IconPickerP
                                             }}
                                         >
                                             <img
-                                                src={`./icons/${option.file}`}
+                                                src={`./custom/icons/${option.file}`}
                                                 alt={option.label}
                                                 style={{ width: 24, height: 24, objectFit: 'contain' }}
                                             />
                                         </Box>
                                     ) : (
                                         <img
-                                            src={`./icons/${option.file}`}
+                                            src={`./custom/icons/${option.file}`}
                                             alt={option.label}
                                             style={{ width: 32, height: 32, objectFit: 'contain', marginBottom: 4 }}
                                         />

@@ -33,6 +33,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyDevice, HarmonyActivity, PowerAction, CommandFunction } from '../../types/harmony';
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
@@ -78,7 +79,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
             <Grid2 container spacing={2} sx={{ maxWidth: 640 }}>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Device Name"
+                        label={I18n.t('deviceName')}
                         value={device.label}
                         onChange={(e): void => handleField('label', e.target.value)}
                         fullWidth
@@ -87,7 +88,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Manufacturer"
+                        label={I18n.t('manufacturer')}
                         value={device.manufacturer}
                         onChange={(e): void => handleField('manufacturer', e.target.value)}
                         fullWidth
@@ -96,7 +97,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Model"
+                        label={I18n.t('model')}
                         value={device.model}
                         onChange={(e): void => handleField('model', e.target.value)}
                         fullWidth
@@ -105,7 +106,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                        Icon
+                        {I18n.t('icon')}
                     </Typography>
                     <Box
                         onClick={(): void => setIconPickerOpen(true)}
@@ -170,16 +171,16 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                     />
                                 </Box>
                                 <Typography variant="body2" color="text.secondary">
-                                    {device.icon || 'Choose icon...'}
+                                    {device.icon || I18n.t('chooseIcon')}
                                 </Typography>
                             </>
                         )}
-                        <Button size="small" sx={{ ml: 'auto' }}>Change</Button>
+                        <Button size="small" sx={{ ml: 'auto' }}>{I18n.t('changeIcon')}</Button>
                     </Box>
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Type"
+                        label={I18n.t('type')}
                         value={device.type}
                         onChange={(e): void => handleField('type', e.target.value)}
                         fullWidth
@@ -188,7 +189,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Transport"
+                        label={I18n.t('transport')}
                         value={transportLabel(device.Transport)}
                         fullWidth
                         size="small"
@@ -206,7 +207,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                     <TextField
-                        label="Display Name"
+                        label={I18n.t('name')}
                         value={device.deviceTypeDisplayName || ''}
                         onChange={(e): void => handleField('deviceTypeDisplayName', e.target.value)}
                         fullWidth
@@ -536,21 +537,21 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                                         />
                                                     )}
                                                     <Box sx={{ ml: 'auto', display: 'flex' }}>
-                                                        <Tooltip title="Move up">
+                                                        <Tooltip title={I18n.t('moveUp')}>
                                                             <span>
                                                                 <IconButton size="small" disabled={i === 0} onClick={(): void => handleMoveUp(i)}>
                                                                     <ArrowUpwardIcon fontSize="small" />
                                                                 </IconButton>
                                                             </span>
                                                         </Tooltip>
-                                                        <Tooltip title="Move down">
+                                                        <Tooltip title={I18n.t('moveDown')}>
                                                             <span>
                                                                 <IconButton size="small" disabled={i >= actions.length - 1} onClick={(): void => handleMoveDown(i)}>
                                                                     <ArrowDownwardIcon fontSize="small" />
                                                                 </IconButton>
                                                             </span>
                                                         </Tooltip>
-                                                        <Tooltip title="Delete step">
+                                                        <Tooltip title={I18n.t('delete')}>
                                                             <IconButton size="small" color="error" onClick={(): void => handleDelete(i)}>
                                                                 <DeleteIcon fontSize="small" />
                                                             </IconButton>
@@ -572,7 +573,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                             startIcon={<BoltIcon />}
                             onClick={(): void => handleAdd('IRPressAction')}
                         >
-                            Add IR Command
+                            {I18n.t('addIRCommand')}
                         </Button>
                         <Button
                             size="small"
@@ -581,7 +582,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                             startIcon={<TimerIcon />}
                             onClick={(): void => handleAdd('IRDelayAction')}
                         >
-                            Add Delay
+                            {I18n.t('addDelay')}
                         </Button>
                     </Box>
                 </Box>
@@ -590,9 +591,9 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
 
         return (
             <Box>
-                {renderTimeline(pf.PowerOnActions || [], 'PowerOnActions', 'Power On Sequence')}
+                {renderTimeline(pf.PowerOnActions || [], 'PowerOnActions', I18n.t('powerOnActions'))}
                 <Divider sx={{ my: 2 }} />
-                {renderTimeline(pf.PowerOffActions || [], 'PowerOffActions', 'Power Off Sequence')}
+                {renderTimeline(pf.PowerOffActions || [], 'PowerOffActions', I18n.t('powerOffActions'))}
             </Box>
         );
     };
@@ -691,10 +692,10 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                 onChange={(_, val): void => setActiveTab(val)}
                 sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
             >
-                <Tab label="Overview" />
-                <Tab label="Commands" />
-                <Tab label="Power Features" />
-                <Tab label="Used In" />
+                <Tab label={I18n.t('overview')} />
+                <Tab label={I18n.t('commands')} />
+                <Tab label={I18n.t('powerFeatures')} />
+                <Tab label={I18n.t('usedInActivities')} />
             </Tabs>
             {tabContent[activeTab]()}
         </Box>

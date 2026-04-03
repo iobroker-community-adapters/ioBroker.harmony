@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { I18n } from '@iobroker/adapter-react-v5';
 import type { HarmonyActivity } from '../../types/harmony';
 import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
 
@@ -47,22 +48,22 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
     return (
         <Box>
             <Typography variant="h6" gutterBottom>
-                Activities ({sorted.length})
+                {I18n.t('activities')} ({sorted.length})
             </Typography>
             {sorted.length === 0 ? (
                 <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
-                    No activities configured.
+                    {I18n.t('noActivities')}
                 </Typography>
             ) : (
                 <TableContainer>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell width={80}>Order</TableCell>
+                                <TableCell width={80}>{I18n.t('order')}</TableCell>
                                 <TableCell width={40} />
-                                <TableCell>Name</TableCell>
-                                <TableCell>Type</TableCell>
-                                <TableCell align="right">Devices</TableCell>
+                                <TableCell>{I18n.t('name')}</TableCell>
+                                <TableCell>{I18n.t('type')}</TableCell>
+                                <TableCell align="right">{I18n.t('devices')}</TableCell>
                                 <TableCell align="right">#</TableCell>
                             </TableRow>
                         </TableHead>
@@ -81,7 +82,7 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
                                             sx={{ whiteSpace: 'nowrap' }}
                                         >
                                             {idx > 0 && (
-                                                <Tooltip title="Move up">
+                                                <Tooltip title={I18n.t('moveUp')}>
                                                     <IconButton
                                                         size="small"
                                                         onClick={(): void => handleMove(idx, 'up')}
@@ -91,7 +92,7 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
                                                 </Tooltip>
                                             )}
                                             {idx < sorted.length - 1 && (
-                                                <Tooltip title="Move down">
+                                                <Tooltip title={I18n.t('moveDown')}>
                                                     <IconButton
                                                         size="small"
                                                         onClick={(): void => handleMove(idx, 'down')}
