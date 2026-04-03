@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageHandler = void 0;
 const config_writer_js_1 = require("./config-writer.js");
+const irdb_service_js_1 = require("./irdb-service.js");
 class MessageHandler {
     constructor(adapter) {
         this.adapter = adapter;
         this.writer = new config_writer_js_1.ConfigWriter(adapter);
+        this.irdb = new irdb_service_js_1.IRDBService(adapter.adapterDir || __dirname);
     }
     async handle(obj) {
         if (!(obj === null || obj === void 0 ? void 0 : obj.command))
@@ -48,6 +50,15 @@ class MessageHandler {
                     break;
                 case 'syncHub':
                     response = await this.writer.syncHub(obj.message.hubName);
+                    break;
+                case 'searchIRDB':
+                    response = await this.searchIRDB(obj.message);
+                    break;
+                case 'getIRDBDeviceTypes':
+                    response = await this.getIRDBDeviceTypes(obj.message);
+                    break;
+                case 'getIRDBCodeSets':
+                    response = await this.getIRDBCodeSets(obj.message);
                     break;
                 default:
                     response = { success: false, error: `Unknown command: ${obj.command}` };
@@ -112,6 +123,45 @@ class MessageHandler {
                 resolve({ success: true, data: state });
             });
         });
+    }
+    async searchIRDB(msg) {
+        if (!(msg === null || msg === void 0 ? void 0 : msg.query))
+            return { success: false, error: 'query required' };
+        try {
+            const results = await this.irdb.searchManufacturers(msg.query);
+            return { success: true, data: results };
+        }
+        catch (e) {
+            const errMsg = e instanceof Error ? e.message : String(e);
+            this.adapter.log.error(`IRDB search error: ${errMsg}`);
+            return { success: false, error: errMsg };
+        }
+    }
+    async getIRDBDeviceTypes(msg) {
+        if (!(msg === null || msg === void 0 ? void 0 : msg.manufacturer))
+            return { success: false, error: 'manufacturer required' };
+        try {
+            const types = await this.irdb.getDeviceTypes(msg.manufacturer);
+            return { success: true, data: types };
+        }
+        catch (e) {
+            const errMsg = e instanceof Error ? e.message : String(e);
+            this.adapter.log.error(`IRDB device types error: ${errMsg}`);
+            return { success: false, error: errMsg };
+        }
+    }
+    async getIRDBCodeSets(msg) {
+        if (!(msg === null || msg === void 0 ? void 0 : msg.manufacturer) || !(msg === null || msg === void 0 ? void 0 : msg.deviceType))
+            return { success: false, error: 'manufacturer and deviceType required' };
+        try {
+            const codeSets = await this.irdb.getCodeSets(msg.manufacturer, msg.deviceType);
+            return { success: true, data: codeSets };
+        }
+        catch (e) {
+            const errMsg = e instanceof Error ? e.message : String(e);
+            this.adapter.log.error(`IRDB code sets error: ${errMsg}`);
+            return { success: false, error: errMsg };
+        }
     }
     async testCommand(msg) {
         if (!(msg === null || msg === void 0 ? void 0 : msg.hubName) || !(msg === null || msg === void 0 ? void 0 : msg.command))

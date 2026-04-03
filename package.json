@@ -46,6 +46,7 @@
   "files": [
     "admin/",
     "build/",
+    "data/",
     "io-package.json"
   ],
   "scripts": {

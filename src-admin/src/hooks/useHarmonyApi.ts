@@ -64,5 +64,13 @@ export function useHarmonyApi() {
         return apiCall<unknown>('searchIRDB', { query });
     }, []);
 
-    return { getHubs, getConfig, getStateDigest, testCommand, writeConfig, addDevice, deleteDevice, generateActivity, searchIRDB };
+    const getIRDBDeviceTypes = useCallback((manufacturer: string): Promise<ApiResponse<string[]>> => {
+        return apiCall<string[]>('getIRDBDeviceTypes', { manufacturer });
+    }, []);
+
+    const getIRDBCodeSets = useCallback((manufacturer: string, deviceType: string): Promise<ApiResponse<unknown>> => {
+        return apiCall<unknown>('getIRDBCodeSets', { manufacturer, deviceType });
+    }, []);
+
+    return { getHubs, getConfig, getStateDigest, testCommand, writeConfig, addDevice, deleteDevice, generateActivity, searchIRDB, getIRDBDeviceTypes, getIRDBCodeSets };
 }

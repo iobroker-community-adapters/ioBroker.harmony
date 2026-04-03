@@ -1,0 +1,22 @@
+[
+    {"name": "Samsung", "deviceTypes": ["TV", "Blu-ray", "Home Theater"]},
+    {"name": "Sony", "deviceTypes": ["TV", "Blu-ray", "AV Receiver", "PlayStation"]},
+    {"name": "LG", "deviceTypes": ["TV", "Blu-ray", "Soundbar"]},
+    {"name": "Yamaha", "deviceTypes": ["AV Receiver", "Soundbar"]},
+    {"name": "Pioneer", "deviceTypes": ["AV Receiver", "Blu-ray"]},
+    {"name": "Acer", "deviceTypes": ["Projector"]},
+    {"name": "Microsoft", "deviceTypes": ["Xbox"]},
+    {"name": "Nintendo", "deviceTypes": ["Switch", "Wii"]},
+    {"name": "Apple", "deviceTypes": ["Apple TV"]},
+    {"name": "Amazon", "deviceTypes": ["Fire TV"]},
+    {"name": "Google", "deviceTypes": ["Chromecast"]},
+    {"name": "Panasonic", "deviceTypes": ["TV", "Blu-ray"]},
+    {"name": "Philips", "deviceTypes": ["TV", "Hue"]},
+    {"name": "Denon", "deviceTypes": ["AV Receiver"]},
+    {"name": "Marantz", "deviceTypes": ["AV Receiver"]},
+    {"name": "Onkyo", "deviceTypes": ["AV Receiver"]},
+    {"name": "Bose", "deviceTypes": ["Soundbar", "Speaker"]},
+    {"name": "Sonos", "deviceTypes": ["Speaker"]},
+    {"name": "Roku", "deviceTypes": ["Streaming"]},
+    {"name": "Vizio", "deviceTypes": ["TV", "Soundbar"]}
+]
