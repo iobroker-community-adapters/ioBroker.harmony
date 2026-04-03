@@ -34,8 +34,8 @@ import TimerIcon from '@mui/icons-material/Timer';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import type { HarmonyDevice, HarmonyActivity, PowerAction, CommandFunction } from '../../types/harmony';
-import { IconPicker, getIconById } from '../Common/IconPicker';
-import { getDeviceTypeIcon } from '../../utils/deviceTypes';
+import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
+import { getDeviceIconSrc } from '../../utils/deviceTypes';
 import { getRoleLabel } from '../../utils/activityTypes';
 
 interface DeviceEditorProps {
@@ -66,11 +66,13 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
         onUpdate({ ...device, [key]: value });
     };
 
-    const DevIcon = getDeviceTypeIcon(device.type);
+    const devIconSrc = getDeviceIconSrc(device.type);
 
     // ---- Overview Tab ----
     const renderOverview = (): React.JSX.Element => {
         const selectedIcon = getIconById(device.icon || '');
+        const selectedIconSrc = getIconSrc(device.icon || '');
+        const isDeviceSelected = selectedIcon?.id.startsWith('device_');
 
         return (
             <Grid2 container spacing={2} sx={{ maxWidth: 640 }}>
@@ -119,14 +121,54 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                             '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
                         }}
                     >
-                        {selectedIcon ? (
+                        {selectedIcon && selectedIconSrc ? (
                             <>
-                                <selectedIcon.icon sx={{ fontSize: 24, color: 'primary.main' }} />
+                                {isDeviceSelected ? (
+                                    <Box
+                                        sx={{
+                                            width: 28,
+                                            height: 28,
+                                            borderRadius: '50%',
+                                            bgcolor: 'grey.800',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <img
+                                            src={selectedIconSrc}
+                                            alt={selectedIcon.label}
+                                            style={{ width: 18, height: 18, objectFit: 'contain' }}
+                                        />
+                                    </Box>
+                                ) : (
+                                    <img
+                                        src={selectedIconSrc}
+                                        alt={selectedIcon.label}
+                                        style={{ width: 24, height: 24, objectFit: 'contain' }}
+                                    />
+                                )}
                                 <Typography variant="body2">{selectedIcon.label}</Typography>
                             </>
                         ) : (
                             <>
-                                <DevIcon sx={{ fontSize: 24, color: 'text.secondary' }} />
+                                <Box
+                                    sx={{
+                                        width: 28,
+                                        height: 28,
+                                        borderRadius: '50%',
+                                        bgcolor: 'grey.800',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <img
+                                        src={devIconSrc}
+                                        alt="device icon"
+                                        style={{ width: 18, height: 18, objectFit: 'contain' }}
+                                    />
+                                </Box>
                                 <Typography variant="body2" color="text.secondary">
                                     {device.icon || 'Choose icon...'}
                                 </Typography>
@@ -617,7 +659,23 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
     return (
         <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <DevIcon sx={{ color: 'primary.main' }} />
+                <Box
+                    sx={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        bgcolor: 'grey.800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <img
+                        src={devIconSrc}
+                        alt={device.label}
+                        style={{ width: 18, height: 18, objectFit: 'contain' }}
+                    />
+                </Box>
                 <Typography variant="h6">
                     {device.label}
                 </Typography>

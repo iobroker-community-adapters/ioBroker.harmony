@@ -16,8 +16,8 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import type { HarmonyConfig } from '../../types/harmony';
-import { getActivityTypeIcon, getActivityTypeLabel } from '../../utils/activityTypes';
-import { getDeviceTypeIcon } from '../../utils/deviceTypes';
+import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
+import { getDeviceIconSrc } from '../../utils/deviceTypes';
 
 export type TreeSelection =
     | { type: 'hub'; hubName: string }
@@ -105,27 +105,28 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                 </ListItemButton>
 
                                 {/* Activity children */}
-                                {activities.map((act) => {
-                                    const ActIcon = getActivityTypeIcon(act.type);
-                                    return (
-                                        <ListItemButton
-                                            key={act.id}
-                                            selected={isSelected(selection, { type: 'activity', hubName: hub.name, activityId: act.id })}
-                                            onClick={(): void => onSelect({ type: 'activity', hubName: hub.name, activityId: act.id })}
-                                            sx={{ pl: 7 }}
-                                        >
-                                            <ListItemIcon sx={{ minWidth: 28 }}>
-                                                <ActIcon fontSize="small" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={act.label}
-                                                secondary={getActivityTypeLabel(act.type)}
-                                                primaryTypographyProps={{ fontSize: 13, noWrap: true }}
-                                                secondaryTypographyProps={{ fontSize: 11 }}
+                                {activities.map((act) => (
+                                    <ListItemButton
+                                        key={act.id}
+                                        selected={isSelected(selection, { type: 'activity', hubName: hub.name, activityId: act.id })}
+                                        onClick={(): void => onSelect({ type: 'activity', hubName: hub.name, activityId: act.id })}
+                                        sx={{ pl: 7 }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 28 }}>
+                                            <img
+                                                src={getActivityIconSrc(act.type)}
+                                                alt={act.label}
+                                                style={{ width: 20, height: 20, objectFit: 'contain' }}
                                             />
-                                        </ListItemButton>
-                                    );
-                                })}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={act.label}
+                                            secondary={getActivityTypeLabel(act.type)}
+                                            primaryTypographyProps={{ fontSize: 13, noWrap: true }}
+                                            secondaryTypographyProps={{ fontSize: 11 }}
+                                        />
+                                    </ListItemButton>
+                                ))}
 
                                 {/* Devices header */}
                                 <ListItemButton
@@ -143,25 +144,38 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                 </ListItemButton>
 
                                 {/* Device children */}
-                                {devices.map((dev) => {
-                                    const DevTypeIcon = getDeviceTypeIcon(dev.type);
-                                    return (
-                                        <ListItemButton
-                                            key={dev.id}
-                                            selected={isSelected(selection, { type: 'device', hubName: hub.name, deviceId: dev.id })}
-                                            onClick={(): void => onSelect({ type: 'device', hubName: hub.name, deviceId: dev.id })}
-                                            sx={{ pl: 7 }}
-                                        >
-                                            <ListItemIcon sx={{ minWidth: 28 }}>
-                                                <DevTypeIcon fontSize="small" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={dev.label}
-                                                primaryTypographyProps={{ fontSize: 13, noWrap: true }}
-                                            />
-                                        </ListItemButton>
-                                    );
-                                })}
+                                {devices.map((dev) => (
+                                    <ListItemButton
+                                        key={dev.id}
+                                        selected={isSelected(selection, { type: 'device', hubName: hub.name, deviceId: dev.id })}
+                                        onClick={(): void => onSelect({ type: 'device', hubName: hub.name, deviceId: dev.id })}
+                                        sx={{ pl: 7 }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 28 }}>
+                                            <Box
+                                                sx={{
+                                                    width: 22,
+                                                    height: 22,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'grey.800',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <img
+                                                    src={getDeviceIconSrc(dev.type)}
+                                                    alt={dev.label}
+                                                    style={{ width: 14, height: 14, objectFit: 'contain' }}
+                                                />
+                                            </Box>
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={dev.label}
+                                            primaryTypographyProps={{ fontSize: 13, noWrap: true }}
+                                        />
+                                    </ListItemButton>
+                                ))}
                             </Collapse>
                         </React.Fragment>
                     );

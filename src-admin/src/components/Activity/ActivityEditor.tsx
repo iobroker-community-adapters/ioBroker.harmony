@@ -45,9 +45,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFunction } from '../../types/harmony';
-import { IconPicker, getIconById } from '../Common/IconPicker';
-import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityTypeIcon, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
-import { getDeviceTypeIcon } from '../../utils/deviceTypes';
+import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
+import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityIconSrc, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
+import { getDeviceIconSrc } from '../../utils/deviceTypes';
 
 interface ActivityEditorProps {
     activity: HarmonyActivity;
@@ -85,7 +85,8 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
     // ---- Overview Tab ----
     const renderOverview = (): React.JSX.Element => {
         const selectedIcon = getIconById(activity.icon || '');
-        const TypeIcon = getActivityTypeIcon(activity.type);
+        const selectedIconSrc = getIconSrc(activity.icon || '');
+        const activityIconSrc = getActivityIconSrc(activity.type);
 
         return (
             <Grid2 container spacing={2} sx={{ maxWidth: 640 }}>
@@ -110,7 +111,11 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                         {Object.entries(ACTIVITY_TYPE_MAP).map(([value, info]) => (
                             <MenuItem key={value} value={value}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <info.icon fontSize="small" />
+                                    <img
+                                        src={`./icons/${info.file}`}
+                                        alt={info.label}
+                                        style={{ width: 20, height: 20, objectFit: 'contain' }}
+                                    />
                                     {info.label}
                                 </Box>
                             </MenuItem>
@@ -145,14 +150,22 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                             '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
                         }}
                     >
-                        {selectedIcon ? (
+                        {selectedIcon && selectedIconSrc ? (
                             <>
-                                <selectedIcon.icon sx={{ fontSize: 24, color: 'primary.main' }} />
+                                <img
+                                    src={selectedIconSrc}
+                                    alt={selectedIcon.label}
+                                    style={{ width: 24, height: 24, objectFit: 'contain' }}
+                                />
                                 <Typography variant="body2">{selectedIcon.label}</Typography>
                             </>
                         ) : (
                             <>
-                                <TypeIcon sx={{ fontSize: 24, color: 'text.secondary' }} />
+                                <img
+                                    src={activityIconSrc}
+                                    alt="activity icon"
+                                    style={{ width: 24, height: 24, objectFit: 'contain' }}
+                                />
                                 <Typography variant="body2" color="text.secondary">
                                     {activity.icon || 'Choose icon...'}
                                 </Typography>
@@ -255,7 +268,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                     {fixitEntries.map(([deviceId, rule]) => {
                         const device = allDevices.find((d) => d.id === deviceId);
                         const role = activity.roles?.[deviceId] || '';
-                        const DevIcon = device ? getDeviceTypeIcon(device.type) : getDeviceTypeIcon('');
+                        const devIconSrc = device ? getDeviceIconSrc(device.type) : getDeviceIconSrc('');
                         const isExpanded = expandedDevice === deviceId;
 
                         return (
@@ -269,7 +282,24 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                 >
                                     <CardContent sx={{ pb: isExpanded ? 2 : '12px !important', pt: 1.5 }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                            <DevIcon sx={{ color: 'primary.main', fontSize: 22 }} />
+                                            <Box
+                                                sx={{
+                                                    width: 26,
+                                                    height: 26,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'grey.800',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <img
+                                                    src={devIconSrc}
+                                                    alt={device?.label || deviceId}
+                                                    style={{ width: 16, height: 16, objectFit: 'contain' }}
+                                                />
+                                            </Box>
                                             <Typography variant="subtitle2" fontWeight={600} sx={{ flex: 1 }} noWrap>
                                                 {device?.label || deviceId}
                                             </Typography>
@@ -384,23 +414,36 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                             </Typography>
                         ) : (
                             <List dense>
-                                {availableDevices.map((dev) => {
-                                    const DevTypeIcon = getDeviceTypeIcon(dev.type);
-                                    return (
-                                        <ListItemButton
-                                            key={dev.id}
-                                            onClick={(): void => handleAddDevice(dev.id)}
-                                        >
-                                            <ListItemIcon sx={{ minWidth: 36 }}>
-                                                <DevTypeIcon fontSize="small" />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={dev.label}
-                                                secondary={`${dev.manufacturer} ${dev.model}`}
-                                            />
-                                        </ListItemButton>
-                                    );
-                                })}
+                                {availableDevices.map((dev) => (
+                                    <ListItemButton
+                                        key={dev.id}
+                                        onClick={(): void => handleAddDevice(dev.id)}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 36 }}>
+                                            <Box
+                                                sx={{
+                                                    width: 24,
+                                                    height: 24,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'grey.800',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <img
+                                                    src={getDeviceIconSrc(dev.type)}
+                                                    alt={dev.label}
+                                                    style={{ width: 16, height: 16, objectFit: 'contain' }}
+                                                />
+                                            </Box>
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={dev.label}
+                                            secondary={`${dev.manufacturer} ${dev.model}`}
+                                        />
+                                    </ListItemButton>
+                                ))}
                             </List>
                         )}
                     </DialogContent>
@@ -472,12 +515,29 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 )}
                 {fixitEntries.map(([deviceId, rule]) => {
                     const device = allDevices.find((d) => d.id === deviceId);
-                    const DevIcon = device ? getDeviceTypeIcon(device.type) : getDeviceTypeIcon('');
+                    const devIconSrc = device ? getDeviceIconSrc(device.type) : getDeviceIconSrc('');
                     return (
                         <Card key={deviceId} variant="outlined" sx={{ mb: 1.5 }}>
                             <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                    <DevIcon fontSize="small" sx={{ color: 'primary.main' }} />
+                                    <Box
+                                        sx={{
+                                            width: 22,
+                                            height: 22,
+                                            borderRadius: '50%',
+                                            bgcolor: 'grey.800',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <img
+                                            src={devIconSrc}
+                                            alt={device?.label || deviceId}
+                                            style={{ width: 14, height: 14, objectFit: 'contain' }}
+                                        />
+                                    </Box>
                                     <Typography variant="subtitle2" fontWeight={600}>
                                         {device?.label || deviceId}
                                     </Typography>
@@ -707,7 +767,11 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
     return (
         <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                {React.createElement(getActivityTypeIcon(activity.type), { sx: { color: 'primary.main' } })}
+                <img
+                    src={getActivityIconSrc(activity.type)}
+                    alt={activity.label}
+                    style={{ width: 24, height: 24, objectFit: 'contain' }}
+                />
                 <Typography variant="h6">
                     {activity.label}
                 </Typography>

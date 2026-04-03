@@ -15,7 +15,7 @@ import {
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import type { HarmonyActivity } from '../../types/harmony';
-import { getActivityTypeIcon, getActivityTypeLabel } from '../../utils/activityTypes';
+import { getActivityIconSrc, getActivityTypeLabel } from '../../utils/activityTypes';
 
 interface ActivityListProps {
     activities: HarmonyActivity[];
@@ -68,7 +68,6 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
                         </TableHead>
                         <TableBody>
                             {sorted.map((act, idx) => {
-                                const ActIcon = getActivityTypeIcon(act.type);
                                 const deviceCount = Object.keys(act.fixit || {}).length;
                                 return (
                                     <TableRow
@@ -103,7 +102,11 @@ export function ActivityList({ activities, onSelectActivity, onReorder }: Activi
                                             )}
                                         </TableCell>
                                         <TableCell>
-                                            <ActIcon sx={{ color: 'primary.main', fontSize: 24, verticalAlign: 'middle' }} />
+                                            <img
+                                                src={getActivityIconSrc(act.type)}
+                                                alt={act.label}
+                                                style={{ width: 24, height: 24, objectFit: 'contain', verticalAlign: 'middle' }}
+                                            />
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight={600} noWrap>

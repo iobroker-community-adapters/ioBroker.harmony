@@ -1,33 +1,25 @@
-import TvIcon from '@mui/icons-material/Tv';
-import MovieIcon from '@mui/icons-material/Movie';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import type { SvgIconComponent } from '@mui/icons-material';
-
 export interface ActivityTypeInfo {
     label: string;
-    icon: SvgIconComponent;
+    file: string;
 }
 
 export const ACTIVITY_TYPE_MAP: Record<string, ActivityTypeInfo> = {
-    'VirtualTelevisionN': { label: 'Watch TV', icon: TvIcon },
-    'VirtualDvd': { label: 'Watch Movie', icon: MovieIcon },
-    'VirtualCdMulti': { label: 'Listen to Music', icon: MusicNoteIcon },
-    'VirtualGameConsole': { label: 'Play Game', icon: SportsEsportsIcon },
-    'VirtualAux': { label: 'AUX Input', icon: SettingsIcon },
-    'VirtualOther': { label: 'Other', icon: SettingsIcon },
-    'VirtualGeneric': { label: 'Generic', icon: SettingsIcon },
-    'PowerOff': { label: 'Power Off', icon: PowerSettingsNewIcon },
+    'VirtualTelevisionN': { label: 'Watch TV', file: 'activity_watch_tv.png' },
+    'VirtualDvd': { label: 'Watch Movie', file: 'activity_watch_movie.png' },
+    'VirtualCdMulti': { label: 'Listen to Music', file: 'activity_play_music.png' },
+    'VirtualGameConsole': { label: 'Play Game', file: 'activity_play_game.png' },
+    'VirtualAux': { label: 'AUX Input', file: 'activity_custom.png' },
+    'VirtualOther': { label: 'Other', file: 'activity_custom.png' },
+    'VirtualGeneric': { label: 'Generic', file: 'activity_custom.png' },
+    'PowerOff': { label: 'Power Off', file: 'activity_powering_off.png' },
 };
 
 export function getActivityTypeLabel(type: string): string {
     return ACTIVITY_TYPE_MAP[type]?.label ?? type;
 }
 
-export function getActivityTypeIcon(type: string): SvgIconComponent {
-    return ACTIVITY_TYPE_MAP[type]?.icon ?? SettingsIcon;
+export function getActivityIconSrc(type: string): string {
+    return `./icons/${ACTIVITY_TYPE_MAP[type]?.file ?? 'activity_custom.png'}`;
 }
 
 /** Friendly role labels for activity device roles */

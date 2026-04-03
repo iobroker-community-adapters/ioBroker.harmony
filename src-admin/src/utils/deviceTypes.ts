@@ -1,50 +1,38 @@
-import TvIcon from '@mui/icons-material/Tv';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import SpeakerIcon from '@mui/icons-material/Speaker';
-import FiberDvrIcon from '@mui/icons-material/FiberDvr';
-import AlbumIcon from '@mui/icons-material/Album';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import ComputerIcon from '@mui/icons-material/Computer';
-import HomeIcon from '@mui/icons-material/Home';
-import DevicesOtherIcon from '@mui/icons-material/DevicesOther';
-import SettingsInputHdmiIcon from '@mui/icons-material/SettingsInputHdmi';
-import type { SvgIconComponent } from '@mui/icons-material';
-
 export interface DeviceTypeInfo {
     label: string;
-    icon: SvgIconComponent;
+    file: string;
 }
 
 export const DEVICE_TYPE_MAP: Record<string, DeviceTypeInfo> = {
-    'Television': { label: 'TV', icon: TvIcon },
-    'Projector': { label: 'Projector', icon: VideocamIcon },
-    'StereoReceiver': { label: 'AV Receiver', icon: SpeakerIcon },
-    'AVReceiver': { label: 'AV Receiver', icon: SpeakerIcon },
-    'DVR': { label: 'DVR / Recorder', icon: FiberDvrIcon },
-    'DVD': { label: 'Blu-ray / DVD', icon: AlbumIcon },
-    'GameConsole': { label: 'Game Console', icon: SportsEsportsIcon },
-    'Computer': { label: 'Computer', icon: ComputerIcon },
-    'HomeAppliance': { label: 'Home Appliance', icon: HomeIcon },
-    'SatelliteBox': { label: 'Satellite / Cable', icon: SettingsInputHdmiIcon },
-    'CableBox': { label: 'Cable Box', icon: SettingsInputHdmiIcon },
-    'PVR': { label: 'PVR', icon: FiberDvrIcon },
+    'Television': { label: 'TV', file: 'device_tv_white.png' },
+    'Projector': { label: 'Projector', file: 'device_tv_white.png' },
+    'StereoReceiver': { label: 'AV Receiver', file: 'device_avr_white.png' },
+    'AVReceiver': { label: 'AV Receiver', file: 'device_avr_white.png' },
+    'DVR': { label: 'DVR / Recorder', file: 'device_stb_white.png' },
+    'DVD': { label: 'Blu-ray / DVD', file: 'device_dvd_white.png' },
+    'GameConsole': { label: 'Game Console', file: 'device_game_white.png' },
+    'Computer': { label: 'Computer', file: 'device_pc_white.png' },
+    'HomeAppliance': { label: 'Home Appliance', file: 'device_plug_white.png' },
+    'SatelliteBox': { label: 'Satellite / Cable', file: 'device_stb_white.png' },
+    'CableBox': { label: 'Cable Box', file: 'device_stb_white.png' },
+    'PVR': { label: 'PVR', file: 'device_stb_white.png' },
 };
 
 export function getDeviceTypeLabel(type: string): string {
     return DEVICE_TYPE_MAP[type]?.label ?? type;
 }
 
-export function getDeviceTypeIcon(type: string): SvgIconComponent {
+export function getDeviceIconSrc(type: string): string {
     // Try exact match first
-    if (DEVICE_TYPE_MAP[type]) return DEVICE_TYPE_MAP[type].icon;
+    if (DEVICE_TYPE_MAP[type]) return `./icons/${DEVICE_TYPE_MAP[type].file}`;
     // Fuzzy match
     const lower = type.toLowerCase();
-    if (lower.includes('television') || lower.includes('tv')) return TvIcon;
-    if (lower.includes('stereo') || lower.includes('receiver') || lower.includes('avr') || lower.includes('audio')) return SpeakerIcon;
-    if (lower.includes('dvd') || lower.includes('blu') || lower.includes('disc')) return AlbumIcon;
-    if (lower.includes('game') || lower.includes('console')) return SportsEsportsIcon;
-    if (lower.includes('cable') || lower.includes('satellite') || lower.includes('pvr')) return SettingsInputHdmiIcon;
-    if (lower.includes('projector')) return VideocamIcon;
-    if (lower.includes('computer') || lower.includes('pc')) return ComputerIcon;
-    return DevicesOtherIcon;
+    if (lower.includes('television') || lower.includes('tv')) return './icons/device_tv_white.png';
+    if (lower.includes('stereo') || lower.includes('receiver') || lower.includes('avr') || lower.includes('audio')) return './icons/device_avr_white.png';
+    if (lower.includes('dvd') || lower.includes('blu') || lower.includes('disc')) return './icons/device_dvd_white.png';
+    if (lower.includes('game') || lower.includes('console')) return './icons/device_game_white.png';
+    if (lower.includes('cable') || lower.includes('satellite') || lower.includes('pvr')) return './icons/device_stb_white.png';
+    if (lower.includes('projector')) return './icons/device_tv_white.png';
+    if (lower.includes('computer') || lower.includes('pc')) return './icons/device_pc_white.png';
+    return './icons/device_default_white.png';
 }

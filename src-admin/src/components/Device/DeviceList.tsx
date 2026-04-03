@@ -11,7 +11,7 @@ import {
     Chip,
 } from '@mui/material';
 import type { HarmonyDevice } from '../../types/harmony';
-import { getDeviceTypeIcon } from '../../utils/deviceTypes';
+import { getDeviceIconSrc } from '../../utils/deviceTypes';
 
 interface DeviceListProps {
     devices: HarmonyDevice[];
@@ -52,7 +52,6 @@ export function DeviceList({ devices, onSelectDevice }: DeviceListProps): React.
                         </TableHead>
                         <TableBody>
                             {devices.map((dev) => {
-                                const DevTypeIcon = getDeviceTypeIcon(dev.type);
                                 const cmdCount = dev.controlGroup.reduce((s, cg) => s + cg.function.length, 0);
                                 return (
                                     <TableRow
@@ -62,7 +61,24 @@ export function DeviceList({ devices, onSelectDevice }: DeviceListProps): React.
                                         onClick={(): void => onSelectDevice(dev.id)}
                                     >
                                         <TableCell>
-                                            <DevTypeIcon sx={{ color: 'primary.main', fontSize: 24, verticalAlign: 'middle' }} />
+                                            <Box
+                                                sx={{
+                                                    width: 28,
+                                                    height: 28,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'grey.800',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    verticalAlign: 'middle',
+                                                }}
+                                            >
+                                                <img
+                                                    src={getDeviceIconSrc(dev.type)}
+                                                    alt={dev.label}
+                                                    style={{ width: 18, height: 18, objectFit: 'contain' }}
+                                                />
+                                            </Box>
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight={600} noWrap>
