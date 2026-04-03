@@ -49,6 +49,7 @@ import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFun
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
 import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityIconSrc, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
+import { getCommandIconSrc } from '../../utils/commandIcons';
 import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 interface ActivityEditorProps {
@@ -647,6 +648,8 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                         );
                                     }
 
+                                    const cmdIconSrc = getCommandIconSrc(fn.name);
+
                                     return (
                                         <Grid2 key={fn.name} size="auto">
                                             <Chip
@@ -670,6 +673,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                                 icon={
                                                     result === 'success' ? <CheckCircleIcon fontSize="small" color="success" /> :
                                                     result === 'error' ? <ErrorOutlineIcon fontSize="small" color="error" /> :
+                                                    cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={fn.name} size={20} /> :
                                                     undefined
                                                 }
                                                 onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
@@ -752,6 +756,7 @@ function PowerTimeline({ title, actions }: PowerTimelineProps): React.JSX.Elemen
                 <Box sx={{ pl: 2 }}>
                     {actions.map((action, i) => {
                         const isIR = action.__type === 'IRPressAction';
+                        const cmdIconSrc = isIR && action.IRCommandName ? getCommandIconSrc(action.IRCommandName) : undefined;
                         return (
                             <Box key={i} sx={{ display: 'flex', gap: 0 }}>
                                 {/* Connector line */}
@@ -790,7 +795,7 @@ function PowerTimeline({ title, actions }: PowerTimelineProps): React.JSX.Elemen
                                     <CardContent sx={{ py: 1, px: 1.5, '&:last-child': { pb: 1 } }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             {isIR ? (
-                                                <BoltIcon fontSize="small" color="primary" />
+                                                cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={action.IRCommandName || ''} size={20} /> : <BoltIcon fontSize="small" color="primary" />
                                             ) : (
                                                 <TimerIcon fontSize="small" color="warning" />
                                             )}

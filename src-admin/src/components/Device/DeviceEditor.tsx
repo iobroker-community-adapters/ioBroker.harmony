@@ -38,6 +38,7 @@ import type { HarmonyDevice, HarmonyActivity, PowerAction, CommandFunction } fro
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
 import { getDeviceIconSrc } from '../../utils/deviceTypes';
 import { getRoleLabel } from '../../utils/activityTypes';
+import { getCommandIconSrc } from '../../utils/commandIcons';
 import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 interface DeviceEditorProps {
@@ -293,6 +294,8 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                         );
                                     }
 
+                                    const cmdIconSrc = getCommandIconSrc(fn.name);
+
                                     return (
                                         <Grid2 key={fn.name} size="auto">
                                             <Chip
@@ -316,6 +319,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                                 icon={
                                                     result === 'success' ? <CheckCircleIcon fontSize="small" color="success" /> :
                                                     result === 'error' ? <ErrorOutlineIcon fontSize="small" color="error" /> :
+                                                    cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={fn.name} size={20} /> :
                                                     undefined
                                                 }
                                                 onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
@@ -423,6 +427,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                         <Box sx={{ pl: 2 }}>
                             {actions.map((action, i) => {
                                 const isIR = action.__type === 'IRPressAction';
+                                const cmdIconSrc = isIR && action.IRCommandName ? getCommandIconSrc(action.IRCommandName) : undefined;
                                 return (
                                     <Box key={i} sx={{ display: 'flex', gap: 0 }}>
                                         {/* Connector line */}
@@ -461,7 +466,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                             <CardContent sx={{ py: 1, px: 1.5, '&:last-child': { pb: 1 } }}>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                                                     {isIR ? (
-                                                        <BoltIcon fontSize="small" color="primary" />
+                                                        cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={action.IRCommandName || ''} size={20} /> : <BoltIcon fontSize="small" color="primary" />
                                                     ) : (
                                                         <TimerIcon fontSize="small" color="warning" />
                                                     )}
@@ -475,9 +480,17 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
                                                             size="small"
                                                             sx={{ minWidth: 160 }}
                                                         >
-                                                            {availableCommands.map((cmd) => (
-                                                                <MenuItem key={cmd} value={cmd}>{cmd}</MenuItem>
-                                                            ))}
+                                                            {availableCommands.map((cmd) => {
+                                                                const optIconSrc = getCommandIconSrc(cmd);
+                                                                return (
+                                                                    <MenuItem key={cmd} value={cmd}>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                            {optIconSrc && <HarmonyIcon src={optIconSrc} alt={cmd} size={18} />}
+                                                                            {cmd}
+                                                                        </Box>
+                                                                    </MenuItem>
+                                                                );
+                                                            })}
                                                             {action.IRCommandName && !availableCommands.includes(action.IRCommandName) && (
                                                                 <MenuItem value={action.IRCommandName}>{action.IRCommandName}</MenuItem>
                                                             )}
