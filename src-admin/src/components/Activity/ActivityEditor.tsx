@@ -19,15 +19,20 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    DialogActions,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
     Collapse,
     InputAdornment,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
 } from '@mui/material';
 import Grid2 from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
@@ -37,7 +42,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// ExpandMore no longer needed - commands use table view
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import BoltIcon from '@mui/icons-material/Bolt';
 import TimerIcon from '@mui/icons-material/Timer';
@@ -197,6 +202,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
 
     // ---- Devices & Roles Tab (card-based) ----
     const renderDevicesRoles = (): React.JSX.Element => {
+        const [confirmRemoveDevice, setConfirmRemoveDevice] = useState<string | null>(null);
         const fixitEntries = Object.entries(activity.fixit || {});
         const assignedDeviceIds = new Set(fixitEntries.map(([id]) => id));
         const availableDevices = allDevices.filter((d) => !assignedDeviceIds.has(d.id));
@@ -217,6 +223,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
             const updatedRoles = { ...(activity.roles || {}) };
             delete updatedRoles[deviceId];
             onUpdate({ ...activity, fixit: updatedFixit, roles: updatedRoles });
+            setConfirmRemoveDevice(null);
         };
 
         const handleAddDevice = (deviceId: string): void => {
@@ -281,7 +288,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                                             <Tooltip title="Remove from activity">
                                                 <IconButton
                                                     size="small"
-                                                    onClick={(): void => handleRemoveDevice(deviceId)}
+                                                    onClick={(): void => setConfirmRemoveDevice(deviceId)}
                                                     sx={{ ml: 'auto' }}
                                                 >
                                                     <CloseIcon fontSize="small" />
@@ -406,6 +413,28 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                             </List>
                         )}
                     </DialogContent>
+                </Dialog>
+
+                {/* Remove Device Confirmation Dialog */}
+                <Dialog open={!!confirmRemoveDevice} onClose={(): void => setConfirmRemoveDevice(null)}>
+                    <DialogTitle>Remove Device</DialogTitle>
+                    <DialogContent>
+                        <Typography>
+                            Are you sure you want to remove this device from the activity? This will also remove its role assignment and FixIt rule.
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={(): void => setConfirmRemoveDevice(null)}>Cancel</Button>
+                        <Button
+                            color="error"
+                            variant="contained"
+                            onClick={(): void => {
+                                if (confirmRemoveDevice) handleRemoveDevice(confirmRemoveDevice);
+                            }}
+                        >
+                            Remove
+                        </Button>
+                    </DialogActions>
                 </Dialog>
             </Box>
         );
@@ -540,8 +569,10 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
         );
     };
 
-    // ---- Commands Tab (Accordion + Chips with Test buttons) ----
+    // ---- Commands Tab (Table view) ----
     const renderCommands = (): React.JSX.Element => {
+        const [confirmDelete, setConfirmDelete] = useState<{ groupIdx: number; funcIdx: number } | null>(null);
+
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (activity.controlGroup || []).map((cg, gi) => {
                 if (gi !== groupIdx) return cg;
@@ -551,6 +582,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 };
             }).filter((cg) => cg.function.length > 0);
             onUpdate({ ...activity, controlGroup: updatedGroups });
+            setConfirmDelete(null);
         };
 
         const handleSaveLabel = (groupIdx: number, funcIdx: number, newLabel: string): void => {
@@ -598,111 +630,189 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
             }, 2000);
         };
 
+        const parseAction = (actionStr: string): string => {
+            try {
+                const parsed = JSON.parse(actionStr);
+                if (parsed.command && parsed.deviceId) {
+                    const type = parsed.type || 'IR';
+                    return `${type}: ${parsed.command} \u2192 Device ${parsed.deviceId}`;
+                }
+                if (typeof parsed === 'object' && Object.keys(parsed).length === 0) {
+                    return '\u2014';
+                }
+                return JSON.stringify(parsed).substring(0, 60);
+            } catch {
+                return actionStr ? actionStr.substring(0, 60) : '\u2014';
+            }
+        };
+
         return (
             <Box>
-                {(activity.controlGroup || []).map((cg, gi) => (
-                    <Accordion key={cg.name} defaultExpanded variant="outlined" sx={{ mb: 1, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    {cg.name}
-                                </Typography>
-                                <Chip label={`${cg.function.length} commands`} size="small" variant="outlined" />
-                                <Tooltip title="Add command">
-                                    <IconButton
-                                        size="small"
-                                        onClick={(e): void => { e.stopPropagation(); handleAddCommand(gi); }}
-                                        sx={{ ml: 'auto' }}
-                                    >
-                                        <AddIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Grid2 container spacing={1}>
-                                {cg.function.map((fn, fi) => {
-                                    const cmdKey = `activity_${activity.id}_${fn.name}`;
-                                    const result = testResult[cmdKey];
-                                    const isTesting = testingCmd === cmdKey;
+                <TableContainer component={Paper} variant="outlined">
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ width: 40 }}></TableCell>
+                                <TableCell>{I18n.t('name')}</TableCell>
+                                <TableCell>{I18n.t('label')}</TableCell>
+                                <TableCell>Action</TableCell>
+                                <TableCell sx={{ width: 140 }} align="center">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {(activity.controlGroup || []).map((cg, gi) => (
+                                <React.Fragment key={cg.name}>
+                                    {/* Group header row */}
+                                    <TableRow sx={{ bgcolor: 'action.hover' }}>
+                                        <TableCell colSpan={5} sx={{ py: 1 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="subtitle2" fontWeight={700}>
+                                                    {cg.name}
+                                                </Typography>
+                                                <Chip label={`${cg.function.length}`} size="small" variant="outlined" />
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                    {/* Command rows */}
+                                    {cg.function.map((fn, fi) => {
+                                        const cmdKey = `activity_${activity.id}_${fn.name}`;
+                                        const result = testResult[cmdKey];
+                                        const isTesting = testingCmd === cmdKey;
+                                        const cmdIconSrc = getCommandIconSrc(fn.name);
+                                        const isEditing = editingCmd?.groupIdx === gi && editingCmd?.funcIdx === fi;
 
-                                    if (editingCmd?.groupIdx === gi && editingCmd?.funcIdx === fi) {
                                         return (
-                                            <Grid2 key={fn.name} size={{ xs: 12 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, p: 0.5 }}>
-                                                    <TextField
-                                                        value={editingCmd.label}
-                                                        onChange={(e): void => setEditingCmd({ ...editingCmd, label: e.target.value })}
-                                                        size="small"
-                                                        sx={{ minWidth: 160 }}
-                                                        label="Label"
-                                                    />
-                                                    <IconButton size="small" color="primary" onClick={(): void => handleSaveLabel(gi, fi, editingCmd.label)}>
-                                                        <SaveIcon fontSize="small" />
-                                                    </IconButton>
-                                                    <IconButton size="small" onClick={(): void => setEditingCmd(null)}>
-                                                        <CancelIcon fontSize="small" />
-                                                    </IconButton>
-                                                </Box>
-                                            </Grid2>
-                                        );
-                                    }
-
-                                    const cmdIconSrc = getCommandIconSrc(fn.name);
-
-                                    return (
-                                        <Grid2 key={fn.name} size="auto">
-                                            <Chip
-                                                label={
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                        <span>{fn.label}</span>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            {fn.name !== fn.label ? fn.name : ''}
-                                                        </Typography>
-                                                    </Box>
-                                                }
-                                                variant="outlined"
+                                            <TableRow
+                                                key={fn.name}
                                                 sx={{
-                                                    height: 'auto',
-                                                    py: 0.5,
-                                                    borderColor: result === 'success' ? 'success.main' : result === 'error' ? 'error.main' : undefined,
-                                                    transition: 'border-color 0.3s ease',
+                                                    bgcolor: result === 'success' ? 'success.50' : result === 'error' ? 'error.50' : undefined,
+                                                    transition: 'background-color 0.3s ease',
                                                 }}
-                                                onDelete={(): void => handleDeleteCommand(gi, fi)}
-                                                deleteIcon={<DeleteIcon fontSize="small" />}
-                                                icon={
-                                                    result === 'success' ? <CheckCircleIcon fontSize="small" color="success" /> :
-                                                    result === 'error' ? <ErrorOutlineIcon fontSize="small" color="error" /> :
-                                                    cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={fn.name} size={20} /> :
-                                                    undefined
-                                                }
-                                                onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
-                                            />
-                                            {testCommand && hubName && (
-                                                <Tooltip title="Test command">
-                                                    <IconButton
-                                                        size="small"
-                                                        color="primary"
-                                                        disabled={isTesting}
-                                                        onClick={(): void => { void handleTestCommand(fn.name); }}
-                                                        sx={{ ml: -0.5 }}
-                                                    >
-                                                        <PlayArrowIcon fontSize="small" />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )}
-                                        </Grid2>
-                                    );
-                                })}
-                            </Grid2>
-                        </AccordionDetails>
-                    </Accordion>
-                ))}
+                                            >
+                                                <TableCell sx={{ width: 40, px: 1 }}>
+                                                    {result === 'success' ? (
+                                                        <CheckCircleIcon fontSize="small" color="success" />
+                                                    ) : result === 'error' ? (
+                                                        <ErrorOutlineIcon fontSize="small" color="error" />
+                                                    ) : cmdIconSrc ? (
+                                                        <HarmonyIcon src={cmdIconSrc} alt={fn.name} size={20} />
+                                                    ) : (
+                                                        <BoltIcon fontSize="small" color="disabled" />
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body2">{fn.name}</Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {isEditing ? (
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                            <TextField
+                                                                value={editingCmd!.label}
+                                                                onChange={(e): void => setEditingCmd({ ...editingCmd!, label: e.target.value })}
+                                                                size="small"
+                                                                variant="standard"
+                                                                sx={{ minWidth: 120 }}
+                                                                autoFocus
+                                                                onKeyDown={(e): void => {
+                                                                    if (e.key === 'Enter') handleSaveLabel(gi, fi, editingCmd!.label);
+                                                                    if (e.key === 'Escape') setEditingCmd(null);
+                                                                }}
+                                                            />
+                                                            <IconButton size="small" color="primary" onClick={(): void => handleSaveLabel(gi, fi, editingCmd!.label)}>
+                                                                <SaveIcon fontSize="small" />
+                                                            </IconButton>
+                                                            <IconButton size="small" onClick={(): void => setEditingCmd(null)}>
+                                                                <CancelIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Box>
+                                                    ) : (
+                                                        <Typography variant="body2">{fn.label}</Typography>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        {parseAction(fn.action)}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>
+                                                    {testCommand && hubName && (
+                                                        <Tooltip title="Test command">
+                                                            <IconButton
+                                                                size="small"
+                                                                color="primary"
+                                                                disabled={isTesting}
+                                                                onClick={(): void => { void handleTestCommand(fn.name); }}
+                                                            >
+                                                                <PlayArrowIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    )}
+                                                    {!isEditing && (
+                                                        <Tooltip title="Edit label">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
+                                                            >
+                                                                <EditIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    )}
+                                                    <Tooltip title="Delete command">
+                                                        <IconButton
+                                                            size="small"
+                                                            color="error"
+                                                            onClick={(): void => setConfirmDelete({ groupIdx: gi, funcIdx: fi })}
+                                                        >
+                                                            <DeleteIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                    {/* Add Command button row */}
+                                    <TableRow>
+                                        <TableCell colSpan={5} sx={{ py: 0.5 }}>
+                                            <Button
+                                                size="small"
+                                                startIcon={<AddIcon />}
+                                                onClick={(): void => handleAddCommand(gi)}
+                                                sx={{ textTransform: 'none' }}
+                                            >
+                                                Add Command
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                </React.Fragment>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 {(!activity.controlGroup || activity.controlGroup.length === 0) && (
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
                         No commands defined for this activity.
                     </Typography>
                 )}
+
+                {/* Delete confirmation dialog */}
+                <Dialog open={!!confirmDelete} onClose={(): void => setConfirmDelete(null)}>
+                    <DialogTitle>Delete Command</DialogTitle>
+                    <DialogContent>
+                        <Typography>Are you sure you want to delete this command?</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={(): void => setConfirmDelete(null)}>Cancel</Button>
+                        <Button
+                            color="error"
+                            variant="contained"
+                            onClick={(): void => {
+                                if (confirmDelete) handleDeleteCommand(confirmDelete.groupIdx, confirmDelete.funcIdx);
+                            }}
+                        >
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         );
     };
