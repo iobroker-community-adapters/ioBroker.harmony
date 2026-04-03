@@ -149,7 +149,16 @@
     "dataSource": "poll",
     "singletonHost": true,
     "adminUI": {
-      "config": "json"
+      "config": "json",
+      "tab": "materialize"
+    },
+    "adminTab": {
+      "singleton": true,
+      "name": {
+        "en": "Harmony", "de": "Harmony", "ru": "Harmony", "pt": "Harmony",
+        "nl": "Harmony", "fr": "Harmony", "it": "Harmony", "es": "Harmony",
+        "pl": "Harmony", "uk": "Harmony", "zh-cn": "Harmony"
+      }
     },
     "messagebox": true,
     "dependencies": [
