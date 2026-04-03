@@ -7,11 +7,6 @@ import {
     TextField,
     Select,
     MenuItem,
-    Table,
-    TableHead,
-    TableBody,
-    TableRow,
-    TableCell,
     IconButton,
     Button,
     Checkbox,
@@ -21,6 +16,18 @@ import {
     Chip,
     Card,
     CardContent,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Collapse,
+    InputAdornment,
 } from '@mui/material';
 import Grid2 from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
@@ -30,22 +37,25 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, ControlGroup, CommandFunction } from '../../types/harmony';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import BoltIcon from '@mui/icons-material/Bolt';
+import TimerIcon from '@mui/icons-material/Timer';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFunction } from '../../types/harmony';
+import { IconPicker, getIconById } from '../Common/IconPicker';
+import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityTypeIcon, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
+import { getDeviceTypeIcon } from '../../utils/deviceTypes';
 
 interface ActivityEditorProps {
     activity: HarmonyActivity;
     allDevices: HarmonyDevice[];
     onUpdate: (updated: HarmonyActivity) => void;
+    testCommand?: (hubName: string, deviceId: string, command: string) => Promise<{ success: boolean }>;
+    hubName?: string;
 }
-
-const ACTIVITY_TYPES = [
-    'VirtualTelevisionN',
-    'VirtualDvd',
-    'VirtualCdMulti',
-    'VirtualGameConsole',
-    'VirtualAux',
-    'VirtualOther',
-];
 
 const ROLE_OPTIONS = [
     '',
@@ -59,83 +69,132 @@ const ROLE_OPTIONS = [
     'GamePlayingActivityRole',
 ];
 
-export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEditorProps): React.JSX.Element {
+export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hubName }: ActivityEditorProps): React.JSX.Element {
     const [activeTab, setActiveTab] = useState(0);
     const [editingCmd, setEditingCmd] = useState<{ groupIdx: number; funcIdx: number; label: string } | null>(null);
+    const [iconPickerOpen, setIconPickerOpen] = useState(false);
+    const [addDeviceOpen, setAddDeviceOpen] = useState(false);
+    const [expandedDevice, setExpandedDevice] = useState<string | null>(null);
+    const [testingCmd, setTestingCmd] = useState<string | null>(null);
+    const [testResult, setTestResult] = useState<Record<string, 'success' | 'error'>>({});
 
     const handleField = <K extends keyof HarmonyActivity>(key: K, value: HarmonyActivity[K]): void => {
         onUpdate({ ...activity, [key]: value });
     };
 
     // ---- Overview Tab ----
-    const renderOverview = (): React.JSX.Element => (
-        <Grid2 container spacing={2} sx={{ maxWidth: 600 }}>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="Name"
-                    value={activity.label}
-                    onChange={(e): void => handleField('label', e.target.value)}
-                    fullWidth
-                    size="small"
-                />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="Type"
-                    value={activity.type}
-                    onChange={(e): void => handleField('type', e.target.value)}
-                    fullWidth
-                    size="small"
-                    select
-                >
-                    {ACTIVITY_TYPES.map((t) => (
-                        <MenuItem key={t} value={t}>{t}</MenuItem>
-                    ))}
-                </TextField>
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="Order"
-                    type="number"
-                    value={activity.activityOrder ?? 0}
-                    onChange={(e): void => handleField('activityOrder', Number(e.target.value))}
-                    fullWidth
-                    size="small"
-                />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="Icon"
-                    value={activity.icon || ''}
-                    onChange={(e): void => handleField('icon', e.target.value)}
-                    fullWidth
-                    size="small"
-                />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="Display Name"
-                    value={activity.activityTypeDisplayName || ''}
-                    onChange={(e): void => handleField('activityTypeDisplayName', e.target.value)}
-                    fullWidth
-                    size="small"
-                />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                    label="ID"
-                    value={activity.id}
-                    fullWidth
-                    size="small"
-                    slotProps={{ input: { readOnly: true } }}
-                />
-            </Grid2>
-        </Grid2>
-    );
+    const renderOverview = (): React.JSX.Element => {
+        const selectedIcon = getIconById(activity.icon || '');
+        const TypeIcon = getActivityTypeIcon(activity.type);
 
-    // ---- Devices & Roles Tab ----
+        return (
+            <Grid2 container spacing={2} sx={{ maxWidth: 640 }}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="Activity Name"
+                        value={activity.label}
+                        onChange={(e): void => handleField('label', e.target.value)}
+                        fullWidth
+                        size="small"
+                    />
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="Type"
+                        value={activity.type}
+                        onChange={(e): void => handleField('type', e.target.value)}
+                        fullWidth
+                        size="small"
+                        select
+                    >
+                        {Object.entries(ACTIVITY_TYPE_MAP).map(([value, info]) => (
+                            <MenuItem key={value} value={value}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <info.icon fontSize="small" />
+                                    {info.label}
+                                </Box>
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="Order"
+                        type="number"
+                        value={activity.activityOrder ?? 0}
+                        onChange={(e): void => handleField('activityOrder', Number(e.target.value))}
+                        fullWidth
+                        size="small"
+                    />
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                        Icon
+                    </Typography>
+                    <Box
+                        onClick={(): void => setIconPickerOpen(true)}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1.5,
+                            p: 1,
+                            border: 1,
+                            borderColor: 'divider',
+                            borderRadius: 1,
+                            cursor: 'pointer',
+                            '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
+                        }}
+                    >
+                        {selectedIcon ? (
+                            <>
+                                <selectedIcon.icon sx={{ fontSize: 24, color: 'primary.main' }} />
+                                <Typography variant="body2">{selectedIcon.label}</Typography>
+                            </>
+                        ) : (
+                            <>
+                                <TypeIcon sx={{ fontSize: 24, color: 'text.secondary' }} />
+                                <Typography variant="body2" color="text.secondary">
+                                    {activity.icon || 'Choose icon...'}
+                                </Typography>
+                            </>
+                        )}
+                        <Button size="small" sx={{ ml: 'auto' }}>Change</Button>
+                    </Box>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="Display Name"
+                        value={activity.activityTypeDisplayName || ''}
+                        onChange={(e): void => handleField('activityTypeDisplayName', e.target.value)}
+                        fullWidth
+                        size="small"
+                    />
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        label="ID"
+                        value={activity.id}
+                        fullWidth
+                        size="small"
+                        slotProps={{ input: { readOnly: true } }}
+                    />
+                </Grid2>
+                <IconPicker
+                    open={iconPickerOpen}
+                    value={activity.icon || ''}
+                    type="activity"
+                    onSelect={(iconId): void => handleField('icon', iconId)}
+                    onClose={(): void => setIconPickerOpen(false)}
+                />
+            </Grid2>
+        );
+    };
+
+    // ---- Devices & Roles Tab (card-based) ----
     const renderDevicesRoles = (): React.JSX.Element => {
         const fixitEntries = Object.entries(activity.fixit || {});
+        const assignedDeviceIds = new Set(fixitEntries.map(([id]) => id));
+        const availableDevices = allDevices.filter((d) => !assignedDeviceIds.has(d.id));
 
         const handleRoleChange = (deviceId: string, role: string): void => {
             const updatedRoles = { ...(activity.roles || {}) };
@@ -147,102 +206,219 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
             onUpdate({ ...activity, roles: updatedRoles });
         };
 
+        const handleRemoveDevice = (deviceId: string): void => {
+            const updatedFixit = { ...(activity.fixit || {}) };
+            delete updatedFixit[deviceId];
+            const updatedRoles = { ...(activity.roles || {}) };
+            delete updatedRoles[deviceId];
+            onUpdate({ ...activity, fixit: updatedFixit, roles: updatedRoles });
+        };
+
+        const handleAddDevice = (deviceId: string): void => {
+            const updatedFixit = { ...(activity.fixit || {}) };
+            updatedFixit[deviceId] = { id: deviceId, Power: 'On', isRelativePower: false, isManualPower: false };
+            onUpdate({ ...activity, fixit: updatedFixit });
+            setAddDeviceOpen(false);
+        };
+
+        const handleFixitChange = (deviceId: string, field: keyof FixItRule, value: string | boolean): void => {
+            const updatedFixit = { ...(activity.fixit || {}) };
+            updatedFixit[deviceId] = { ...updatedFixit[deviceId], [field]: value };
+            onUpdate({ ...activity, fixit: updatedFixit });
+        };
+
         return (
             <Box>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 600 }}>Device</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Role</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Power</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Input</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {fixitEntries.map(([deviceId, rule]) => {
-                            const device = allDevices.find((d) => d.id === deviceId);
-                            const role = activity.roles?.[deviceId] || '';
-                            return (
-                                <TableRow key={deviceId}>
-                                    <TableCell>{device?.label || deviceId}</TableCell>
-                                    <TableCell>
-                                        <Select
-                                            value={role}
-                                            onChange={(e): void => handleRoleChange(deviceId, e.target.value)}
+                {/* Section 1: Devices in this activity */}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                        Devices in this Activity ({fixitEntries.length})
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        size="small"
+                        onClick={(): void => setAddDeviceOpen(true)}
+                        disabled={availableDevices.length === 0}
+                    >
+                        Add Device
+                    </Button>
+                </Box>
+
+                {fixitEntries.length === 0 && (
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: 'center' }}>
+                        No devices assigned to this activity yet. Click "Add Device" to get started.
+                    </Typography>
+                )}
+
+                <Grid2 container spacing={2}>
+                    {fixitEntries.map(([deviceId, rule]) => {
+                        const device = allDevices.find((d) => d.id === deviceId);
+                        const role = activity.roles?.[deviceId] || '';
+                        const DevIcon = device ? getDeviceTypeIcon(device.type) : getDeviceTypeIcon('');
+                        const isExpanded = expandedDevice === deviceId;
+
+                        return (
+                            <Grid2 key={deviceId} size={{ xs: 12, sm: 6, md: 4 }}>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        transition: 'all 0.15s ease',
+                                        '&:hover': { borderColor: 'primary.main' },
+                                    }}
+                                >
+                                    <CardContent sx={{ pb: isExpanded ? 2 : '12px !important', pt: 1.5 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                            <DevIcon sx={{ color: 'primary.main', fontSize: 22 }} />
+                                            <Typography variant="subtitle2" fontWeight={600} sx={{ flex: 1 }} noWrap>
+                                                {device?.label || deviceId}
+                                            </Typography>
+                                            <Tooltip title="Remove from activity">
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={(): void => handleRemoveDevice(deviceId)}
+                                                    sx={{ ml: 'auto' }}
+                                                >
+                                                    <CloseIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                            {role && (
+                                                <Chip
+                                                    label={getRoleLabel(role)}
+                                                    size="small"
+                                                    color="primary"
+                                                    variant="outlined"
+                                                />
+                                            )}
+                                            <Chip
+                                                label={`Power: ${rule.Power}`}
+                                                size="small"
+                                                variant="outlined"
+                                                color={rule.Power === 'On' ? 'success' : 'default'}
+                                            />
+                                        </Box>
+                                        <Button
                                             size="small"
-                                            displayEmpty
-                                            sx={{ minWidth: 180 }}
+                                            onClick={(): void => setExpandedDevice(isExpanded ? null : deviceId)}
+                                            sx={{ mt: 0.5, textTransform: 'none', fontSize: 12 }}
                                         >
-                                            <MenuItem value="">
-                                                <em>None</em>
-                                            </MenuItem>
-                                            {ROLE_OPTIONS.filter(Boolean).map((r) => (
-                                                <MenuItem key={r} value={r}>{r}</MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell>{rule.Power}</TableCell>
-                                    <TableCell>{rule.Input || '-'}</TableCell>
-                                </TableRow>
-                            );
-                        })}
-                        {fixitEntries.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={4} align="center">
-                                    <Typography variant="body2" color="text.secondary">No devices assigned</Typography>
-                                </TableCell>
-                            </TableRow>
+                                            {isExpanded ? 'Collapse' : 'Edit Settings'}
+                                        </Button>
+                                        <Collapse in={isExpanded}>
+                                            <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                                                <Select
+                                                    value={role}
+                                                    onChange={(e): void => handleRoleChange(deviceId, e.target.value)}
+                                                    size="small"
+                                                    displayEmpty
+                                                    fullWidth
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>No Role</em>
+                                                    </MenuItem>
+                                                    {ROLE_OPTIONS.filter(Boolean).map((r) => (
+                                                        <MenuItem key={r} value={r}>{getRoleLabel(r)}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                                <Select
+                                                    value={rule.Power}
+                                                    onChange={(e): void => handleFixitChange(deviceId, 'Power', e.target.value)}
+                                                    size="small"
+                                                    fullWidth
+                                                >
+                                                    <MenuItem value="On">Power On</MenuItem>
+                                                    <MenuItem value="Off">Power Off</MenuItem>
+                                                    <MenuItem value="Toggle">Toggle</MenuItem>
+                                                </Select>
+                                                <TextField
+                                                    value={rule.Input || ''}
+                                                    onChange={(e): void => handleFixitChange(deviceId, 'Input', e.target.value)}
+                                                    size="small"
+                                                    placeholder="Input source (e.g. HDMI1)"
+                                                    fullWidth
+                                                    label="Input"
+                                                />
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={!!rule.isRelativePower}
+                                                            onChange={(e): void => handleFixitChange(deviceId, 'isRelativePower', e.target.checked)}
+                                                            size="small"
+                                                        />
+                                                    }
+                                                    label={<Typography variant="body2">Relative power</Typography>}
+                                                />
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={!!rule.isManualPower}
+                                                            onChange={(e): void => handleFixitChange(deviceId, 'isManualPower', e.target.checked)}
+                                                            size="small"
+                                                        />
+                                                    }
+                                                    label={<Typography variant="body2">Manual power</Typography>}
+                                                />
+                                            </Box>
+                                        </Collapse>
+                                    </CardContent>
+                                </Card>
+                            </Grid2>
+                        );
+                    })}
+                </Grid2>
+
+                {/* Add Device Dialog */}
+                <Dialog
+                    open={addDeviceOpen}
+                    onClose={(): void => setAddDeviceOpen(false)}
+                    maxWidth="xs"
+                    fullWidth
+                >
+                    <DialogTitle>Add Device to Activity</DialogTitle>
+                    <DialogContent>
+                        {availableDevices.length === 0 ? (
+                            <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                                All hub devices are already in this activity.
+                            </Typography>
+                        ) : (
+                            <List dense>
+                                {availableDevices.map((dev) => {
+                                    const DevTypeIcon = getDeviceTypeIcon(dev.type);
+                                    return (
+                                        <ListItemButton
+                                            key={dev.id}
+                                            onClick={(): void => handleAddDevice(dev.id)}
+                                        >
+                                            <ListItemIcon sx={{ minWidth: 36 }}>
+                                                <DevTypeIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={dev.label}
+                                                secondary={`${dev.manufacturer} ${dev.model}`}
+                                            />
+                                        </ListItemButton>
+                                    );
+                                })}
+                            </List>
                         )}
-                    </TableBody>
-                </Table>
+                    </DialogContent>
+                </Dialog>
             </Box>
         );
     };
 
-    // ---- Power Sequences Tab (FULLY FUNCTIONAL VISUAL EDITOR) ----
+    // ---- Power Sequences Tab (Visual Timeline) ----
     const renderPowerSequences = (): React.JSX.Element => {
         const fixitEntries = Object.entries(activity.fixit || {});
 
-        const handleAddAction = (deviceId: string, phase: 'PowerOn' | 'PowerOff', actionType: 'IRPressAction' | 'IRDelayAction'): void => {
-            const device = allDevices.find((d) => d.id === deviceId);
-            if (!device) return;
-            const pf = { ...device.powerFeatures };
-            const key = phase === 'PowerOn' ? 'PowerOnActions' : 'PowerOffActions';
-            const actions = [...(pf[key] || [])];
-            const maxOrder = actions.reduce((m, a) => Math.max(m, a.Order), 0);
-            const newAction: PowerAction = actionType === 'IRPressAction'
-                ? { __type: 'IRPressAction', Order: maxOrder + 1, IRCommandName: 'PowerToggle', Duration: null, ActionId: 0 }
-                : { __type: 'IRDelayAction', Order: maxOrder + 1, Delay: 500, Duration: null, ActionId: 0 };
-            actions.push(newAction);
-            pf[key] = actions;
-
-            // Update the device in allDevices through the activity's fixit
-            // We need to update the device itself, not the activity
-            // But since we only have onUpdate for activity, let's store power sequences in the device editor
-            // Actually, power sequences for devices involved in an activity live on the device itself.
-            // For the activity editor, we show the power sequences of referenced devices.
-            // We can't update devices from the activity editor directly, so we show editable data
-            // that maps to the device. Let's update through modifying the device in the config.
-            // Since we only have onUpdate for activity and this is read from device.powerFeatures,
-            // we'll need to approach this differently: store overrides or use a different mechanism.
-            // For now, let's show an editable view that works through the activity's enterActions/sequences.
-
-            // Actually looking at the data model more carefully, each device has its own powerFeatures.
-            // The activity references devices through fixit rules. The power sequences shown here
-            // should be per-device. Since we can't modify devices from here, let's redirect users
-            // to the device editor for power sequence editing, but show the data here read-only
-            // with a note.
-
-            // Let me reconsider: the request says "Power Sequence Editor" must be fully functional.
-            // Since activity has enterActions, let's build a proper editor for enterActions.
-            void 0;
-        };
-
-        // Show device power sequences (from allDevices) for devices in this activity
         return (
             <Box>
                 {fixitEntries.length === 0 && (
-                    <Typography variant="body2" color="text.secondary">No devices in this activity.</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        No devices in this activity. Add devices in the "Devices & Roles" tab first.
+                    </Typography>
                 )}
                 {fixitEntries.map(([deviceId]) => {
                     const device = allDevices.find((d) => d.id === deviceId);
@@ -255,41 +431,20 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                                     {device.label}
                                 </Typography>
-
-                                {/* Power On Actions */}
-                                <PowerSequenceEditor
-                                    title="Power On Actions"
+                                <PowerTimeline
+                                    title="Power On Sequence"
                                     actions={pf?.PowerOnActions || []}
                                     device={device}
-                                    onChange={(newActions): void => {
-                                        // We need to propagate device changes up. Since we only have
-                                        // onUpdate for activity, we'll store a mapping.
-                                        // For a complete solution, the parent should also accept device updates.
-                                        // We'll note that this is best edited in the Device Editor.
-                                        // But let's still make it editable by encoding changes.
-                                        void newActions;
-                                    }}
-                                    allDevices={allDevices}
-                                    activityDeviceId={deviceId}
-                                    activityOnUpdate={onUpdate}
-                                    activity={activity}
-                                    phase="PowerOn"
                                 />
-
                                 <Divider sx={{ my: 2 }} />
-
-                                {/* Power Off Actions */}
-                                <PowerSequenceEditor
-                                    title="Power Off Actions"
+                                <PowerTimeline
+                                    title="Power Off Sequence"
                                     actions={pf?.PowerOffActions || []}
                                     device={device}
-                                    onChange={(newActions): void => { void newActions; }}
-                                    allDevices={allDevices}
-                                    activityDeviceId={deviceId}
-                                    activityOnUpdate={onUpdate}
-                                    activity={activity}
-                                    phase="PowerOff"
                                 />
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                                    Edit power sequences in the Device Editor for full control.
+                                </Typography>
                             </CardContent>
                         </Card>
                     );
@@ -298,7 +453,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
         );
     };
 
-    // ---- FixIt Rules Tab (FULLY EDITABLE) ----
+    // ---- FixIt Rules Tab ----
     const renderFixitRules = (): React.JSX.Element => {
         const fixitEntries = Object.entries(activity.fixit || {});
 
@@ -310,72 +465,80 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
 
         return (
             <Box>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 600 }}>Device</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Power</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Input</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Relative Power</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Manual Power</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {fixitEntries.map(([deviceId, rule]) => {
-                            const device = allDevices.find((d) => d.id === deviceId);
-                            return (
-                                <TableRow key={deviceId}>
-                                    <TableCell>{device?.label || deviceId}</TableCell>
-                                    <TableCell>
+                {fixitEntries.length === 0 && (
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                        No FixIt rules. Add devices in the "Devices & Roles" tab first.
+                    </Typography>
+                )}
+                {fixitEntries.map(([deviceId, rule]) => {
+                    const device = allDevices.find((d) => d.id === deviceId);
+                    const DevIcon = device ? getDeviceTypeIcon(device.type) : getDeviceTypeIcon('');
+                    return (
+                        <Card key={deviceId} variant="outlined" sx={{ mb: 1.5 }}>
+                            <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                    <DevIcon fontSize="small" sx={{ color: 'primary.main' }} />
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {device?.label || deviceId}
+                                    </Typography>
+                                </Box>
+                                <Grid2 container spacing={1.5}>
+                                    <Grid2 size={{ xs: 6, sm: 3 }}>
                                         <Select
                                             value={rule.Power}
                                             onChange={(e): void => handleFixitChange(deviceId, 'Power', e.target.value)}
                                             size="small"
-                                            sx={{ minWidth: 100 }}
+                                            fullWidth
                                         >
-                                            <MenuItem value="On">On</MenuItem>
-                                            <MenuItem value="Off">Off</MenuItem>
+                                            <MenuItem value="On">Power On</MenuItem>
+                                            <MenuItem value="Off">Power Off</MenuItem>
                                             <MenuItem value="Toggle">Toggle</MenuItem>
                                         </Select>
-                                    </TableCell>
-                                    <TableCell>
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 6, sm: 3 }}>
                                         <TextField
                                             value={rule.Input || ''}
                                             onChange={(e): void => handleFixitChange(deviceId, 'Input', e.target.value)}
                                             size="small"
-                                            placeholder="Input source"
-                                            sx={{ minWidth: 120 }}
+                                            placeholder="Input"
+                                            label="Input"
+                                            fullWidth
                                         />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Checkbox
-                                            checked={!!rule.isRelativePower}
-                                            onChange={(e): void => handleFixitChange(deviceId, 'isRelativePower', e.target.checked)}
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 6, sm: 3 }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={!!rule.isRelativePower}
+                                                    onChange={(e): void => handleFixitChange(deviceId, 'isRelativePower', e.target.checked)}
+                                                    size="small"
+                                                />
+                                            }
+                                            label={<Typography variant="caption">Relative</Typography>}
                                         />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Checkbox
-                                            checked={!!rule.isManualPower}
-                                            onChange={(e): void => handleFixitChange(deviceId, 'isManualPower', e.target.checked)}
+                                    </Grid2>
+                                    <Grid2 size={{ xs: 6, sm: 3 }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={!!rule.isManualPower}
+                                                    onChange={(e): void => handleFixitChange(deviceId, 'isManualPower', e.target.checked)}
+                                                    size="small"
+                                                />
+                                            }
+                                            label={<Typography variant="caption">Manual</Typography>}
                                         />
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
-                        {fixitEntries.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={5} align="center">
-                                    <Typography variant="body2" color="text.secondary">No FixIt rules</Typography>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                                    </Grid2>
+                                </Grid2>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
             </Box>
         );
     };
 
-    // ---- Commands Tab (FULLY EDITABLE) ----
+    // ---- Commands Tab (Accordion + Chips with Test buttons) ----
     const renderCommands = (): React.JSX.Element => {
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (activity.controlGroup || []).map((cg, gi) => {
@@ -413,80 +576,122 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
             onUpdate({ ...activity, controlGroup: updatedGroups });
         };
 
+        const handleTestCommand = async (commandName: string): Promise<void> => {
+            if (!testCommand || !hubName) return;
+            const cmdKey = `activity_${activity.id}_${commandName}`;
+            setTestingCmd(cmdKey);
+            try {
+                const result = await testCommand(hubName, activity.id, commandName);
+                setTestResult((prev) => ({ ...prev, [cmdKey]: result.success ? 'success' : 'error' }));
+            } catch {
+                setTestResult((prev) => ({ ...prev, [cmdKey]: 'error' }));
+            }
+            setTestingCmd(null);
+            setTimeout(() => {
+                setTestResult((prev) => {
+                    const next = { ...prev };
+                    delete next[cmdKey];
+                    return next;
+                });
+            }, 2000);
+        };
+
         return (
             <Box>
                 {(activity.controlGroup || []).map((cg, gi) => (
-                    <Box key={cg.name} sx={{ mb: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                                {cg.name}
-                            </Typography>
-                            <Tooltip title="Add command to this group">
-                                <IconButton size="small" onClick={(): void => handleAddCommand(gi)}>
-                                    <AddIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }}>Label</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, maxWidth: 300 }}>Action</TableCell>
-                                    <TableCell sx={{ fontWeight: 600 }} align="center">Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {cg.function.map((fn, fi) => (
-                                    <TableRow key={fn.name}>
-                                        <TableCell>{fn.name}</TableCell>
-                                        <TableCell>
-                                            {editingCmd?.groupIdx === gi && editingCmd?.funcIdx === fi ? (
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Accordion key={cg.name} defaultExpanded variant="outlined" sx={{ mb: 1, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    {cg.name}
+                                </Typography>
+                                <Chip label={`${cg.function.length} commands`} size="small" variant="outlined" />
+                                <Tooltip title="Add command">
+                                    <IconButton
+                                        size="small"
+                                        onClick={(e): void => { e.stopPropagation(); handleAddCommand(gi); }}
+                                        sx={{ ml: 'auto' }}
+                                    >
+                                        <AddIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Grid2 container spacing={1}>
+                                {cg.function.map((fn, fi) => {
+                                    const cmdKey = `activity_${activity.id}_${fn.name}`;
+                                    const result = testResult[cmdKey];
+                                    const isTesting = testingCmd === cmdKey;
+
+                                    if (editingCmd?.groupIdx === gi && editingCmd?.funcIdx === fi) {
+                                        return (
+                                            <Grid2 key={fn.name} size={{ xs: 12 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, p: 0.5 }}>
                                                     <TextField
                                                         value={editingCmd.label}
                                                         onChange={(e): void => setEditingCmd({ ...editingCmd, label: e.target.value })}
                                                         size="small"
-                                                        sx={{ minWidth: 120 }}
+                                                        sx={{ minWidth: 160 }}
+                                                        label="Label"
                                                     />
-                                                    <IconButton size="small" onClick={(): void => handleSaveLabel(gi, fi, editingCmd.label)}>
+                                                    <IconButton size="small" color="primary" onClick={(): void => handleSaveLabel(gi, fi, editingCmd.label)}>
                                                         <SaveIcon fontSize="small" />
                                                     </IconButton>
                                                     <IconButton size="small" onClick={(): void => setEditingCmd(null)}>
                                                         <CancelIcon fontSize="small" />
                                                     </IconButton>
                                                 </Box>
-                                            ) : (
-                                                fn.label
+                                            </Grid2>
+                                        );
+                                    }
+
+                                    return (
+                                        <Grid2 key={fn.name} size="auto">
+                                            <Chip
+                                                label={
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                        <span>{fn.label}</span>
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            {fn.name !== fn.label ? fn.name : ''}
+                                                        </Typography>
+                                                    </Box>
+                                                }
+                                                variant="outlined"
+                                                sx={{
+                                                    height: 'auto',
+                                                    py: 0.5,
+                                                    borderColor: result === 'success' ? 'success.main' : result === 'error' ? 'error.main' : undefined,
+                                                    transition: 'border-color 0.3s ease',
+                                                }}
+                                                onDelete={(): void => handleDeleteCommand(gi, fi)}
+                                                deleteIcon={<DeleteIcon fontSize="small" />}
+                                                icon={
+                                                    result === 'success' ? <CheckCircleIcon fontSize="small" color="success" /> :
+                                                    result === 'error' ? <ErrorOutlineIcon fontSize="small" color="error" /> :
+                                                    undefined
+                                                }
+                                                onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
+                                            />
+                                            {testCommand && hubName && (
+                                                <Tooltip title="Test command">
+                                                    <IconButton
+                                                        size="small"
+                                                        color="primary"
+                                                        disabled={isTesting}
+                                                        onClick={(): void => { void handleTestCommand(fn.name); }}
+                                                        sx={{ ml: -0.5 }}
+                                                    >
+                                                        <PlayArrowIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
                                             )}
-                                        </TableCell>
-                                        <TableCell sx={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {fn.action}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Tooltip title="Edit label">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={(): void => setEditingCmd({ groupIdx: gi, funcIdx: fi, label: fn.label })}
-                                                >
-                                                    <EditIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Delete command">
-                                                <IconButton
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={(): void => handleDeleteCommand(gi, fi)}
-                                                >
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </Box>
+                                        </Grid2>
+                                    );
+                                })}
+                            </Grid2>
+                        </AccordionDetails>
+                    </Accordion>
                 ))}
                 {(!activity.controlGroup || activity.controlGroup.length === 0) && (
                     <Typography variant="body2" color="text.secondary">
@@ -501,9 +706,13 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
 
     return (
         <Box>
-            <Typography variant="h6" gutterBottom>
-                {activity.label}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                {React.createElement(getActivityTypeIcon(activity.type), { sx: { color: 'primary.main' } })}
+                <Typography variant="h6">
+                    {activity.label}
+                </Typography>
+                <Chip label={getActivityTypeLabel(activity.type)} size="small" variant="outlined" sx={{ ml: 1 }} />
+            </Box>
             <Tabs
                 value={activeTab}
                 onChange={(_, val): void => setActiveTab(val)}
@@ -520,73 +729,91 @@ export function ActivityEditor({ activity, allDevices, onUpdate }: ActivityEdito
     );
 }
 
-// ---- Power Sequence Editor Sub-component ----
+// ---- Power Timeline Sub-component (visual vertical timeline) ----
 
-interface PowerSequenceEditorProps {
+interface PowerTimelineProps {
     title: string;
     actions: PowerAction[];
     device: HarmonyDevice;
-    onChange: (actions: PowerAction[]) => void;
-    allDevices: HarmonyDevice[];
-    activityDeviceId: string;
-    activityOnUpdate: (updated: HarmonyActivity) => void;
-    activity: HarmonyActivity;
-    phase: 'PowerOn' | 'PowerOff';
 }
 
-function PowerSequenceEditor({ title, actions, device, phase }: PowerSequenceEditorProps): React.JSX.Element {
-    // Get all available IR commands from the device's control groups
-    const availableCommands: string[] = [];
-    for (const cg of device.controlGroup || []) {
-        for (const fn of cg.function) {
-            availableCommands.push(fn.name);
-        }
-    }
-
+function PowerTimeline({ title, actions }: PowerTimelineProps): React.JSX.Element {
     return (
         <Box>
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                 {title}
             </Typography>
-            {actions.length > 0 ? (
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 600 }} align="center">Order</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Type</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Command / Duration</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Delay</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {actions.map((action, i) => (
-                            <TableRow key={i}>
-                                <TableCell align="center">{action.Order}</TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={action.__type === 'IRPressAction' ? 'IR Command' : 'Delay'}
-                                        size="small"
-                                        color={action.__type === 'IRPressAction' ? 'primary' : 'default'}
-                                        variant="outlined"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    {action.__type === 'IRPressAction'
-                                        ? action.IRCommandName || '-'
-                                        : `${action.Duration ?? '-'} ms`
-                                    }
-                                </TableCell>
-                                <TableCell>
-                                    {action.Delay != null ? `${action.Delay} ms` : '-'}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            ) : (
+            {actions.length === 0 ? (
                 <Typography variant="body2" color="text.secondary">
-                    No {phase === 'PowerOn' ? 'power on' : 'power off'} actions defined.
+                    No actions defined.
                 </Typography>
+            ) : (
+                <Box sx={{ pl: 2 }}>
+                    {actions.map((action, i) => {
+                        const isIR = action.__type === 'IRPressAction';
+                        return (
+                            <Box key={i} sx={{ display: 'flex', gap: 0 }}>
+                                {/* Connector line */}
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    mr: 1.5,
+                                    width: 20,
+                                }}>
+                                    <Box sx={{
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: '50%',
+                                        bgcolor: isIR ? 'primary.main' : 'warning.main',
+                                        mt: 1.5,
+                                    }} />
+                                    {i < actions.length - 1 && (
+                                        <Box sx={{
+                                            width: 2,
+                                            flex: 1,
+                                            bgcolor: 'divider',
+                                        }} />
+                                    )}
+                                </Box>
+                                {/* Step card */}
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        flex: 1,
+                                        mb: 1,
+                                        borderLeft: 3,
+                                        borderLeftColor: isIR ? 'primary.main' : 'warning.main',
+                                    }}
+                                >
+                                    <CardContent sx={{ py: 1, px: 1.5, '&:last-child': { pb: 1 } }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            {isIR ? (
+                                                <BoltIcon fontSize="small" color="primary" />
+                                            ) : (
+                                                <TimerIcon fontSize="small" color="warning" />
+                                            )}
+                                            <Typography variant="body2" fontWeight={500}>
+                                                Step {i + 1}:
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                {isIR
+                                                    ? `IR Command: ${action.IRCommandName || '-'}`
+                                                    : `Delay: ${action.Delay ?? action.Duration ?? '-'} ms`
+                                                }
+                                            </Typography>
+                                            {isIR && action.Duration != null && (
+                                                <Typography variant="caption" color="text.secondary">
+                                                    ({action.Duration} ms)
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            </Box>
+                        );
+                    })}
+                </Box>
             )}
         </Box>
     );

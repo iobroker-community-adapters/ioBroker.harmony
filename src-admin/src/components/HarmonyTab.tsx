@@ -169,6 +169,11 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
         }));
     }, [configState]);
 
+    const handleTestCommand = useCallback(async (hubNameArg: string, deviceId: string, command: string): Promise<{ success: boolean }> => {
+        const resp = await sendCommand<unknown>('sendCommand', { hubName: hubNameArg, deviceId, command });
+        return { success: resp.success };
+    }, [sendCommand]);
+
     function renderDetail(): React.JSX.Element {
         if (!selection) {
             return (
@@ -218,6 +223,8 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                         activity={activity}
                         allDevices={config?.device || []}
                         onUpdate={handleActivityUpdate}
+                        testCommand={handleTestCommand}
+                        hubName={selection.hubName}
                     />
                 );
             }
@@ -232,6 +239,8 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                         device={device}
                         allActivities={config?.activity || []}
                         onUpdate={handleDeviceUpdate}
+                        testCommand={handleTestCommand}
+                        hubName={selection.hubName}
                     />
                 );
             }

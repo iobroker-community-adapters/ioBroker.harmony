@@ -7,21 +7,17 @@ import {
     ListItemText,
     Collapse,
     Typography,
+    Chip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import RouterIcon from '@mui/icons-material/Router';
-import TvIcon from '@mui/icons-material/Tv';
-import MovieIcon from '@mui/icons-material/Movie';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import DevicesIcon from '@mui/icons-material/Devices';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import SettingsInputHdmiIcon from '@mui/icons-material/SettingsInputHdmi';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import type { HarmonyConfig } from '../../types/harmony';
+import { getActivityTypeIcon, getActivityTypeLabel } from '../../utils/activityTypes';
+import { getDeviceTypeIcon } from '../../utils/deviceTypes';
 
 export type TreeSelection =
     | { type: 'hub'; hubName: string }
@@ -47,25 +43,6 @@ function isSelected(selection: TreeSelection | null, candidate: TreeSelection): 
         return selection.deviceId === candidate.deviceId;
     }
     return true;
-}
-
-function activityIcon(type: string): React.JSX.Element {
-    const lower = type.toLowerCase();
-    if (lower.includes('tv') || lower === 'vod') return <TvIcon fontSize="small" />;
-    if (lower.includes('movie') || lower.includes('dvd') || lower.includes('blu')) return <MovieIcon fontSize="small" />;
-    if (lower.includes('music') || lower.includes('audio')) return <MusicNoteIcon fontSize="small" />;
-    if (lower.includes('game')) return <SportsEsportsIcon fontSize="small" />;
-    return <PowerSettingsNewIcon fontSize="small" />;
-}
-
-function deviceIcon(type: string): React.JSX.Element {
-    const lower = type.toLowerCase();
-    if (lower.includes('television') || lower.includes('tv')) return <TvIcon fontSize="small" />;
-    if (lower.includes('stereo') || lower.includes('receiver') || lower.includes('avr') || lower.includes('audio')) return <VolumeUpIcon fontSize="small" />;
-    if (lower.includes('dvd') || lower.includes('blu') || lower.includes('disc')) return <MovieIcon fontSize="small" />;
-    if (lower.includes('game') || lower.includes('console')) return <SportsEsportsIcon fontSize="small" />;
-    if (lower.includes('cable') || lower.includes('satellite') || lower.includes('pvr')) return <SettingsInputHdmiIcon fontSize="small" />;
-    return <DevicesIcon fontSize="small" />;
 }
 
 export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.Element {
@@ -128,22 +105,27 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                 </ListItemButton>
 
                                 {/* Activity children */}
-                                {activities.map((act) => (
-                                    <ListItemButton
-                                        key={act.id}
-                                        selected={isSelected(selection, { type: 'activity', hubName: hub.name, activityId: act.id })}
-                                        onClick={(): void => onSelect({ type: 'activity', hubName: hub.name, activityId: act.id })}
-                                        sx={{ pl: 7 }}
-                                    >
-                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                            {activityIcon(act.type)}
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={act.label}
-                                            primaryTypographyProps={{ fontSize: 13, noWrap: true }}
-                                        />
-                                    </ListItemButton>
-                                ))}
+                                {activities.map((act) => {
+                                    const ActIcon = getActivityTypeIcon(act.type);
+                                    return (
+                                        <ListItemButton
+                                            key={act.id}
+                                            selected={isSelected(selection, { type: 'activity', hubName: hub.name, activityId: act.id })}
+                                            onClick={(): void => onSelect({ type: 'activity', hubName: hub.name, activityId: act.id })}
+                                            sx={{ pl: 7 }}
+                                        >
+                                            <ListItemIcon sx={{ minWidth: 28 }}>
+                                                <ActIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={act.label}
+                                                secondary={getActivityTypeLabel(act.type)}
+                                                primaryTypographyProps={{ fontSize: 13, noWrap: true }}
+                                                secondaryTypographyProps={{ fontSize: 11 }}
+                                            />
+                                        </ListItemButton>
+                                    );
+                                })}
 
                                 {/* Devices header */}
                                 <ListItemButton
@@ -161,22 +143,25 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                 </ListItemButton>
 
                                 {/* Device children */}
-                                {devices.map((dev) => (
-                                    <ListItemButton
-                                        key={dev.id}
-                                        selected={isSelected(selection, { type: 'device', hubName: hub.name, deviceId: dev.id })}
-                                        onClick={(): void => onSelect({ type: 'device', hubName: hub.name, deviceId: dev.id })}
-                                        sx={{ pl: 7 }}
-                                    >
-                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                            {deviceIcon(dev.type)}
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={dev.label}
-                                            primaryTypographyProps={{ fontSize: 13, noWrap: true }}
-                                        />
-                                    </ListItemButton>
-                                ))}
+                                {devices.map((dev) => {
+                                    const DevTypeIcon = getDeviceTypeIcon(dev.type);
+                                    return (
+                                        <ListItemButton
+                                            key={dev.id}
+                                            selected={isSelected(selection, { type: 'device', hubName: hub.name, deviceId: dev.id })}
+                                            onClick={(): void => onSelect({ type: 'device', hubName: hub.name, deviceId: dev.id })}
+                                            sx={{ pl: 7 }}
+                                        >
+                                            <ListItemIcon sx={{ minWidth: 28 }}>
+                                                <DevTypeIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={dev.label}
+                                                primaryTypographyProps={{ fontSize: 13, noWrap: true }}
+                                            />
+                                        </ListItemButton>
+                                    );
+                                })}
                             </Collapse>
                         </React.Fragment>
                     );
