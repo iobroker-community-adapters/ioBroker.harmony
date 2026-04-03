@@ -42,6 +42,8 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
 
     const [hubs, setHubs] = useState<HarmonyHubInfo[]>([]);
     const [configs, setConfigs] = useState<Record<string, HarmonyConfig | null>>({});
+    const [discoveryInfos, setDiscoveryInfos] = useState<Record<string, Record<string, string>>>({});
+    const [stateDigests, setStateDigests] = useState<Record<string, Record<string, unknown>>>({});
     const [selection, setSelection] = useState<TreeSelection | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -77,6 +79,14 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                     const configResp = await sendCommand<HarmonyConfig>('getConfig', { hubName: hub.name });
                     if (configResp.success && configResp.data) {
                         setConfigs((prev) => ({ ...prev, [hub.name]: configResp.data as HarmonyConfig }));
+                    }
+                    const discResp = await sendCommand<Record<string, string>>('getDiscoveryInfo', { hubName: hub.name });
+                    if (discResp.success && discResp.data) {
+                        setDiscoveryInfos((prev) => ({ ...prev, [hub.name]: discResp.data as Record<string, string> }));
+                    }
+                    const stateResp = await sendCommand<Record<string, unknown>>('getStateDigest', { hubName: hub.name });
+                    if (stateResp.success && stateResp.data) {
+                        setStateDigests((prev) => ({ ...prev, [hub.name]: stateResp.data as Record<string, unknown> }));
                     }
                 }
 
@@ -157,6 +167,34 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
         });
     }, [configState]);
 
+    const handleSync = useCallback(async (): Promise<void> => {
+        if (!activeHub) return;
+        const resp = await sendCommand<unknown>('syncHub', { hubName: activeHub });
+        if (resp.success) {
+            setSnackbar({ open: true, message: 'Hub sync triggered', severity: 'success' });
+        } else {
+            setSnackbar({ open: true, message: 'Sync failed: ' + (resp.error || 'Unknown error'), severity: 'error' });
+        }
+    }, [activeHub, sendCommand]);
+
+    const handleRefresh = useCallback(async (): Promise<void> => {
+        if (!activeHub) return;
+        const configResp = await sendCommand<HarmonyConfig>('getConfig', { hubName: activeHub });
+        if (configResp.success && configResp.data) {
+            setConfigs((prev) => ({ ...prev, [activeHub]: configResp.data as HarmonyConfig }));
+            configState.loadConfig(configResp.data);
+        }
+        const discResp = await sendCommand<Record<string, string>>('getDiscoveryInfo', { hubName: activeHub });
+        if (discResp.success && discResp.data) {
+            setDiscoveryInfos((prev) => ({ ...prev, [activeHub]: discResp.data as Record<string, string> }));
+        }
+        const stateResp = await sendCommand<Record<string, unknown>>('getStateDigest', { hubName: activeHub });
+        if (stateResp.success && stateResp.data) {
+            setStateDigests((prev) => ({ ...prev, [activeHub]: stateResp.data as Record<string, unknown> }));
+        }
+        setSnackbar({ open: true, message: 'Configuration refreshed', severity: 'success' });
+    }, [activeHub, sendCommand, configState]);
+
     const handleActivityUpdate = useCallback((updated: HarmonyActivity): void => {
         configState.updateConfig((cfg) => ({
             ...cfg,
@@ -193,9 +231,16 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                 return (
                     <HubOverview
                         hubName={selection.hubName}
+                        friendlyName={hub?.friendlyName || selection.hubName}
                         connected={hub?.connected ?? false}
                         config={config}
                         themeType={themeType}
+                        discoveryInfo={discoveryInfos[selection.hubName]}
+                        stateDigest={stateDigests[selection.hubName]}
+                        onExport={handleExport}
+                        onImport={handleImport}
+                        onSync={handleSync}
+                        onRefresh={handleRefresh}
                     />
                 );
 
