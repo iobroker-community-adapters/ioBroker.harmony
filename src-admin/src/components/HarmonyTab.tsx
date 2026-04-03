@@ -202,6 +202,9 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                     <ActivityList
                         activities={config?.activity || []}
                         onSelectActivity={(id): void => setSelection({ type: 'activity', hubName: selection.hubName, activityId: id })}
+                        onReorder={(reorderedActivities): void => {
+                            configState.updateConfig((cfg) => ({ ...cfg, activity: reorderedActivities }));
+                        }}
                     />
                 );
 
