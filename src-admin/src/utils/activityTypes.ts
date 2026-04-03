@@ -25,11 +25,11 @@ export function getActivityIconSrc(type: string): string {
 /** Friendly role labels for activity device roles */
 export const ROLE_LABEL_MAP: Record<string, string> = {
     'VolumeActivityRole': 'Volume Control',
-    'DisplayActivityRole': 'Display / Screen',
+    'DisplayActivityRole': 'Display',
     'ChannelChangingActivityRole': 'Channel Control',
     'PlayMovieActivityRole': 'Movie Playback',
     'PlayMusicActivityRole': 'Music Playback',
-    'NavigationActivityRole': 'Navigation / Menus',
+    'NavigationActivityRole': 'Navigation',
     'TextEntryActivityRole': 'Text / Keyboard',
     'GamePlayingActivityRole': 'Game Control',
 };
