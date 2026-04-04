@@ -28,8 +28,8 @@ export interface MessageResponse {
 /** Top-level configuration object returned by the hub. */
 export interface HarmonyConfig {
     dataConsent: boolean;
-    sequence: unknown[];
-    global: { timeStampHash: string; locale: string };
+    sequence: HarmonySequence[];
+    global: HarmonyGlobal;
     device: HarmonyDevice[];
     activity: HarmonyActivity[];
     sla: { latestSLAAccepted: boolean; latestSLAAcceptedDate: string };
@@ -40,6 +40,37 @@ export interface HarmonyConfig {
         contentImageHost: string;
         householdUserProfileUri: string;
     };
+}
+
+/** Global hub settings. */
+export interface HarmonyGlobal {
+    timeStampHash: string;
+    locale: string;
+}
+
+/** A custom button sequence (macro). */
+export interface HarmonySequence {
+    id: number;
+    name: string;
+    sequenceActions: SequenceAction[];
+}
+
+/** A single step within a custom sequence. */
+export interface SequenceAction {
+    type: string;
+    deviceId: string;
+    command: string;
+    duration: number;
+    delay: number;
+}
+
+/** An action that runs when an activity starts or stops. */
+export interface EnterAction {
+    type: string;
+    deviceId: string;
+    command: string;
+    duration?: number;
+    delay?: number;
 }
 
 /** A device registered on the hub. */
@@ -82,10 +113,18 @@ export interface HarmonyActivity {
     roles: Record<string, string>;
     controlGroup: ControlGroup[];
     fixit: Record<string, FixItRule>;
-    rules: unknown[];
-    sequences: unknown[];
-    enterActions: unknown[];
+    rules: ActivityRule[];
+    sequences: HarmonySequence[];
+    enterActions: EnterAction[];
     zones?: unknown;
+}
+
+/** A rule within an activity (e.g., input switching, volume leveling). */
+export interface ActivityRule {
+    type: string;
+    deviceId?: string;
+    input?: string;
+    [key: string]: unknown;
 }
 
 /** A named group of IR/BT commands (e.g. "Volume", "Channel"). */

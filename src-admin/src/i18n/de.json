@@ -153,5 +153,13 @@
   "sequences": "Sequenzen",
   "yes": "Ja",
   "no": "Nein",
-  "off": "Aus"
+  "off": "Aus",
+  "noSequences": "Keine Sequenzen definiert",
+  "enterActions": "Startaktionen",
+  "enterActionsDesc": "Aktionen, die beim Start dieser Aktivität ausgeführt werden (z.B. Eingänge umschalten, Tasten drücken).",
+  "hubName": "Hub-Name",
+  "sleepTimerDesc": "Alle Geräte nach Inaktivität automatisch ausschalten.",
+  "outOfHomeDesc": "Geräte aus der Ferne steuern, wenn Sie nicht zu Hause sind.",
+  "outOfHomeReadOnly": "Diese Einstellung kann nur in der Harmony-App geändert werden.",
+  "hubSettings": "Hub-Einstellungen"
 }

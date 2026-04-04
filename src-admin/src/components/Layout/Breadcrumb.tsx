@@ -37,6 +37,16 @@ export function Breadcrumb({ selection, hubConfigs }: BreadcrumbProps): React.JS
             parts.push(I18n.t('devices'));
             parts.push(cfg?.devices[selection.deviceId] ?? selection.deviceId);
             break;
+        case 'sequenceList':
+            parts.push(I18n.t('sequences'));
+            break;
+        case 'sequence':
+            parts.push(I18n.t('sequences'));
+            parts.push(String(selection.sequenceId));
+            break;
+        case 'hubSettings':
+            parts.push(I18n.t('settings'));
+            break;
     }
 
     return (

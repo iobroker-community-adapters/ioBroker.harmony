@@ -13,6 +13,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import RouterIcon from '@mui/icons-material/Router';
 import DevicesIcon from '@mui/icons-material/Devices';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
+import SettingsIcon from '@mui/icons-material/Settings';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { I18n } from '@iobroker/adapter-react-v5';
@@ -23,10 +25,13 @@ import { HarmonyIcon } from '../Common/HarmonyIcon';
 
 export type TreeSelection =
     | { type: 'hub'; hubName: string }
+    | { type: 'hubSettings'; hubName: string }
     | { type: 'activityList'; hubName: string }
     | { type: 'activity'; hubName: string; activityId: string }
     | { type: 'deviceList'; hubName: string }
-    | { type: 'device'; hubName: string; deviceId: string };
+    | { type: 'device'; hubName: string; deviceId: string }
+    | { type: 'sequenceList'; hubName: string }
+    | { type: 'sequence'; hubName: string; sequenceId: number };
 
 interface TreeNavProps {
     hubs: Array<{ name: string; friendlyName: string; connected: boolean; config: HarmonyConfig | null }>;
@@ -43,6 +48,9 @@ function isSelected(selection: TreeSelection | null, candidate: TreeSelection): 
     }
     if (selection.type === 'device' && candidate.type === 'device') {
         return selection.deviceId === candidate.deviceId;
+    }
+    if (selection.type === 'sequence' && candidate.type === 'sequence') {
+        return selection.sequenceId === candidate.sequenceId;
     }
     return true;
 }
@@ -69,6 +77,7 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                             .sort((a, b) => (a.activityOrder || 0) - (b.activityOrder || 0))
                         : [];
                     const devices = config ? config.device : [];
+                    const sequences = config?.sequence || [];
                     const isExpanded = expanded[hub.name] ?? true;
 
                     return (
@@ -162,6 +171,54 @@ export function TreeNav({ hubs, selection, onSelect }: TreeNavProps): React.JSX.
                                         />
                                     </ListItemButton>
                                 ))}
+
+                                {/* Sequences header */}
+                                <ListItemButton
+                                    selected={isSelected(selection, { type: 'sequenceList', hubName: hub.name })}
+                                    onClick={(): void => onSelect({ type: 'sequenceList', hubName: hub.name })}
+                                    sx={{ pl: 4 }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 28 }}>
+                                        <PlaylistPlayIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={`${I18n.t('sequences')} (${sequences.length})`}
+                                        primaryTypographyProps={{ fontWeight: 500, fontSize: 13 }}
+                                    />
+                                </ListItemButton>
+
+                                {/* Sequence children */}
+                                {sequences.map((seq) => (
+                                    <ListItemButton
+                                        key={seq.id}
+                                        selected={isSelected(selection, { type: 'sequence', hubName: hub.name, sequenceId: seq.id })}
+                                        onClick={(): void => onSelect({ type: 'sequence', hubName: hub.name, sequenceId: seq.id })}
+                                        sx={{ pl: 7 }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 36 }}>
+                                            <PlaylistPlayIcon fontSize="small" color="primary" />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={seq.name}
+                                            primaryTypographyProps={{ fontSize: 13, noWrap: true }}
+                                        />
+                                    </ListItemButton>
+                                ))}
+
+                                {/* Hub Settings */}
+                                <ListItemButton
+                                    selected={isSelected(selection, { type: 'hubSettings', hubName: hub.name })}
+                                    onClick={(): void => onSelect({ type: 'hubSettings', hubName: hub.name })}
+                                    sx={{ pl: 4 }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 28 }}>
+                                        <SettingsIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={I18n.t('settings')}
+                                        primaryTypographyProps={{ fontWeight: 500, fontSize: 13 }}
+                                    />
+                                </ListItemButton>
                             </Collapse>
                         </React.Fragment>
                     );

@@ -18,10 +18,13 @@ import { ActivityList } from './Activity/ActivityList';
 import { ActivityEditor } from './Activity/ActivityEditor';
 import { DeviceList } from './Device/DeviceList';
 import { DeviceEditor } from './Device/DeviceEditor';
+import { SequenceList } from './Sequence/SequenceList';
+import { SequenceEditor } from './Sequence/SequenceEditor';
+import { HubSettings } from './Hub/HubSettings';
 import { ConfigToolbar } from './Config/ConfigToolbar';
 import { UnsavedBanner } from './Config/UnsavedBanner';
 import { exportConfig, triggerImport } from './Config/ExportImport';
-import type { HarmonyHubInfo, HarmonyConfig, HarmonyActivity, HarmonyDevice } from '../types/harmony';
+import type { HarmonyHubInfo, HarmonyConfig, HarmonyActivity, HarmonyDevice, HarmonySequence, HarmonyGlobal } from '../types/harmony';
 
 interface HarmonyTabProps {
     socket: AdminConnection;
@@ -209,8 +212,62 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
         }));
     }, [configState]);
 
+    const handleSequenceUpdate = useCallback((updated: HarmonySequence): void => {
+        configState.updateConfig((cfg) => ({
+            ...cfg,
+            sequence: (cfg.sequence || []).map((s) => s.id === updated.id ? updated : s),
+        }));
+    }, [configState]);
+
+    const handleSequenceAdd = useCallback((): void => {
+        configState.updateConfig((cfg) => {
+            const seqs = cfg.sequence || [];
+            const maxId = seqs.reduce((max, s) => Math.max(max, s.id), 0);
+            const newSeq: HarmonySequence = {
+                id: maxId + 1,
+                name: `Sequence ${maxId + 1}`,
+                sequenceActions: [],
+            };
+            return { ...cfg, sequence: [...seqs, newSeq] };
+        });
+    }, [configState]);
+
+    const handleSequenceDelete = useCallback((id: number): void => {
+        configState.updateConfig((cfg) => ({
+            ...cfg,
+            sequence: (cfg.sequence || []).filter((s) => s.id !== id),
+        }));
+    }, [configState]);
+
+    const handleGlobalUpdate = useCallback((updated: HarmonyGlobal): void => {
+        configState.updateConfig((cfg) => ({
+            ...cfg,
+            global: updated,
+        }));
+    }, [configState]);
+
+    const handleRenameHub = useCallback(async (newName: string): Promise<void> => {
+        if (!activeHub) return;
+        const resp = await sendCommand<unknown>('renameHub', { hubName: activeHub, newName });
+        if (resp.success) {
+            setSnackbar({ open: true, message: 'Hub renamed', severity: 'success' });
+        } else {
+            setSnackbar({ open: true, message: 'Rename failed: ' + (resp.error || ''), severity: 'error' });
+        }
+    }, [activeHub, sendCommand]);
+
+    const handleSetSleepTimer = useCallback(async (minutes: number): Promise<void> => {
+        if (!activeHub) return;
+        const resp = await sendCommand<unknown>('setSleepTimer', { hubName: activeHub, minutes });
+        if (resp.success) {
+            setSnackbar({ open: true, message: 'Sleep timer updated', severity: 'success' });
+        } else {
+            setSnackbar({ open: true, message: 'Failed: ' + (resp.error || ''), severity: 'error' });
+        }
+    }, [activeHub, sendCommand]);
+
     const handleTestCommand = useCallback(async (hubNameArg: string, deviceId: string, command: string): Promise<{ success: boolean }> => {
-        const resp = await sendCommand<unknown>('sendCommand', { hubName: hubNameArg, deviceId, command });
+        const resp = await sendCommand<unknown>('testCommand', { hubName: hubNameArg, deviceId, command });
         return { success: resp.success };
     }, [sendCommand]);
 
@@ -294,6 +351,44 @@ export default function HarmonyTab({ socket, themeType, theme, adapterName, inst
                     />
                 );
             }
+
+            case 'sequenceList':
+                return (
+                    <SequenceList
+                        sequences={config?.sequence || []}
+                        onSelectSequence={(id): void => setSelection({ type: 'sequence', hubName: selection.hubName, sequenceId: id })}
+                        onAdd={handleSequenceAdd}
+                        onDelete={handleSequenceDelete}
+                    />
+                );
+
+            case 'sequence': {
+                const seq = config?.sequence?.find((s) => s.id === selection.sequenceId);
+                if (!seq) {
+                    return <Typography color="text.secondary" sx={{ p: 2 }}>Sequence not found.</Typography>;
+                }
+                return (
+                    <SequenceEditor
+                        sequence={seq}
+                        allDevices={config?.device || []}
+                        onUpdate={handleSequenceUpdate}
+                    />
+                );
+            }
+
+            case 'hubSettings':
+                return (
+                    <HubSettings
+                        hubName={selection.hubName}
+                        friendlyName={hub?.friendlyName || selection.hubName}
+                        global={config?.global || null}
+                        discoveryInfo={discoveryInfos[selection.hubName]}
+                        stateDigest={stateDigests[selection.hubName]}
+                        onUpdateGlobal={handleGlobalUpdate}
+                        onRenameHub={handleRenameHub}
+                        onSetSleepTimer={handleSetSleepTimer}
+                    />
+                );
         }
     }
 

@@ -50,7 +50,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFunction } from '../../types/harmony';
+import type { HarmonyActivity, HarmonyDevice, PowerAction, FixItRule, CommandFunction, EnterAction } from '../../types/harmony';
 import { IconPicker, getIconById, getIconSrc } from '../Common/IconPicker';
 import { CommandEditor } from '../Common/CommandEditor';
 import { ACTIVITY_TYPE_MAP, getActivityTypeLabel, getActivityIconSrc, ROLE_LABEL_MAP, getRoleLabel } from '../../utils/activityTypes';
@@ -88,6 +88,8 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
     const [testResult, setTestResult] = useState<Record<string, 'success' | 'error'>>({});
     const [commandEditorOpen, setCommandEditorOpen] = useState(false);
     const [commandEditorTarget, setCommandEditorTarget] = useState<{ groupIdx: number; funcIdx: number | null; command: CommandFunction | null } | null>(null);
+    const [confirmRemoveDevice, setConfirmRemoveDevice] = useState<string | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<{ groupIdx: number; funcIdx: number } | null>(null);
 
     const handleField = <K extends keyof HarmonyActivity>(key: K, value: HarmonyActivity[K]): void => {
         onUpdate({ ...activity, [key]: value });
@@ -205,7 +207,6 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
 
     // ---- Devices & Roles Tab (card-based) ----
     const renderDevicesRoles = (): React.JSX.Element => {
-        const [confirmRemoveDevice, setConfirmRemoveDevice] = useState<string | null>(null);
         const fixitEntries = Object.entries(activity.fixit || {});
         const assignedDeviceIds = new Set(fixitEntries.map(([id]) => id));
         const availableDevices = allDevices.filter((d) => !assignedDeviceIds.has(d.id));
@@ -574,8 +575,6 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
 
     // ---- Commands Tab (Table view) ----
     const renderCommands = (): React.JSX.Element => {
-        const [confirmDelete, setConfirmDelete] = useState<{ groupIdx: number; funcIdx: number } | null>(null);
-
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (activity.controlGroup || []).map((cg, gi) => {
                 if (gi !== groupIdx) return cg;
@@ -848,7 +847,181 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
         );
     };
 
-    const tabContent = [renderOverview, renderDevicesRoles, renderPowerSequences, renderFixitRules, renderCommands];
+    // ---- Enter Actions Tab (actions triggered on activity start) ----
+    const renderEnterActions = (): React.JSX.Element => {
+        const actions: EnterAction[] = activity.enterActions || [];
+
+        const allDeviceCommands: Record<string, string[]> = {};
+        for (const dev of allDevices) {
+            const cmds: string[] = [];
+            for (const cg of dev.controlGroup || []) {
+                for (const fn of cg.function) {
+                    cmds.push(fn.name);
+                }
+            }
+            allDeviceCommands[dev.id] = cmds;
+        }
+
+        const updateEnterActions = (newActions: EnterAction[]): void => {
+            onUpdate({ ...activity, enterActions: newActions });
+        };
+
+        const handleAddAction = (): void => {
+            const defaultDeviceId = allDevices.length > 0 ? allDevices[0].id : '';
+            const defaultCmd = defaultDeviceId && allDeviceCommands[defaultDeviceId]?.length > 0
+                ? allDeviceCommands[defaultDeviceId][0] : '';
+            updateEnterActions([...actions, { type: 'IRPressAction', deviceId: defaultDeviceId, command: defaultCmd, duration: 100 }]);
+        };
+
+        const handleAddDelay = (): void => {
+            updateEnterActions([...actions, { type: 'IRDelayAction', deviceId: '', command: '', delay: 500 }]);
+        };
+
+        const handleDeleteAction = (index: number): void => {
+            updateEnterActions(actions.filter((_, i) => i !== index));
+        };
+
+        const handleMoveUpAction = (index: number): void => {
+            if (index === 0) return;
+            const arr = [...actions];
+            [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
+            updateEnterActions(arr);
+        };
+
+        const handleMoveDownAction = (index: number): void => {
+            if (index >= actions.length - 1) return;
+            const arr = [...actions];
+            [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+            updateEnterActions(arr);
+        };
+
+        const handleActionFieldChange = (index: number, field: keyof EnterAction, value: string | number): void => {
+            const arr = [...actions];
+            arr[index] = { ...arr[index], [field]: value };
+            if (field === 'deviceId' && typeof value === 'string') {
+                const cmds = allDeviceCommands[value] || [];
+                arr[index].command = cmds.length > 0 ? cmds[0] : '';
+            }
+            updateEnterActions(arr);
+        };
+
+        return (
+            <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {I18n.t('enterActionsDesc')}
+                </Typography>
+                {actions.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {I18n.t('noCommands')}
+                    </Typography>
+                ) : (
+                    <Box sx={{ pl: 2 }}>
+                        {actions.map((action, i) => {
+                            const isDelay = action.type === 'IRDelayAction';
+                            const device = allDevices.find((d) => d.id === action.deviceId);
+                            const cmdIconSrc = !isDelay && action.command ? getCommandIconSrc(action.command) : undefined;
+
+                            return (
+                                <Box key={i} sx={{ display: 'flex', gap: 0 }}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mr: 1.5, width: 20 }}>
+                                        <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: isDelay ? 'warning.main' : 'primary.main', mt: 2 }} />
+                                        {i < actions.length - 1 && <Box sx={{ width: 2, flex: 1, bgcolor: 'divider' }} />}
+                                    </Box>
+                                    <Card variant="outlined" sx={{ flex: 1, mb: 1, borderLeft: 3, borderLeftColor: isDelay ? 'warning.main' : 'primary.main' }}>
+                                        <CardContent sx={{ py: 1, px: 1.5, '&:last-child': { pb: 1 } }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                {isDelay ? (
+                                                    <TimerIcon fontSize="small" color="warning" />
+                                                ) : (
+                                                    cmdIconSrc ? <HarmonyIcon src={cmdIconSrc} alt={action.command} size={20} /> : <BoltIcon fontSize="small" color="primary" />
+                                                )}
+                                                <Typography variant="body2" fontWeight={500} sx={{ minWidth: 50 }}>
+                                                    {I18n.t('step')} {i + 1}
+                                                </Typography>
+                                                {isDelay ? (
+                                                    <TextField
+                                                        type="number"
+                                                        value={action.delay ?? 0}
+                                                        onChange={(e): void => handleActionFieldChange(i, 'delay', Number(e.target.value))}
+                                                        size="small"
+                                                        sx={{ width: 120 }}
+                                                        slotProps={{ input: { endAdornment: <InputAdornment position="end">ms</InputAdornment> } }}
+                                                    />
+                                                ) : (
+                                                    <>
+                                                        <Select
+                                                            value={action.deviceId}
+                                                            onChange={(e): void => handleActionFieldChange(i, 'deviceId', e.target.value)}
+                                                            size="small"
+                                                            sx={{ minWidth: 140 }}
+                                                        >
+                                                            {allDevices.map((dev) => (
+                                                                <MenuItem key={dev.id} value={dev.id}>
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                        <HarmonyIcon src={getDeviceIconSrc(dev.type)} alt={dev.label} size={18} />
+                                                                        {dev.label}
+                                                                    </Box>
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                        <Select
+                                                            value={action.command}
+                                                            onChange={(e): void => handleActionFieldChange(i, 'command', e.target.value)}
+                                                            size="small"
+                                                            sx={{ minWidth: 140 }}
+                                                        >
+                                                            {(allDeviceCommands[action.deviceId] || []).map((cmd) => (
+                                                                <MenuItem key={cmd} value={cmd}>{cmd}</MenuItem>
+                                                            ))}
+                                                            {action.command && !(allDeviceCommands[action.deviceId] || []).includes(action.command) && (
+                                                                <MenuItem value={action.command}>{action.command}</MenuItem>
+                                                            )}
+                                                        </Select>
+                                                    </>
+                                                )}
+                                                <Box sx={{ ml: 'auto', display: 'flex' }}>
+                                                    <Tooltip title={I18n.t('moveUp')}>
+                                                        <span>
+                                                            <IconButton size="small" disabled={i === 0} onClick={(): void => handleMoveUpAction(i)}>
+                                                                <ArrowUpwardIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </span>
+                                                    </Tooltip>
+                                                    <Tooltip title={I18n.t('moveDown')}>
+                                                        <span>
+                                                            <IconButton size="small" disabled={i >= actions.length - 1} onClick={(): void => handleMoveDownAction(i)}>
+                                                                <ArrowDownwardIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </span>
+                                                    </Tooltip>
+                                                    <Tooltip title={I18n.t('delete')}>
+                                                        <IconButton size="small" color="error" onClick={(): void => handleDeleteAction(i)}>
+                                                            <DeleteIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Box>
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                </Box>
+                            );
+                        })}
+                    </Box>
+                )}
+                <Divider sx={{ my: 1 }} />
+                <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                    <Button size="small" variant="outlined" color="primary" startIcon={<BoltIcon />} onClick={handleAddAction}>
+                        {I18n.t('addIRCommand')}
+                    </Button>
+                    <Button size="small" variant="outlined" color="warning" startIcon={<TimerIcon />} onClick={handleAddDelay}>
+                        {I18n.t('addDelay')}
+                    </Button>
+                </Box>
+            </Box>
+        );
+    };
+
+    const tabContent = [renderOverview, renderDevicesRoles, renderPowerSequences, renderFixitRules, renderEnterActions, renderCommands];
 
     return (
         <Box>
@@ -868,6 +1041,7 @@ export function ActivityEditor({ activity, allDevices, onUpdate, testCommand, hu
                 <Tab label={I18n.t('devicesAndRoles')} />
                 <Tab label={I18n.t('powerSequences')} />
                 <Tab label={I18n.t('fixitRules')} />
+                <Tab label={I18n.t('enterActions')} />
                 <Tab label={I18n.t('commands')} />
             </Tabs>
             {tabContent[activeTab]()}

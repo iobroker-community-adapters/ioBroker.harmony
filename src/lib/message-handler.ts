@@ -76,6 +76,12 @@ export class MessageHandler {
                         (obj.message as { hubName: string; activityId: string }).activityId,
                     );
                     break;
+                case 'renameHub':
+                    response = await this.renameHub(obj.message as { hubName: string; newName: string });
+                    break;
+                case 'setSleepTimer':
+                    response = await this.setSleepTimer(obj.message as { hubName: string; minutes: number });
+                    break;
                 case 'syncHub':
                     response = await this.writer.syncHub(
                         (obj.message as { hubName: string }).hubName,
@@ -221,6 +227,36 @@ export class MessageHandler {
         } catch (e: unknown) {
             const errMsg = e instanceof Error ? e.message : String(e);
             this.adapter.log.error(`IRDB code sets error: ${errMsg}`);
+            return { success: false, error: errMsg };
+        }
+    }
+
+    private async renameHub(msg: { hubName: string; newName: string }): Promise<MessageResponse> {
+        if (!msg?.hubName || !msg?.newName) return { success: false, error: 'hubName and newName required' };
+        try {
+            await this.writer.sendHubQuery(msg.hubName, 'connect.discoveryinfo?set', { friendlyName: msg.newName });
+            return { success: true, data: { renamed: true } };
+        } catch (e: unknown) {
+            const errMsg = e instanceof Error ? e.message : String(e);
+            return { success: false, error: errMsg };
+        }
+    }
+
+    private async setSleepTimer(msg: { hubName: string; minutes: number }): Promise<MessageResponse> {
+        if (!msg?.hubName) return { success: false, error: 'hubName required' };
+        const hub = this.adapter.hubs[msg.hubName];
+        if (!hub?.client) return { success: false, error: `Hub not found: ${msg.hubName}` };
+
+        try {
+            if (msg.minutes <= 0) {
+                // Cancel sleep timer
+                await this.writer.sendHubQuery(msg.hubName, 'harmony.engine?setsleeptimer', { interval: -1 });
+            } else {
+                await this.writer.sendHubQuery(msg.hubName, 'harmony.engine?setsleeptimer', { interval: msg.minutes * 60 });
+            }
+            return { success: true, data: { set: true } };
+        } catch (e: unknown) {
+            const errMsg = e instanceof Error ? e.message : String(e);
             return { success: false, error: errMsg };
         }
     }

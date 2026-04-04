@@ -75,6 +75,7 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
     const [testResult, setTestResult] = useState<Record<string, 'success' | 'error'>>({});
     const [commandEditorOpen, setCommandEditorOpen] = useState(false);
     const [commandEditorTarget, setCommandEditorTarget] = useState<{ groupIdx: number; funcIdx: number | null; command: CommandFunction | null } | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<{ groupIdx: number; funcIdx: number } | null>(null);
 
     const handleField = <K extends keyof HarmonyDevice>(key: K, value: HarmonyDevice[K]): void => {
         onUpdate({ ...device, [key]: value });
@@ -199,8 +200,6 @@ export function DeviceEditor({ device, allActivities, onUpdate, testCommand, hub
 
     // ---- Commands Tab (Table view) ----
     const renderCommands = (): React.JSX.Element => {
-        const [confirmDelete, setConfirmDelete] = useState<{ groupIdx: number; funcIdx: number } | null>(null);
-
         const handleDeleteCommand = (groupIdx: number, funcIdx: number): void => {
             const updatedGroups = (device.controlGroup || []).map((cg, gi) => {
                 if (gi !== groupIdx) return cg;

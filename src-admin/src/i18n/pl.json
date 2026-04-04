@@ -127,5 +127,13 @@
   "actionPreview": "Action Preview",
   "rawAction": "Raw Action JSON",
   "rawActionHelp": "Advanced: edit the raw action JSON directly",
-  "group": "Group"
+  "group": "Group",
+  "noSequences": "No sequences defined",
+  "enterActions": "Start Actions",
+  "enterActionsDesc": "Actions that are executed when this activity starts (e.g. switch inputs, press buttons).",
+  "hubName": "Hub Name",
+  "sleepTimerDesc": "Automatically turn off all devices after inactivity.",
+  "outOfHomeDesc": "Control your devices remotely when away from home.",
+  "outOfHomeReadOnly": "This setting can only be changed in the Harmony app.",
+  "hubSettings": "Hub Settings"
 }
