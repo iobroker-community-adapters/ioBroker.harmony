@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "harmony",
-    "version": "2.0.5",
+    "version": "2.1.0",
     "news": {
+      "2.1.0": {
+        "en": "Adapter requires admin >= 7.7.22 now",
+        "de": "Adapter benötigt admin >= 7.7.22 jetzt",
+        "ru": "Адаптер требует администратора >= 7.7.22",
+        "pt": "Adaptador requer admin >= 7.7.22 agora",
+        "nl": "Adapter vereist admin < 7.7.22 nu",
+        "fr": "Adaptateur nécessite admin >= 7.7.22 maintenant",
+        "it": "Adattatore richiede admin >= 7.7.22 ora",
+        "es": "El adaptador requiere administrador= 7.7.22 ahora",
+        "pl": "Adapter wymaga admin > = 7.7.22",
+        "uk": "Адаптер вимагає адмін >= 7.7.22 тепер",
+        "zh-cn": "适任者需要管理员 \\ 7.7.22 现在"
+      },
       "2.0.5": {
         "en": "Corrected the type of value",
         "de": "Korrektur der Art des Wertes",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga node.js 18 i sterownika js- > = 5 teraz\nTłumaczenia zostały zaktualizowane\nZaktualizowano zależności",
         "uk": "Адаптер вимагає node.js 18 і js-controller >= 5 тепер\nОновлено переклади\nЗалежність було оновлено",
         "zh-cn": "适配器需要节点.js 18和js控制器 QQ 现在5号\n翻译已更新\n依赖关系已更新"
-      },
-      "1.3.0": {
-        "en": "Adapter requires nodejs 16 now.\nAdapter has been moved to iobroker-community-adapters organisation.\nDependencies have been updated.",
-        "de": "Adapter benötigt jetzt Nodejs 16.\nDer Adapter wurde auf die Organisation von iobroker-community-Adaptern verschoben.\nAbhängigkeiten wurden aktualisiert.",
-        "ru": "Адаптер требует nodejs 16 сейчас.\nАдаптер переехал в организацию iobroker-community-adapters.\nОбновлены зависимости.",
-        "pt": "Adaptador requer nodejs 16 agora.\nAdapter foi transferido para a organização iobroker-community-adapters.\nAs dependências foram atualizadas.",
-        "nl": "Adapter vereist nodejs 16 nu.\nAdapter is verplaatst naar iobroker-community-apters organisatie.\nAfhankelijkheid is geüpdateerd.",
-        "fr": "L'adaptateur nécessite 16 nodejs maintenant.\nAdaptateur a été déplacé à l'organisation iobroker-community-adapters.\nLes dépendances ont été mises à jour.",
-        "it": "L'adattatore richiede nodejs 16 ora.\nL'adattatore è stato spostato nell'organizzazione di hobroker-community-adapters.\nLe dipendenze sono state aggiornate.",
-        "es": "Adaptador requiere nodejs 16 ahora.\nEl adaptador ha sido trasladado a la organización de ibroker-community-adapters.\nSe han actualizado las dependencias.",
-        "pl": "Adapter wymaga węzła 16.\nAdapter przeniesiono do organizacji iobroker-community-adapters.\nW zależności zostały zaktualizowane.",
-        "uk": "Адаптер вимагає nodejs 16 тепер.\nПереміщено перехід на iobroker-community-adapters.\nОновлено залежність.",
-        "zh-cn": "现在需要16秒。.\n已经向加勒比采掘业者组织道歉。.\n情况已经更新。."
       }
     },
     "titleLang": {

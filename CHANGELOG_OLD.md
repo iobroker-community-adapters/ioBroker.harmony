@@ -1,4 +1,9 @@
 # Older Changelogs
+## 1.5.0 (2024-06-02)
+* (WolfspiritM) Multiple subnets can be entered as a comma-separated list now. (#147)
+* (mcm1957) Testing for node.js 22 has been added.
+* (mcm1957) Dependencies have been updated.
+
 ## 1.4.0 (2024-04-11)
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
 * (mcm1957) Translations have been updated
