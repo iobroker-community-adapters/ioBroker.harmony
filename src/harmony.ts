@@ -577,6 +577,7 @@ export class HarmonyAdapter extends Adapter {
                 native: activity,
             });
             delete this.hubs[hub].ioStates[activityLabel];
+            delete this.hubs[hub].ioStates[`${activityLabel}-control`];
         }
 
         // create devices

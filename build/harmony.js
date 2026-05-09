@@ -467,6 +467,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
                 native: activity,
             });
             delete this.hubs[hub].ioStates[activityLabel];
+            delete this.hubs[hub].ioStates[`${activityLabel}-control`];
         }
         // create devices
         this.log.debug('[PROCESS] Creating devices');
