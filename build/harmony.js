@@ -276,14 +276,11 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
                 this.hubs[hub].ioChannels[channel.common.name] = true;
             }
             const states = await this.getStatesAsync(`${hub}.activities.*`);
-            if (!states) {
-                for (const state in states) {
-                    if (Object.prototype.hasOwnProperty.call(states, state)) {
-                        const tmp = state.split('.');
-                        const name = tmp.pop();
-                        if (name !== 'currentStatus' && name !== 'currentActivity') {
-                            this.hubs[hub].ioStates[name] = true;
-                        }
+            if (states && Object.keys(states).length > 0) {
+                for (const stateId of Object.keys(states)) {
+                    const name = stateId.split('.').pop();
+                    if (name && name !== 'currentStatus' && name !== 'currentActivity') {
+                        this.hubs[hub].ioStates[name] = true;
                     }
                 }
             }
