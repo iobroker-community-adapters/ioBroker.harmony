@@ -35,66 +35,33 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ping = exports.PingOptions = void 0;
 const dgram = __importStar(require("node:dgram"));
-const os = __importStar(require("node:os"));
 class PingOptions {
 }
 exports.PingOptions = PingOptions;
-function generateBroadcastIp(logger) {
-    if (!/^win/i.test(process.platform)) {
-        logger('We are running non windows so just broadcast');
-        return ['255.255.255.255'];
-    }
-    logger('We are running on windows so we try to find the local ip address to fix a windows broadcast protocol bug');
-    const ifaces = os.networkInterfaces();
-    const possibleIps = [];
-    Object.keys(ifaces).forEach(ifname => {
-        ifaces[ifname].forEach(iface => {
-            // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
-            if ('IPv4' !== iface.family || iface.internal !== false) {
-                return;
-            }
-            possibleIps.push(iface.address);
-        });
-    });
-    return possibleIps
-        .filter(ip => ip.indexOf('192.') === 0)
-        .map(ip => {
-        const nums = ip.split('.');
-        nums[3] = '255';
-        logger(`Fallback to local ip address -> ${nums.join('.')}`);
-        return nums.join('.');
-    });
-}
 class Ping {
     constructor(portToAnnounce, options) {
-        // try to find an ip address that is in a local (home) network
         options || (options = {});
         this.logger = options.logger || (() => { });
-        options.address || (options.address = generateBroadcastIp(this.logger));
+        options.address || (options.address = ['255.255.255.255']);
         if (typeof options.address === 'string') {
             options.address = [options.address];
         }
-        // merge default with user options
-        // default address is 255.255.255.255 from generateBroadcastIp()
         this.options = {
-            ...{
-                port: 5224,
-                interval: 2000,
-            },
+            port: 5224,
+            interval: 2000,
             ...options,
         };
+        this.broadcast = options.broadcast !== false;
         this.logger(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
         this.portToAnnounce = portToAnnounce;
-        // init the welcome messages
         this.message = `_logitech-reverse-bonjour._tcp.local.\n${portToAnnounce}`;
         this.messageBuffer = Buffer.from(this.message);
     }
     /**
-     * emit a broadcast into the network.
+     * Emit a discovery ping to every configured address.
      */
     emit() {
         this.logger('emit()');
-        // emit to all the addresses
         this.options.address.forEach(address => this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
             if (err) {
                 this.logger(`error emitting ping. stopping now :( (${err})`);
@@ -103,7 +70,7 @@ class Ping {
         }));
     }
     /**
-     * Start an interval emitting broadcasts into the network.
+     * Start emitting discovery pings on an interval.
      */
     start() {
         this.logger('start()');
@@ -111,19 +78,25 @@ class Ping {
             this.logger('Ping is already running, call stop() first');
             return;
         }
-        // setup socket to broadcast messages from the incoming ping
-        // unref so that the app can close
         this.socket = dgram.createSocket('udp4');
-        this.socket.bind(this.portToAnnounce, () => {
-            // this.options.port,  -> forget this bind no need to care from which port the data was send??
-            this.socket.setBroadcast(true);
+        // Without this listener a bind failure (e.g. a stale bindAddress that is no longer a
+        // local interface) would surface as an uncaught 'error' event and crash the adapter.
+        this.socket.on('error', (err) => {
+            var _a, _b;
+            this.logger(`socket error: ${err.message}`);
+            (_b = (_a = this.options).onError) === null || _b === void 0 ? void 0 : _b.call(_a, err);
+            this.stop();
+        });
+        this.socket.bind(this.portToAnnounce, this.options.bindAddress, () => {
+            if (this.broadcast) {
+                this.socket.setBroadcast(true);
+            }
         });
         this.socket.unref();
-        // start the interval, do not unref to keep Node.js running
         this.intervalToken = setInterval(() => this.emit(), this.options.interval);
     }
     /**
-     * Stop broadcasting into the network.
+     * Stop the ping interval and close the socket.
      */
     stop() {
         this.logger('stop()');
@@ -131,18 +104,12 @@ class Ping {
             this.logger('ping has already been stopped, call start() first');
             return;
         }
-        // stop the message emit
         clearInterval(this.intervalToken);
         this.intervalToken = undefined;
-        // close the socket
         this.socket.close();
         this.socket = undefined;
     }
-    /**
-     * Return an indicator it this ping is currently running.
-     */
     isRunning() {
-        this.logger('isRunning()');
         return this.intervalToken !== undefined;
     }
 }

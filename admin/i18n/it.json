@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definisci uno o più indirizzi IP dell'hub. Se vuoto, verranno aggiunti tutti gli hub nella rete.",
-    "Devices (optional)": "Dispositivi (facoltativo)",
-    "Discovery Interval": "Intervallo di scoperta",
-    "Discovery-Subnet:": "Sottorete di rilevamento:",
-    "Discovery-Subnets": "Scoperta-Subnet",
-    "Find Hub": "Trova Hub",
-    "Hub Name": "Nome dell'hub",
-    "Hub Password": "Password dell'hub",
-    "Hub User": "Utente dell'Hub",
-    "IP address": "indirizzo IP",
-    "If no IP address given, all Hubs in the network will be added.": "Se non viene fornito alcun indirizzo IP, verranno aggiunti tutti gli hub nella rete.",
-    "Logitech Harmony adapter settings": "Impostazioni dell'adattatore Logitech Harmony",
-    "Only change if you know, what you are doing.": "Cambia solo se sai cosa stai facendo.",
-    "Settings": "Impostazioni"
+    "discoveryHeader": "Rilevamento Hub",
+    "discoveryInfo": "L'adattatore cerca Hub Logitech Harmony sulla rete. Se non viene indicato alcun IP qui sotto, tutti gli hub trovati vengono aggiunti automaticamente.",
+    "networkInterfaceLabel": "Interfaccia di rete",
+    "networkInterfaceTooltip": "Interfaccia di rete utilizzata per il rilevamento degli hub. Lascia vuoto per usare tutte le interfacce (consigliato nella maggior parte dei casi).",
+    "discoverIntervalLabel": "Intervallo di ricerca",
+    "discoverIntervalTooltip": "Frequenza di invio del broadcast di ricerca. Predefinito 2000 ms.",
+    "devicesHeader": "IP manuali degli Hub (opzionale)",
+    "devicesInfo": "Opzionale. Se inserisci uno o più IP di hub qui, l'adattatore contatta solo questi IP direttamente e salta il broadcast. Utile per hub in un'altra sottorete o quando il broadcast è bloccato sulla rete.",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Indirizzo IP dell'Hub",
+    "devicesNameLabel": "Nome dell'Hub"
 }

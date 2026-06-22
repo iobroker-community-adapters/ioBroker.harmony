@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definieren Sie eine oder mehrere Hub-IP-Adressen. Wenn das Feld leer ist, werden alle Hubs im Netzwerk hinzugefügt.",
-    "Devices (optional)": "Geräte (optional)",
-    "Discovery Interval": "Entdeckungsintervall",
-    "Discovery-Subnet:": "Discovery-Subnetz:",
-    "Discovery-Subnets": "Discovery-Subnetze",
-    "Find Hub": "Suche Hub",
-    "Hub Name": "Hub-Name",
-    "Hub Password": "Hub-Passwort",
-    "Hub User": "Hub-Benutzer",
-    "IP address": "IP-Adresse",
-    "If no IP address given, all Hubs in the network will be added.": "Wenn keine IP-Adresse angegeben wird, werden alle Hubs hinzugefügt.",
-    "Logitech Harmony adapter settings": "Logitech Harmony Adapter Einstellungen",
-    "Only change if you know, what you are doing.": "Nur ändern, falls benötigt.",
-    "Settings": "Einstellungen"
+    "discoveryHeader": "Hub-Erkennung",
+    "discoveryInfo": "Der Adapter sucht im Netzwerk nach Logitech Harmony Hubs. Ohne Eintrag unten werden alle gefundenen Hubs automatisch hinzugefügt.",
+    "networkInterfaceLabel": "Netzwerk-Interface",
+    "networkInterfaceTooltip": "Netzwerk-Interface für die Hub-Erkennung. Leer lassen für alle Interfaces (in den meisten Fällen empfohlen).",
+    "discoverIntervalLabel": "Suchintervall",
+    "discoverIntervalTooltip": "Wie oft ein Suche-Broadcast gesendet wird. Standard 2000 ms.",
+    "devicesHeader": "Manuelle Hub-IPs (optional)",
+    "devicesInfo": "Optional. Werden hier eine oder mehrere Hub-IPs eingetragen, kontaktiert der Adapter nur diese IPs direkt und überspringt den Broadcast. Nützlich für Hubs in einem anderen Subnetz oder wenn Broadcast im Netzwerk blockiert ist.",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Hub-IP-Adresse",
+    "devicesNameLabel": "Hub-Name"
 }

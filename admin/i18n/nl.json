@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Definieer een of meer hub-IP-adressen. Indien leeg, worden alle hubs in het netwerk toegevoegd.",
-    "Devices (optional)": "Apparaten (optioneel)",
-    "Discovery Interval": "Ontdekkingsinterval",
-    "Discovery-Subnet:": "Discovery-subnet:",
-    "Discovery-Subnets": "Discovery-subnetten",
-    "Find Hub": "Zoek Hub",
-    "Hub Name": "Hubnaam",
-    "Hub Password": "Hub-wachtwoord",
-    "Hub User": "Hub-gebruiker",
-    "IP address": "IP adres",
-    "If no IP address given, all Hubs in the network will be added.": "Als er geen IP-adres wordt opgegeven, worden alle Hubs in het netwerk toegevoegd.",
-    "Logitech Harmony adapter settings": "Logitech Harmony-adapterinstellingen",
-    "Only change if you know, what you are doing.": "Verander alleen als je weet wat je doet.",
-    "Settings": "Instellingen"
+    "discoveryHeader": "Hub-detectie",
+    "discoveryInfo": "De adapter zoekt naar Logitech Harmony Hubs in het netwerk. Als hieronder geen IP staat, worden alle gevonden hubs automatisch toegevoegd.",
+    "networkInterfaceLabel": "Netwerkinterface",
+    "networkInterfaceTooltip": "Netwerkinterface die voor hub-detectie wordt gebruikt. Laat leeg om alle interfaces te gebruiken (in de meeste gevallen aanbevolen).",
+    "discoverIntervalLabel": "Zoekinterval",
+    "discoverIntervalTooltip": "Hoe vaak een zoek-broadcast wordt verstuurd. Standaard 2000 ms.",
+    "devicesHeader": "Handmatige hub-IP's (optioneel)",
+    "devicesInfo": "Optioneel. Als je hier een of meer hub-IP's invoert, neemt de adapter alleen direct contact op met deze IP's en slaat de broadcast over. Handig voor hubs in een ander subnet of als broadcast in je netwerk wordt geblokkeerd.",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Hub-IP-adres",
+    "devicesNameLabel": "Hub-naam"
 }

@@ -164,9 +164,9 @@
     ]
   },
   "native": {
-    "subnet": "255.255.255.255",
+    "networkInterface": "",
     "devices": [],
-    "discoverInterval": 10000
+    "discoverInterval": 2000
   },
   "objects": []
 }

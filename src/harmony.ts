@@ -8,13 +8,13 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 
 import { Explorer, type HubData as HubDataConfig, ExplorerEvents } from './discover/lib/index.js';
+import { fixId } from './lib/sanitize-id.js';
+import { buildDiscoveryPlan, clampDiscoverInterval, type DiscoveryPlan } from './lib/discovery-config.js';
 // @ts-expect-error -- no types available
 import createSemaphore from 'semaphore';
 // @ts-expect-error -- no types available
 import HarmonyWS from 'harmonyhubws';
 import type { HarmonyAdapterConfig } from './types';
-const FORBIDDEN_CHARS = /[\][*,;'"`<>\\? ]/g;
-const fixId = (id: string): string => id.replace(FORBIDDEN_CHARS, '_');
 
 interface HubData {
     client: {
@@ -52,9 +52,9 @@ export class HarmonyAdapter extends Adapter {
     declare config: HarmonyAdapterConfig;
     private hubs: { [id: string]: HubData } = {};
     private discover: null | Explorer = null;
-    private manualDiscoverHubs: { ip: string }[] = [];
-    private subnet: string[] = [];
-    private discoverInterval: number = 0;
+    private discoveryPlan: DiscoveryPlan = { mode: 'broadcast', bindAddress: undefined, targets: ['255.255.255.255'] };
+    private discoverInterval: number = 2000;
+    private respondedHubIps: Set<string> = new Set();
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -95,12 +95,17 @@ export class HarmonyAdapter extends Adapter {
             this.log.info(`hub busy, stateChange delayed: ${id} = ${state.val}`);
         }
         semaphore.take(async (): Promise<void> => {
-            await this.setBlocked(hub, true);
-            await this.processStateChange(hub, id, state);
-            if (semaphore.current === 1) {
-                await this.setBlocked(hub, false);
+            try {
+                await this.setBlocked(hub, true);
+                await this.processStateChange(hub, id, state);
+                if (semaphore.current === 1) {
+                    await this.setBlocked(hub, false);
+                }
+            } catch (err) {
+                this.log.warn(`stateChange handler failed: ${(err as Error)?.message ?? err}`);
+            } finally {
+                semaphore.leave();
             }
-            semaphore.leave();
         });
     }
 
@@ -203,11 +208,9 @@ export class HarmonyAdapter extends Adapter {
     }
 
     main(): void {
-        this.manualDiscoverHubs = this.config.devices || [];
-        this.subnet = this.config.subnet.split(',').map(s => s.trim()) || ['255.255.255.255'];
-        this.discoverInterval = parseInt(this.config.discoverInterval as string, 10) || 1000;
+        this.discoveryPlan = buildDiscoveryPlan(this.config);
+        this.discoverInterval = clampDiscoverInterval(this.config.discoverInterval);
         this.subscribeStates('*');
-        this.log.debug(`[START] Subnet: ${this.subnet.join(', ')}, Discovery interval: ${this.discoverInterval}`);
         this.discoverStart();
     }
 
@@ -219,51 +222,63 @@ export class HarmonyAdapter extends Adapter {
 
         this.getPort(61991, port => {
             this.discover = new Explorer(port, {
-                address: this.subnet,
+                address: this.discoveryPlan.targets,
+                bindAddress: this.discoveryPlan.bindAddress,
+                broadcast: this.discoveryPlan.mode === 'broadcast',
                 port: 5224,
                 interval: this.discoverInterval,
                 logger: (text: string) => {
                     this.log.debug(text);
                 },
             });
-            this.discover.on(ExplorerEvents.ONLINE, async (hub: HubDataConfig): Promise<void> => {
-                // Triggered when a new hub was found
-                if (hub.friendlyName !== undefined) {
-                    let addHub = false;
-                    const hubName = fixId(hub.friendlyName).replace('.', '_');
-
-                    if (this.manualDiscoverHubs.length) {
-                        for (const manualDiscoverHub of this.manualDiscoverHubs) {
-                            if (manualDiscoverHub.ip === hub.ip && !this.hubs[hubName]) {
-                                this.log.info(
-                                    `[DISCOVER] Discovered ${hub.friendlyName} (${hub.ip}) and will try to connect`,
-                                );
-                                addHub = true;
-                            } else if (!this.hubs[hubName]) {
-                                this.log
-                                    .debug(`[DISCOVER] Discovered ${hub.friendlyName} (${hub.ip}) but won't try to connect, because
- manual search is configured and hub's ip not listed`);
-                            }
-                        } // endFor
-                    } else if (!this.hubs[hubName]) {
-                        this.log.info(`[DISCOVER] Discovered ${hub.friendlyName} (${hub.ip}) and will try to connect`);
-                        addHub = true; // if no manual discovery --> add all this.hubs
-                    }
-
-                    if (addHub) {
-                        await this.initHub(hubName);
-                        // wait 2 seconds for hub before connecting
-                        this.log.info(`[CONNECT] Connecting to ${hub.friendlyName} (${hub.ip})`);
-                        this.connect(hubName, hub);
-                    }
-                }
+            this.discover.on(ExplorerEvents.ONLINE, (hub: HubDataConfig): void => {
+                this.handleHubOnline(hub).catch(err =>
+                    this.log.warn(`[DISCOVER] online handler failed: ${err?.message ?? err}`),
+                );
             });
 
             this.discover.on('error', (err: Error): void => this.log.warn(`[DISCOVER] Discover error: ${err.message}`));
 
             this.discover.start();
-            this.log.info(`[DISCOVER] Searching for Harmony Hubs on ${this.subnet.join(', ')}`);
+            if (this.discoveryPlan.mode === 'unicast') {
+                this.log.info(`[DISCOVER] Contacting hubs directly: ${this.discoveryPlan.targets.join(', ')}`);
+                this.setTimeout(() => this.warnUnreachableManualHubs(), 30000);
+            } else {
+                const bindHint = this.discoveryPlan.bindAddress ? ` via ${this.discoveryPlan.bindAddress}` : '';
+                this.log.info(
+                    `[DISCOVER] Broadcasting for Harmony Hubs on ${this.discoveryPlan.targets.join(', ')}${bindHint}`,
+                );
+            }
         });
+    }
+
+    private async handleHubOnline(hub: HubDataConfig): Promise<void> {
+        if (hub.friendlyName === undefined) {
+            return;
+        }
+        if (hub.ip) {
+            this.respondedHubIps.add(hub.ip);
+        }
+        const hubName = fixId(hub.friendlyName);
+        if (this.hubs[hubName]) {
+            return;
+        }
+        this.log.info(`[DISCOVER] Discovered ${hub.friendlyName} (${hub.ip}) and will try to connect`);
+        await this.initHub(hubName);
+        this.log.info(`[CONNECT] Connecting to ${hub.friendlyName} (${hub.ip})`);
+        this.connect(hubName, hub);
+    }
+
+    private warnUnreachableManualHubs(): void {
+        const configured = (this.config.devices ?? []).filter(d => typeof d?.ip === 'string' && d.ip.length > 0);
+        for (const dev of configured) {
+            if (!this.respondedHubIps.has(dev.ip)) {
+                const label = dev.name && dev.name.length > 0 ? `${dev.name} (${dev.ip})` : dev.ip;
+                this.log.warn(
+                    `[DISCOVER] No Harmony Hub responded at ${label} within 30s — check the IP and that the hub is powered on`,
+                );
+            }
+        }
     }
 
     async initHub(hub: string): Promise<void> {
@@ -305,14 +320,11 @@ export class HarmonyAdapter extends Adapter {
                 this.hubs[hub].ioChannels[channel.common.name as string] = true;
             }
             const states = await this.getStatesAsync(`${hub}.activities.*`);
-            if (!states) {
-                for (const state in states) {
-                    if (Object.prototype.hasOwnProperty.call(states, state)) {
-                        const tmp = state.split('.');
-                        const name = tmp.pop();
-                        if (name !== 'currentStatus' && name !== 'currentActivity') {
-                            this.hubs[hub].ioStates[name] = true;
-                        }
+            if (states && Object.keys(states).length > 0) {
+                for (const stateId of Object.keys(states)) {
+                    const name = stateId.split('.').pop();
+                    if (name && name !== 'currentStatus' && name !== 'currentActivity') {
+                        this.hubs[hub].ioStates[name] = true;
                     }
                 }
             } else {
@@ -341,19 +353,23 @@ export class HarmonyAdapter extends Adapter {
         const client = new HarmonyWS(hubObj.ip);
         this.hubs[hub].client = client;
 
-        client.on('online', async (): Promise<void> => {
-            await this.setBlocked(hub, true);
-            await this.setConnected(hub, true);
-            this.log.info(`[CONNECT] Connected to ${hubObj.friendlyName} (${hubObj.ip})`);
-            this.hubs[hub].client.requestConfig();
+        client.on('online', (): void => {
+            void (async (): Promise<void> => {
+                await this.setBlocked(hub, true);
+                await this.setConnected(hub, true);
+                this.log.info(`[CONNECT] Connected to ${hubObj.friendlyName} (${hubObj.ip})`);
+                this.hubs[hub].client.requestConfig();
+            })().catch(err => this.log.warn(`[CONNECT] online handler failed: ${(err as Error)?.message ?? err}`));
         });
 
-        client.on('offline', async (): Promise<void> => {
-            if (this.hubs[hub].connected) {
-                this.log.info(`[CONNECT] lost Connection to ${hubObj.friendlyName} (${hubObj.ip})`);
-            }
-            await this.setConnected(hub, false);
-            await this.setBlocked(hub, false);
+        client.on('offline', (): void => {
+            void (async (): Promise<void> => {
+                if (this.hubs[hub].connected) {
+                    this.log.info(`[CONNECT] lost Connection to ${hubObj.friendlyName} (${hubObj.ip})`);
+                }
+                await this.setConnected(hub, false);
+                await this.setBlocked(hub, false);
+            })().catch(err => this.log.warn(`[CONNECT] offline handler failed: ${(err as Error)?.message ?? err}`));
         });
 
         client.on(
@@ -396,8 +412,10 @@ export class HarmonyAdapter extends Adapter {
             },
         );
 
-        client.on('state', async (activityId: string, activityStatus: number): Promise<void> => {
-            await this.processDigest(hub, activityId, activityStatus);
+        client.on('state', (activityId: string, activityStatus: number): void => {
+            this.processDigest(hub, activityId, activityStatus).catch(err =>
+                this.log.warn(`[STATE] digest failed: ${(err as Error)?.message ?? err}`),
+            );
         });
     }
 
@@ -522,7 +540,7 @@ export class HarmonyAdapter extends Adapter {
         }
 
         for (const activity of config.activity) {
-            const activityLabel = fixId(activity.label).replace('.', '_');
+            const activityLabel = fixId(activity.label);
             this.hubs[hub].activities[activity.id] = activityLabel;
             this.hubs[hub].activitiesReverse[activityLabel] = activity.id;
             if (activity.id === '-1') {
@@ -568,13 +586,14 @@ export class HarmonyAdapter extends Adapter {
                 native: activity,
             });
             delete this.hubs[hub].ioStates[activityLabel];
+            delete this.hubs[hub].ioStates[`${activityLabel}-control`];
         }
 
         // create devices
         this.log.debug('[PROCESS] Creating devices');
         channelName = hub;
         for (const device of config.device) {
-            const deviceLabel = fixId(device.label).replace('.', '_');
+            const deviceLabel = fixId(device.label);
             const deviceChannelName = `${channelName}.${deviceLabel}`;
             const controlGroup = device.controlGroup;
             this.hubs[hub].devices[device.id] = deviceLabel;
@@ -596,7 +615,7 @@ export class HarmonyAdapter extends Adapter {
                     for (const command of cg.function) {
                         command.controlGroup = groupName;
                         command.deviceId = device.id;
-                        const commandName = fixId(command.name).replace('.', '_');
+                        const commandName = fixId(command.name);
                         // create command
                         await this.setObjectAsync(`${deviceChannelName}.${commandName}`, {
                             type: 'state',
@@ -695,7 +714,7 @@ export class HarmonyAdapter extends Adapter {
             this.log.warn(`[SETSTATE] Unknown activityId: ${id}`);
             return;
         }
-        const channelName = fixId(`${hub}.activities.${this.hubs[hub].activities[id]}`);
+        const channelName = `${hub}.activities.${this.hubs[hub].activities[id]}`;
         await this.setStateAsync(channelName, { val: value, ack: true });
         await this.setStateAsync(`${channelName}-control`, { val: !!value, ack: true });
     }

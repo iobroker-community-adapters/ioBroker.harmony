@@ -79,6 +79,9 @@ After sending, the state will be set to 0 again.
 -->
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22 now
+- (krobipd) State ID sanitisation hardened — tab/newline and other whitespace in hub-supplied device names no longer crash subscribe (#98). Dots are also collapsed so labels cannot split the ID path. Empty results fall back to `unnamed`.
+- (krobipd) Async event handlers (`stateChange`, hub discovery, client online/offline/state) now have proper error handling — a single failing await no longer terminates the adapter with an unhandled promise rejection.
+- (krobipd) Existing activities are now correctly recognised on every restart — the inverted `if` in `initHub` left the bookkeeping empty and made every activity log as `Added new activity` after each adapter start. As a side effect, activities deleted on the hub are now also pruned from the state tree, and the per-activity `-control` state is no longer falsely flagged as stale during the cleanup pass.
 
 ### 2.1.0 (2026-04-15)
 - (copilot) Adapter requires admin >= 7.7.22 now

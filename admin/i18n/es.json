@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Defina una o más direcciones IP de concentrador. Si no se especifica, se agregarán todos los concentradores de la red.",
-    "Devices (optional)": "Dispositivos (opcional)",
-    "Discovery Interval": "Intervalo de descubrimiento",
-    "Discovery-Subnet:": "Subred de descubrimiento:",
-    "Discovery-Subnets": "Subredes de descubrimiento",
-    "Find Hub": "Buscar centro",
-    "Hub Name": "Nombre del centro",
-    "Hub Password": "Contraseña del concentrador",
-    "Hub User": "Usuario del concentrador",
-    "IP address": "dirección IP",
-    "If no IP address given, all Hubs in the network will be added.": "Si no se proporciona ninguna dirección IP, se agregarán todos los Hubs de la red.",
-    "Logitech Harmony adapter settings": "Configuración del adaptador Logitech Harmony",
-    "Only change if you know, what you are doing.": "Solo cambia si sabes lo que estás haciendo.",
-    "Settings": "Ajustes"
+    "discoveryHeader": "Descubrimiento de Hubs",
+    "discoveryInfo": "El adaptador busca Logitech Harmony Hubs en la red. Si no se indica ninguna IP abajo, todos los hubs encontrados se añaden automáticamente.",
+    "networkInterfaceLabel": "Interfaz de red",
+    "networkInterfaceTooltip": "Interfaz de red usada para la búsqueda de hubs. Déjalo vacío para usar todas las interfaces (recomendado en la mayoría de los casos).",
+    "discoverIntervalLabel": "Intervalo de búsqueda",
+    "discoverIntervalTooltip": "Frecuencia con la que se envía un broadcast de búsqueda. Predeterminado 2000 ms.",
+    "devicesHeader": "IPs manuales de Hubs (opcional)",
+    "devicesInfo": "Opcional. Si listas una o más IPs de hubs aquí, el adaptador contacta solo a esas IPs directamente y omite el broadcast. Útil para hubs en otra subred o cuando el broadcast está bloqueado en tu red.",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Dirección IP del Hub",
+    "devicesNameLabel": "Nombre del Hub"
 }

@@ -47,7 +47,12 @@ class Explorer extends node_events_1.EventEmitter {
         }
         this.logger = (pingOptions === null || pingOptions === void 0 ? void 0 : pingOptions.logger) || (() => { });
         this.logger(`Explorer(${this.port})`);
-        this.ping = new ping_js_1.Ping(this.port, pingOptions);
+        // Surface socket errors from the ping (e.g. a bind failure) as an Explorer 'error'
+        // event so the adapter can log them at warn level instead of crashing.
+        this.ping = new ping_js_1.Ping(this.port, {
+            ...(pingOptions !== null && pingOptions !== void 0 ? pingOptions : {}),
+            onError: (err) => this.emit('error', err),
+        });
     }
     /**
      * Inits the listening for hub replies, and starts broadcasting.
@@ -56,6 +61,7 @@ class Explorer extends node_events_1.EventEmitter {
         this.logger('start()');
         this.responseCollector = new responseCollector_js_1.ResponseCollector(this.port, this.logger);
         this.responseCollector.on(responseCollector_js_1.ResponseCollectorEvents.RESPONSE, (data) => this.handleResponse(data));
+        this.responseCollector.on(responseCollector_js_1.ResponseCollectorEvents.ERROR, (err) => this.emit('error', err));
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
         this.responseCollector.start();
         this.ping.start();

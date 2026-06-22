@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Укажите один или несколько IP-адресов концентраторов. Если не указать, будут добавлены все концентраторы в сети.",
-    "Devices (optional)": "Устройства (необязательно)",
-    "Discovery Interval": "Интервал обнаружения",
-    "Discovery-Subnet:": "Discovery-Подсеть:",
-    "Discovery-Subnets": "Подсети обнаружения",
-    "Find Hub": "Find Hub",
-    "Hub Name": "Hub Name",
-    "Hub Password": "Hub Password",
-    "Hub User": "Hub User",
-    "IP address": "айпи адрес",
-    "If no IP address given, all Hubs in the network will be added.": "Если IP-адрес не указан, будут добавлены все концентраторы в сети.",
-    "Logitech Harmony adapter settings": "Logitech Harmony adapter settings",
-    "Only change if you know, what you are doing.": "Меняйтесь только в том случае, если вы знаете, что делаете.",
-    "Settings": "Settings"
+    "discoveryHeader": "Обнаружение хабов",
+    "discoveryInfo": "Адаптер ищет хабы Logitech Harmony в сети. Если ниже не указан IP, все найденные хабы добавляются автоматически.",
+    "networkInterfaceLabel": "Сетевой интерфейс",
+    "networkInterfaceTooltip": "Сетевой интерфейс для обнаружения хабов. Оставьте пустым, чтобы использовать все интерфейсы (рекомендуется в большинстве случаев).",
+    "discoverIntervalLabel": "Интервал поиска",
+    "discoverIntervalTooltip": "Как часто отправляется широковещательный запрос. По умолчанию 2000 мс.",
+    "devicesHeader": "Ручные IP хабов (опционально)",
+    "devicesInfo": "Опционально. Если вы укажете здесь один или несколько IP хабов, адаптер свяжется только с этими IP напрямую и пропустит широковещательную рассылку. Полезно для хабов в другой подсети или если широковещание заблокировано в сети.",
+    "devicesLabel": "Хабы",
+    "devicesIpLabel": "IP-адрес хаба",
+    "devicesNameLabel": "Имя хаба"
 }

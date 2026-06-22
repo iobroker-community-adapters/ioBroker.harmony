@@ -3,6 +3,7 @@ import * as net from 'node:net';
 
 export enum ResponseCollectorEvents {
     RESPONSE = 'response',
+    ERROR = 'error',
 }
 
 export class ResponseCollector extends EventEmitter {
@@ -32,23 +33,30 @@ export class ResponseCollector extends EventEmitter {
     start(): void {
         this.logger('start()');
 
-        this.server = net
-            .createServer(socket => {
-                this.logger('handle new connection');
+        this.server = net.createServer(socket => {
+            this.logger('handle new connection');
 
-                let buffer = '';
+            let buffer = '';
 
-                socket.on('data', data => {
-                    this.logger('received data chunk');
-                    buffer += data.toString();
-                });
+            socket.on('data', data => {
+                this.logger('received data chunk');
+                buffer += data.toString();
+            });
 
-                socket.on('end', () => {
-                    this.logger('connection closed. emitting data.');
-                    this.emit(ResponseCollectorEvents.RESPONSE, buffer);
-                });
-            })
-            .listen(this.port);
+            socket.on('end', () => {
+                this.logger('connection closed. emitting data.');
+                this.emit(ResponseCollectorEvents.RESPONSE, buffer);
+            });
+        });
+
+        // Without this a listen failure (e.g. the port already in use) would surface as an
+        // uncaught 'error' event on the server and crash the adapter.
+        this.server.on('error', (err: Error) => {
+            this.logger(`server error: ${err.message}`);
+            this.emit(ResponseCollectorEvents.ERROR, err);
+        });
+
+        this.server.listen(this.port);
     }
 
     /**
