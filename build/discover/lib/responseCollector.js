@@ -39,6 +39,7 @@ const net = __importStar(require("node:net"));
 var ResponseCollectorEvents;
 (function (ResponseCollectorEvents) {
     ResponseCollectorEvents["RESPONSE"] = "response";
+    ResponseCollectorEvents["ERROR"] = "error";
 })(ResponseCollectorEvents || (exports.ResponseCollectorEvents = ResponseCollectorEvents = {}));
 class ResponseCollector extends node_events_1.EventEmitter {
     /**
@@ -58,8 +59,7 @@ class ResponseCollector extends node_events_1.EventEmitter {
      */
     start() {
         this.logger('start()');
-        this.server = net
-            .createServer(socket => {
+        this.server = net.createServer(socket => {
             this.logger('handle new connection');
             let buffer = '';
             socket.on('data', data => {
@@ -70,8 +70,14 @@ class ResponseCollector extends node_events_1.EventEmitter {
                 this.logger('connection closed. emitting data.');
                 this.emit(ResponseCollectorEvents.RESPONSE, buffer);
             });
-        })
-            .listen(this.port);
+        });
+        // Without this a listen failure (e.g. the port already in use) would surface as an
+        // uncaught 'error' event on the server and crash the adapter.
+        this.server.on('error', (err) => {
+            this.logger(`server error: ${err.message}`);
+            this.emit(ResponseCollectorEvents.ERROR, err);
+        });
+        this.server.listen(this.port);
     }
     /**
      * Close the tcp server.

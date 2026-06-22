@@ -2,44 +2,75 @@
     "type": "panel",
     "i18n": true,
     "items": {
-        "subnet": {
-            "type": "text",
-            "label": "Discovery-Subnets",
-            "help": "Only change if you know what you are doing. Example: 192.168.178.5,192.168.178.6",
-            "default": "255.255.255.255",
-            "xs": 12,
-            "sm": 12,
-            "md": 12,
-            "lg": 12,
-            "xl": 12
+        "_discoveryHeader": {
+            "type": "header",
+            "text": "discoveryHeader",
+            "size": 5
         },
-        "discoverInterval": {
-            "type": "number",
-            "label": "Discovery Interval",
-            "unit": "ms",
-            "default": 10,
-            "xs": 12,
-            "sm": 12,
-            "md": 10,
-            "lg": 8,
-            "xl": 4,
-            "style": { "marginTop": 16 }
-        },
-        "_staticText": {
-            "newLine": true,
+        "_discoveryInfo": {
             "type": "staticText",
-            "label": "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.",
+            "text": "discoveryInfo",
             "xs": 12,
             "sm": 12,
             "md": 12,
             "lg": 12,
             "xl": 12,
-            "style": { "marginTop": 16 }
+            "style": {
+                "fontSize": 14,
+                "marginBottom": 16
+            }
+        },
+        "networkInterface": {
+            "type": "ip",
+            "label": "networkInterfaceLabel",
+            "tooltip": "networkInterfaceTooltip",
+            "onlyIp4": true,
+            "noInternal": true,
+            "listenOnAllPorts": true,
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "discoverInterval": {
+            "type": "number",
+            "label": "discoverIntervalLabel",
+            "tooltip": "discoverIntervalTooltip",
+            "unit": "ms",
+            "default": 2000,
+            "min": 500,
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "_devicesHeader": {
+            "newLine": true,
+            "type": "header",
+            "text": "devicesHeader",
+            "size": 5,
+            "style": {
+                "marginTop": 16
+            }
+        },
+        "_devicesInfo": {
+            "type": "staticText",
+            "text": "devicesInfo",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12,
+            "style": {
+                "fontSize": 14,
+                "marginBottom": 8
+            }
         },
         "devices": {
-            "newLine": true,
             "type": "table",
-            "label": "Devices (optional)",
+            "label": "devicesLabel",
             "useCardFor": ["xs"],
             "xs": 12,
             "sm": 12,
@@ -48,9 +79,16 @@
             "xl": 12,
             "items": [
                 {
+                    "attr": "name",
+                    "type": "text",
+                    "label": "devicesNameLabel",
+                    "width": "40%"
+                },
+                {
                     "attr": "ip",
                     "type": "text",
-                    "label": "IP Address"
+                    "label": "devicesIpLabel",
+                    "width": "60%"
                 }
             ]
         }
