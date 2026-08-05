@@ -270,14 +270,28 @@ export class HarmonyAdapter extends Adapter {
     }
 
     private warnUnreachableManualHubs(): void {
-        const configured = (this.config.devices ?? []).filter(d => typeof d?.ip === 'string' && d.ip.length > 0);
-        for (const dev of configured) {
-            if (!this.respondedHubIps.has(dev.ip)) {
-                const label = dev.name && dev.name.length > 0 ? `${dev.name} (${dev.ip})` : dev.ip;
-                this.log.warn(
-                    `[DISCOVER] No Harmony Hub responded at ${label} within 30s — check the IP and that the hub is powered on`,
-                );
+        // The discovery plan holds exactly the IPs that were contacted: trimmed and
+        // validated by buildDiscoveryPlan. Compare against those so a stray blank or a
+        // typo'd address gets an accurate message instead of a false "no hub responded".
+        const contacted = new Set(this.discoveryPlan.targets);
+        for (const dev of this.config.devices ?? []) {
+            const ip = typeof dev?.ip === 'string' ? dev.ip.trim() : '';
+            if (!ip) {
+                continue;
             }
+            if (!contacted.has(ip)) {
+                this.log.warn(
+                    `[DISCOVER] Configured hub address "${dev.ip}" is not a valid IPv4 address and was skipped`,
+                );
+                continue;
+            }
+            if (this.respondedHubIps.has(ip)) {
+                continue;
+            }
+            const label = dev.name && dev.name.length > 0 ? `${dev.name} (${ip})` : ip;
+            this.log.warn(
+                `[DISCOVER] No Harmony Hub responded at ${label} within 30s — check the IP and that the hub is powered on`,
+            );
         }
     }
 

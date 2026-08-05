@@ -26,14 +26,14 @@ describe('sanitize-id', () => {
 
         it('returns "unnamed" for empty or all-forbidden input', () => {
             expect(fixId('')).to.equal('unnamed');
-            expect(fixId('   ')).to.equal('___');
-            expect(fixId('...')).to.equal('___');
+            expect(fixId('   ')).to.equal('unnamed');
+            expect(fixId('...')).to.equal('unnamed');
         });
 
         it('returns "unnamed" for non-string input', () => {
-            expect(fixId(undefined as unknown as string)).to.equal('unnamed');
-            expect(fixId(null as unknown as string)).to.equal('unnamed');
-            expect(fixId(42 as unknown as string)).to.equal('unnamed');
+            expect(fixId(undefined)).to.equal('unnamed');
+            expect(fixId(null)).to.equal('unnamed');
+            expect(fixId(42)).to.equal('unnamed');
         });
 
         it('keeps allowed characters untouched', () => {
