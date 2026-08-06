@@ -48,7 +48,7 @@ jobs:
     
         steps:
             - uses: ioBroker/testing-action-adapter@v1
-            with:
+              with:
                 node-version: ${{ matrix.node-version }}
                 os: ${{ matrix.os }}
                 build: true
