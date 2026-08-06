@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "Indiquez une ou plusieurs adresses IP de hub. Si ce champ est laissé vide, tous les hubs du réseau seront ajoutés.",
-    "Devices (optional)": "Appareils (facultatifs)",
-    "Discovery Interval": "Intervalle de découverte",
-    "Discovery-Subnet:": "Sous-réseau de découverte :",
-    "Discovery-Subnets": "Sous-réseaux de découverte",
-    "Find Hub": "Trouver un hub",
-    "Hub Name": "Nom du hub",
-    "Hub Password": "Mot de passe du hub",
-    "Hub User": "Utilisateur du hub",
-    "IP address": "adresse IP",
-    "If no IP address given, all Hubs in the network will be added.": "Si aucune adresse IP n'est fournie, tous les hubs du réseau seront ajoutés.",
-    "Logitech Harmony adapter settings": "Paramètres de l'adaptateur Logitech Harmony",
-    "Only change if you know, what you are doing.": "Ne changez que si vous savez ce que vous faites.",
-    "Settings": "Paramètres"
+    "discoveryHeader": "Découverte des Hubs",
+    "discoveryInfo": "L'adaptateur recherche les Hubs Logitech Harmony sur le réseau. Si aucune IP n'est indiquée ci-dessous, tous les hubs détectés sont ajoutés automatiquement.",
+    "networkInterfaceLabel": "Interface réseau",
+    "networkInterfaceTooltip": "Interface réseau utilisée pour la découverte des hubs. Laissez vide pour utiliser toutes les interfaces (recommandé dans la plupart des cas).",
+    "discoverIntervalLabel": "Intervalle de recherche",
+    "discoverIntervalTooltip": "Fréquence d'envoi d'un broadcast de recherche. Par défaut 2000 ms.",
+    "devicesHeader": "IPs manuelles de Hubs (optionnel)",
+    "devicesInfo": "Optionnel. Si vous indiquez une ou plusieurs IPs de hubs ici, l'adaptateur contacte uniquement ces IPs directement et ignore le broadcast. Utile pour les hubs dans un autre sous-réseau ou lorsque le broadcast est bloqué sur votre réseau.",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Adresse IP du Hub",
+    "devicesNameLabel": "Nom du Hub"
 }

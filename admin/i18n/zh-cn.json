@@ -1,16 +1,13 @@
 {
-    "Define one or more Hub IP addresses. If empty, all Hubs in the network will be added.": "定义一个或多个集线器 IP 地址。如果为空，则会添加网络中的所有集线器。",
-    "Devices (optional)": "设备（可选）",
-    "Discovery Interval": "发现间隔",
-    "Discovery-Subnet:": "发现子网：",
-    "Discovery-Subnets": "发现子网",
-    "Find Hub": "寻找中心",
-    "Hub Name": "集线器名称",
-    "Hub Password": "集线器密码",
-    "Hub User": "集线器用户",
-    "IP address": "IP地址",
-    "If no IP address given, all Hubs in the network will be added.": "如果没有给出 IP 地址，则将添加网络中的所有集线器。",
-    "Logitech Harmony adapter settings": "罗技 Harmony 适配器设置",
-    "Only change if you know, what you are doing.": "只有当你知道自己在做什么时才改变。",
-    "Settings": "设置"
+    "discoveryHeader": "Hub 发现",
+    "discoveryInfo": "适配器在网络中搜索 Logitech Harmony Hub。如果下方未列出 IP，则会自动添加网络中找到的所有 Hub。",
+    "networkInterfaceLabel": "网络接口",
+    "networkInterfaceTooltip": "用于 Hub 发现的网络接口。留空以使用所有接口（在大多数情况下推荐）。",
+    "discoverIntervalLabel": "发现间隔",
+    "discoverIntervalTooltip": "发送发现广播的频率。默认 2000 毫秒。",
+    "devicesHeader": "手动 Hub IP（可选）",
+    "devicesInfo": "可选。如果您在此处列出一个或多个 Hub IP，适配器将仅直接联系这些 IP 并跳过广播。适用于位于不同子网中的 Hub 或网络中广播被阻止的情况。",
+    "devicesLabel": "Hubs",
+    "devicesIpLabel": "Hub IP 地址",
+    "devicesNameLabel": "Hub 名称"
 }

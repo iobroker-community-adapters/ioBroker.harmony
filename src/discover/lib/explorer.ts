@@ -100,7 +100,12 @@ export class Explorer extends EventEmitter {
 
         this.logger(`Explorer(${this.port})`);
 
-        this.ping = new Ping(this.port, pingOptions);
+        // Surface socket errors from the ping (e.g. a bind failure) as an Explorer 'error'
+        // event so the adapter can log them at warn level instead of crashing.
+        this.ping = new Ping(this.port, {
+            ...(pingOptions ?? {}),
+            onError: (err: Error) => this.emit('error', err),
+        });
     }
 
     /**
@@ -111,6 +116,7 @@ export class Explorer extends EventEmitter {
 
         this.responseCollector = new ResponseCollector(this.port, this.logger);
         this.responseCollector.on(ResponseCollectorEvents.RESPONSE, (data: string) => this.handleResponse(data));
+        this.responseCollector.on(ResponseCollectorEvents.ERROR, (err: Error) => this.emit('error', err));
         this.cleanUpIntervalToken = setInterval(() => this.executeCleanUp(), 2000);
 
         this.responseCollector.start();

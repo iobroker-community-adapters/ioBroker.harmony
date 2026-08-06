@@ -1,5 +1,5 @@
 export interface HarmonyAdapterConfig {
-    subnet: string;
+    networkInterface: string;
     discoverInterval: number | string;
-    devices: { ip: string }[];
+    devices: { ip: string; name?: string }[];
 }
