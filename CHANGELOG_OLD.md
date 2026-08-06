@@ -1,4 +1,10 @@
 # Older Changelogs
+## 2.0.2 (2025-11-03)
+* (mcm1957) Adapter requires node.js >= 20, js-controller >= 6.0.11 and admin >= 7.6.17 now.
+* (@GermanBluefox) Added state "switch" to switch activities on/off with Alexa
+* (@GermanBluefox) Adapter has been rewritten with TypeScript
+* (mcm1957) Dependencies have been updated.
+
 ## 1.5.0 (2024-06-02)
 * (WolfspiritM) Multiple subnets can be entered as a comma-separated list now. (#147)
 * (mcm1957) Testing for node.js 22 has been added.
