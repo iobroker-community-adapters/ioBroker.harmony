@@ -15,10 +15,14 @@ const adapter_core_1 = require("@iobroker/adapter-core");
 const index_js_1 = require("./discover/lib/index.js");
 const sanitize_id_js_1 = require("./lib/sanitize-id.js");
 const discovery_config_js_1 = require("./lib/discovery-config.js");
+const migrate_config_js_1 = require("./lib/migrate-config.js");
 // @ts-expect-error -- no types available
 const semaphore_1 = __importDefault(require("semaphore"));
 // @ts-expect-error -- no types available
 const harmonyhubws_1 = __importDefault(require("harmonyhubws"));
+/** Wait before the first discovery restart after a socket error, then double up to the max. */
+const DISCOVER_RESTART_MIN_MS = 30000;
+const DISCOVER_RESTART_MAX_MS = 300000;
 // Activity status state mappings
 const ACTIVITY_STATUS_STATES = {
     0: 'stopped',
@@ -31,12 +35,19 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         super({
             ...options,
             name: 'harmony',
-            ready: () => this.main(),
+            ready: () => {
+                this.main().catch(err => { var _a; return this.log.error(`[START] Startup failed: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
+            },
             stateChange: (id, state) => this.onStateChange(id, state),
             unload: async (callback) => {
                 var _a;
                 try {
                     this.log.info('[END] Terminating');
+                    this.unloaded = true;
+                    if (this.discoverRestartTimer !== undefined) {
+                        this.clearTimeout(this.discoverRestartTimer);
+                        this.discoverRestartTimer = undefined;
+                    }
                     (_a = this.discover) === null || _a === void 0 ? void 0 : _a.stop();
                     this.discover = null;
                     for (const hub of Object.keys(this.hubs)) {
@@ -54,6 +65,9 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.discoveryPlan = { mode: 'broadcast', bindAddress: undefined, targets: ['255.255.255.255'] };
         this.discoverInterval = 2000;
         this.respondedHubIps = new Set();
+        this.discoverRestartTimer = undefined;
+        this.discoverRestartDelay = DISCOVER_RESTART_MIN_MS;
+        this.unloaded = false;
     }
     onStateChange(id, state) {
         if (!id || !state || state.ack) {
@@ -184,11 +198,50 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.log.warn('[ACTIVITY] Activity does not exists');
         }
     }
-    main() {
+    async main() {
+        await this.migrateDiscoveryConfig();
         this.discoveryPlan = (0, discovery_config_js_1.buildDiscoveryPlan)(this.config);
         this.discoverInterval = (0, discovery_config_js_1.clampDiscoverInterval)(this.config.discoverInterval);
         this.subscribeStates('*');
         this.discoverStart();
+    }
+    /**
+     * Carry the removed `subnet` setting over into the current discovery config.
+     *
+     * Runs once: the migrated values are written back and `subnet` is deleted, so the next
+     * start finds nothing to do. Persisting `native` makes js-controller restart the
+     * instance, hence the values are also applied in memory — this run discovers correctly
+     * either way, and a failed write degrades to "migrated for this session only" instead
+     * of blocking startup.
+     */
+    async migrateDiscoveryConfig() {
+        var _a;
+        const legacy = this.config;
+        const result = (0, migrate_config_js_1.migrateLegacyConfig)(legacy);
+        if (!result.changed) {
+            return;
+        }
+        this.log.info(`[MIGRATE] The "Discovery-Subnets" setting has been replaced by a network interface selector and a manual hub list. Converting "${String(legacy.subnet)}"`);
+        for (const note of result.notes) {
+            this.log.info(`[MIGRATE] ${note}`);
+        }
+        this.config.networkInterface = result.networkInterface;
+        this.config.devices = result.devices;
+        delete legacy.subnet;
+        try {
+            await this.extendForeignObjectAsync(`system.adapter.${this.namespace}`, {
+                native: {
+                    // null deletes the key, so the migration cannot run a second time.
+                    subnet: null,
+                    networkInterface: result.networkInterface,
+                    devices: result.devices,
+                },
+            });
+            this.log.info('[MIGRATE] Discovery settings migrated, the instance restarts once to apply them');
+        }
+        catch (err) {
+            this.log.warn(`[MIGRATE] Could not save the migrated discovery settings: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}. They are applied for this session only — please check the instance configuration.`);
+        }
     }
     discoverStart() {
         if (this.discover) {
@@ -199,7 +252,6 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.discover = new index_js_1.Explorer(port, {
                 address: this.discoveryPlan.targets,
                 bindAddress: this.discoveryPlan.bindAddress,
-                broadcast: this.discoveryPlan.mode === 'broadcast',
                 port: 5224,
                 interval: this.discoverInterval,
                 logger: (text) => {
@@ -209,7 +261,12 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.discover.on(index_js_1.ExplorerEvents.ONLINE, (hub) => {
                 this.handleHubOnline(hub).catch(err => { var _a; return this.log.warn(`[DISCOVER] online handler failed: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
             });
-            this.discover.on('error', (err) => this.log.warn(`[DISCOVER] Discover error: ${err.message}`));
+            this.discover.on('error', (err) => {
+                this.log.warn(`[DISCOVER] Discover error: ${err.message}`);
+                // A bind or listen failure takes the sockets down for good. Without a retry
+                // the adapter would keep running but never discover anything again.
+                this.scheduleDiscoverRestart();
+            });
             this.discover.start();
             if (this.discoveryPlan.mode === 'unicast') {
                 this.log.info(`[DISCOVER] Contacting hubs directly: ${this.discoveryPlan.targets.join(', ')}`);
@@ -221,10 +278,36 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             }
         });
     }
+    /** Tear the explorer down and start it again, with a doubling delay between attempts. */
+    scheduleDiscoverRestart() {
+        if (this.unloaded || this.discoverRestartTimer !== undefined) {
+            return;
+        }
+        const delay = this.discoverRestartDelay;
+        this.log.info(`[DISCOVER] Restarting discovery in ${Math.round(delay / 1000)}s`);
+        this.discoverRestartTimer = this.setTimeout(() => {
+            this.discoverRestartTimer = undefined;
+            this.discoverRestartDelay = Math.min(this.discoverRestartDelay * 2, DISCOVER_RESTART_MAX_MS);
+            this.discoverStop();
+            this.discoverStart();
+        }, delay);
+    }
+    discoverStop() {
+        var _a, _b;
+        try {
+            (_a = this.discover) === null || _a === void 0 ? void 0 : _a.stop();
+        }
+        catch (err) {
+            this.log.debug(`[DISCOVER] Stopping the explorer failed: ${(_b = err === null || err === void 0 ? void 0 : err.message) !== null && _b !== void 0 ? _b : err}`);
+        }
+        this.discover = null;
+    }
     async handleHubOnline(hub) {
         if (hub.friendlyName === undefined) {
             return;
         }
+        // Discovery works, so a later failure starts over at the short delay.
+        this.discoverRestartDelay = DISCOVER_RESTART_MIN_MS;
         if (hub.ip) {
             this.respondedHubIps.add(hub.ip);
         }
@@ -297,8 +380,17 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             }
             const states = await this.getStatesAsync(`${hub}.activities.*`);
             if (states && Object.keys(states).length > 0) {
+                // Cut at the channel instead of splitting on every dot: states created before
+                // dots were sanitised are named e.g. "Movie_v1.2", and popping the last
+                // segment would register them as "2" — the old object then survives every
+                // clean-up pass while a bogus id gets deleted instead.
+                const prefix = `${hub}.activities.`;
                 for (const stateId of Object.keys(states)) {
-                    const name = stateId.split('.').pop();
+                    const at = stateId.lastIndexOf(prefix);
+                    if (at < 0) {
+                        continue;
+                    }
+                    const name = stateId.slice(at + prefix.length);
                     if (name && name !== 'currentStatus' && name !== 'currentActivity') {
                         this.hubs[hub].ioStates[name] = true;
                     }

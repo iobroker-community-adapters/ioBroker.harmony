@@ -5,8 +5,6 @@ export class PingOptions {
     address?: string | Array<string>;
     /** Local interface IP to bind the UDP socket to. Undefined = let the OS pick. */
     bindAddress?: string;
-    /** Whether to enable SO_BROADCAST on the socket. Default true (legacy behavior). */
-    broadcast?: boolean;
     interval?: number;
     logger?: (text: string) => void;
     /** Called on a socket error (e.g. bind failure). Lets the owner surface it at warn level. */
@@ -23,7 +21,6 @@ export class Ping {
 
     private readonly options: PingOptions;
     private readonly logger: (text: string) => void;
-    private readonly broadcast: boolean;
 
     constructor(portToAnnounce: number, options?: PingOptions) {
         options ||= {};
@@ -40,8 +37,6 @@ export class Ping {
             ...options,
         };
 
-        this.broadcast = options.broadcast !== false;
-
         this.logger(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
 
         this.portToAnnounce = portToAnnounce;
@@ -55,11 +50,16 @@ export class Ping {
     emit(): void {
         this.logger('emit()');
 
+        if (!this.socket) {
+            return;
+        }
+
         (this.options.address as Array<string>).forEach(address =>
             this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
+                // Per-address failure only: one unreachable target (a hub that is switched
+                // off, a route that is down) must not stop the pings for every other one.
                 if (err) {
-                    this.logger(`error emitting ping. stopping now :( (${err})`);
-                    this.stop();
+                    this.logger(`error emitting ping to ${address}: ${err.message}`);
                 }
             }),
         );
@@ -85,9 +85,10 @@ export class Ping {
             this.stop();
         });
         this.socket.bind(this.portToAnnounce, this.options.bindAddress, () => {
-            if (this.broadcast) {
-                this.socket.setBroadcast(true);
-            }
+            // Always allow broadcast destinations. The option only *permits* sending to a
+            // broadcast address and changes nothing for unicast, so leaving it off would
+            // only turn a manually configured broadcast address into an EACCES per ping.
+            this.socket?.setBroadcast(true);
         });
         this.socket.unref();
 
@@ -100,15 +101,23 @@ export class Ping {
     stop(): void {
         this.logger('stop()');
 
-        if (this.intervalToken === undefined) {
+        if (this.intervalToken === undefined && !this.socket) {
             this.logger('ping has already been stopped, call start() first');
             return;
         }
 
-        clearInterval(this.intervalToken);
-        this.intervalToken = undefined;
+        if (this.intervalToken !== undefined) {
+            clearInterval(this.intervalToken);
+            this.intervalToken = undefined;
+        }
 
-        this.socket.close();
+        // close() throws when the socket never made it past a failed bind, which is exactly
+        // the situation the error handler calls stop() in.
+        try {
+            this.socket?.close();
+        } catch (err) {
+            this.logger(`socket close failed: ${(err as Error)?.message ?? err}`);
+        }
         this.socket = undefined;
     }
 

@@ -4,6 +4,7 @@ import {
     broadcastForInterface,
     buildDiscoveryPlan,
     clampDiscoverInterval,
+    interfaceForBroadcast,
     isValidIPv4,
 } from './discovery-config';
 
@@ -76,6 +77,18 @@ describe('discovery-config', () => {
 
         it('returns null for an unknown IP', () => {
             expect(broadcastForInterface('10.0.0.5', fakeInterfaces)).to.be.null;
+        });
+
+        it('maps a broadcast address back to its interface', () => {
+            expect(interfaceForBroadcast('192.168.1.255', fakeInterfaces)).to.equal('192.168.1.10');
+        });
+
+        it('returns null for a broadcast address of a foreign network', () => {
+            expect(interfaceForBroadcast('10.20.30.255', fakeInterfaces)).to.be.null;
+        });
+
+        it('never maps a broadcast address to an internal interface', () => {
+            expect(interfaceForBroadcast('127.255.255.255', fakeInterfaces)).to.be.null;
         });
     });
 

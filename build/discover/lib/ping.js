@@ -51,7 +51,6 @@ class Ping {
             interval: 2000,
             ...options,
         };
-        this.broadcast = options.broadcast !== false;
         this.logger(`Ping(${portToAnnounce}, ${JSON.stringify(this.options)})`);
         this.portToAnnounce = portToAnnounce;
         this.message = `_logitech-reverse-bonjour._tcp.local.\n${portToAnnounce}`;
@@ -62,10 +61,14 @@ class Ping {
      */
     emit() {
         this.logger('emit()');
+        if (!this.socket) {
+            return;
+        }
         this.options.address.forEach(address => this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
+            // Per-address failure only: one unreachable target (a hub that is switched
+            // off, a route that is down) must not stop the pings for every other one.
             if (err) {
-                this.logger(`error emitting ping. stopping now :( (${err})`);
-                this.stop();
+                this.logger(`error emitting ping to ${address}: ${err.message}`);
             }
         }));
     }
@@ -88,9 +91,11 @@ class Ping {
             this.stop();
         });
         this.socket.bind(this.portToAnnounce, this.options.bindAddress, () => {
-            if (this.broadcast) {
-                this.socket.setBroadcast(true);
-            }
+            var _a;
+            // Always allow broadcast destinations. The option only *permits* sending to a
+            // broadcast address and changes nothing for unicast, so leaving it off would
+            // only turn a manually configured broadcast address into an EACCES per ping.
+            (_a = this.socket) === null || _a === void 0 ? void 0 : _a.setBroadcast(true);
         });
         this.socket.unref();
         this.intervalToken = setInterval(() => this.emit(), this.options.interval);
@@ -99,14 +104,24 @@ class Ping {
      * Stop the ping interval and close the socket.
      */
     stop() {
+        var _a, _b;
         this.logger('stop()');
-        if (this.intervalToken === undefined) {
+        if (this.intervalToken === undefined && !this.socket) {
             this.logger('ping has already been stopped, call start() first');
             return;
         }
-        clearInterval(this.intervalToken);
-        this.intervalToken = undefined;
-        this.socket.close();
+        if (this.intervalToken !== undefined) {
+            clearInterval(this.intervalToken);
+            this.intervalToken = undefined;
+        }
+        // close() throws when the socket never made it past a failed bind, which is exactly
+        // the situation the error handler calls stop() in.
+        try {
+            (_a = this.socket) === null || _a === void 0 ? void 0 : _a.close();
+        }
+        catch (err) {
+            this.logger(`socket close failed: ${(_b = err === null || err === void 0 ? void 0 : err.message) !== null && _b !== void 0 ? _b : err}`);
+        }
         this.socket = undefined;
     }
     isRunning() {

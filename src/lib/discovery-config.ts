@@ -81,6 +81,38 @@ export function broadcastForInterface(
 }
 
 /**
+ * Reverse of `broadcastForInterface`: find the local interface whose network broadcasts
+ * to the given address, and return that interface's own IPv4 address.
+ *
+ * Used to convert a directed broadcast address from the removed `subnet` setting back
+ * into the interface it belongs to. Internal interfaces are skipped — the discovery
+ * socket is never meant to be bound to loopback.
+ *
+ * Returns null if no local interface broadcasts to that address.
+ */
+export function interfaceForBroadcast(
+    broadcast: string,
+    interfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]> = os.networkInterfaces(),
+): string | null {
+    for (const ifaces of Object.values(interfaces)) {
+        if (!ifaces) {
+            continue;
+        }
+        for (const iface of ifaces) {
+            if (
+                iface.family === 'IPv4' &&
+                !iface.internal &&
+                iface.cidr &&
+                broadcastFromCidr(iface.cidr) === broadcast
+            ) {
+                return iface.address;
+            }
+        }
+    }
+    return null;
+}
+
+/**
  * Derive the IPv4 broadcast address from a CIDR string like `192.168.1.5/24`.
  * Returns null on invalid input.
  */
@@ -126,10 +158,17 @@ export function isValidIPv4(ip: string): boolean {
     return true;
 }
 
-export function clampDiscoverInterval(raw: number | string | undefined, defaultMs = 2000, minMs = 500): number {
+/**
+ * Resolve the configured discovery interval.
+ *
+ * Anything below `minValidMs` is treated as bogus rather than clamped to the floor: the
+ * admin form shipped a default of `10` for a while, and honouring that literally means a
+ * broadcast every 10 ms. Such values are replaced by `defaultMs`, not by `minValidMs`.
+ */
+export function clampDiscoverInterval(raw: number | string | undefined, defaultMs = 2000, minValidMs = 500): number {
     const n = typeof raw === 'number' ? raw : parseInt(String(raw ?? ''), 10);
-    if (isNaN(n) || n < minMs) {
-        return Math.max(defaultMs, minMs);
+    if (isNaN(n) || n < minValidMs) {
+        return Math.max(defaultMs, minValidMs);
     }
     return n;
 }

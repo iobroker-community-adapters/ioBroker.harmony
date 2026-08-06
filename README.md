@@ -34,11 +34,22 @@ Control your harmony activities from ioBroker.
 
 ## Install
 Install Harmony via ioBroker Admin.
-Adapter should automatically find your Hubs.
+The adapter should find your hubs automatically.
 
-If the hub and iobroker are in the different subnets, the broadcasts will not work (#147).
-The workaround is to add the hub IP as subnet IP but this only works for one hub,
-e.g. setting the subnet(s) to (`192.168.178.5,192.168.178.6`) in admin will allow discovery for both hubs.
+If no hub is found, the instance settings offer two knobs:
+
+* **Network interface** — the interface the adapter searches on. Pick one on hosts with
+  several networks (multiple NICs, Docker, VPN) so both the broadcast and the hub's reply
+  use the right one. The broadcast address is derived from that interface, so subnet masks
+  other than /24 work as well (#331).
+* **Manual hub IPs** — list your hub addresses. The adapter then contacts exactly those
+  addresses and skips the broadcast entirely. Use this when a hub sits in a different
+  subnet than ioBroker, or when broadcast traffic is blocked in your network (#147).
+
+Instances updated from version 2.1.0 or older migrate the removed *Discovery-Subnets*
+setting automatically on first start: an address that is the broadcast address of one of
+your interfaces selects that interface, any other address becomes a manual hub IP. The
+adapter logs what it converted.
 
 ## Usage
 
@@ -82,6 +93,11 @@ After sending, the state will be set to 0 again.
 - (krobipd) State ID sanitisation hardened — tab/newline and other whitespace in hub-supplied device names no longer crash subscribe (#98). Dots are also collapsed so labels cannot split the ID path. Empty results fall back to `unnamed`.
 - (krobipd) Async event handlers (`stateChange`, hub discovery, client online/offline/state) now have proper error handling — a single failing await no longer terminates the adapter with an unhandled promise rejection.
 - (krobipd) Existing activities are now correctly recognised on every restart — the inverted `if` in `initHub` left the bookkeeping empty and made every activity log as `Added new activity` after each adapter start. As a side effect, activities deleted on the hub are now also pruned from the state tree, and the per-activity `-control` state is no longer falsely flagged as stale during the cleanup pass.
+- (GermanBluefox) **Breaking:** the `Discovery-Subnets` setting was replaced by a network interface selector plus a manual hub list. Existing instances are migrated automatically on first start — a directed broadcast address selects the matching interface, any other address is carried over as a manual hub IP. The conversion is written to the log and runs exactly once.
+- (GermanBluefox) **Breaking:** dots in hub, activity, device and command names are now replaced by `_` throughout, not just the first one. States whose name contained a dot are recreated under the new ID and the outdated objects are removed on the next hub sync. Adapt scripts, VIS views and aliases that referenced such states.
+- (GermanBluefox) Discovery now restarts by itself after a socket error, with a delay growing from 30 s to at most 5 min, instead of staying silently dead until the adapter is restarted.
+- (GermanBluefox) A single unreachable address no longer stops discovery for every other hub — send failures are logged per address.
+- (GermanBluefox) A broadcast address entered in the manual hub list works again instead of failing with `EACCES` on every ping.
 
 ### 2.1.0 (2026-04-15)
 - (copilot) Adapter requires admin >= 7.7.22 now
