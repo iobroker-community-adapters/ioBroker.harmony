@@ -74,7 +74,4 @@ jobs:
               with:
                   node-version: '24.x'
                   build: true
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
-                  # npm-token: ${{ secrets.NPM_TOKEN }}
                   github-token: ${{ secrets.GITHUB_TOKEN }}
