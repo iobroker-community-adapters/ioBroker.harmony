@@ -61,10 +61,13 @@ class Ping {
      */
     emit() {
         this.logger('emit()');
-        if (!this.socket) {
+        // Held in a local: inside the callback the compiler cannot know that this.socket is
+        // still the same one, and stop() may well have cleared it by then.
+        const socket = this.socket;
+        if (!socket) {
             return;
         }
-        this.options.address.forEach(address => this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
+        this.options.address.forEach(address => socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
             // Per-address failure only: one unreachable target (a hub that is switched
             // off, a route that is down) must not stop the pings for every other one.
             if (err) {

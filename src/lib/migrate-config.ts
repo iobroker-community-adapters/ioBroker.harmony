@@ -21,6 +21,8 @@ export interface MigratableConfig {
 export interface MigrationResult {
     /** True when the config has to be written back — also when nothing was carried over, because the `subnet` key itself still has to go. */
     changed: boolean;
+    /** The old value as it was found, for the log line. */
+    legacyValue: string;
     networkInterface: string;
     devices: { ip: string; name?: string }[];
     /** One human-readable line per handled `subnet` entry, for the adapter log. */
@@ -54,10 +56,14 @@ export function migrateLegacyConfig(
 
     // Absent on a fresh install and on an instance that has already been migrated.
     if (config.subnet === undefined || config.subnet === null) {
-        return { changed: false, networkInterface, devices, notes };
+        return { changed: false, legacyValue: '', networkInterface, devices, notes };
     }
 
-    const entries = String(config.subnet)
+    // The setting only ever held a string. Anything else carries nothing over, but the key
+    // still has to be removed, so the migration counts as changed either way.
+    const legacyValue = typeof config.subnet === 'string' ? config.subnet : '';
+
+    const entries = legacyValue
         .split(',')
         .map(entry => entry.trim())
         .filter(entry => entry.length > 0);
@@ -92,5 +98,5 @@ export function migrateLegacyConfig(
         notes.push(`"${entry}" was carried over into the manual hub list`);
     }
 
-    return { changed: true, networkInterface, devices, notes };
+    return { changed: true, legacyValue, networkInterface, devices, notes };
 }

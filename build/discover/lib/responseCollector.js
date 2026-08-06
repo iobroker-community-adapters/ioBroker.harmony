@@ -48,6 +48,8 @@ class ResponseCollector extends node_events_1.EventEmitter {
      */
     constructor(port, logger) {
         super();
+        /** Only exists between start() and stop(). */
+        this.server = null;
         this.logger = logger;
         this.logger(`Be aware that port ${port} needs to be reachable on your machine in order to discover harmony hubs.`);
         this.logger(`ResponseCollector(${port})`);
@@ -86,6 +88,7 @@ class ResponseCollector extends node_events_1.EventEmitter {
         this.logger('stop()');
         if (this.server) {
             this.server.close();
+            this.server = null;
         }
         else {
             this.logger('not running');

@@ -98,6 +98,9 @@ After sending, the state will be set to 0 again.
 - (GermanBluefox) Discovery now restarts by itself after a socket error, with a delay growing from 30 s to at most 5 min, instead of staying silently dead until the adapter is restarted.
 - (GermanBluefox) A single unreachable address no longer stops discovery for every other hub — send failures are logged per address.
 - (GermanBluefox) A broadcast address entered in the manual hub list works again instead of failing with `EACCES` on every ping.
+- (GermanBluefox) Dependencies updated: TypeScript 6, `@tsconfig/node22`, `@iobroker/adapter-core` 3.4.3, `@iobroker/testing` 5.3.0. The unused `sinon-chai` and `chai-as-promised` test helpers are gone.
+- (GermanBluefox) `npm run build` and `npm run check` compile without errors again. The sources carried 26 strict-mode violations — unguarded `null` accesses on hub clients and discovery sockets, `Array.pop()` results used as strings, and `delete` on properties typed as required — none of which were caught because the scripts had been failing for a while.
+- (GermanBluefox) `npm run lint` works again. It reported nothing but parse errors on every file (`project` and `projectService` were both enabled), and `allowDefaultProject` sat outside `projectService`, so no rule ever ran. An unused `tsconfig.json` left over from the vendored discovery library was shadowing the real one for everything under `src/discover/` and hid the Node.js types from the linter.
 
 ### 2.1.0 (2026-04-15)
 - (copilot) Adapter requires admin >= 7.7.22 now
@@ -117,7 +120,7 @@ After sending, the state will be set to 0 again.
 * (@GermanBluefox) Adapter has been rewritten with TypeScript
 * (mcm1957) Dependencies have been updated.
 
-### License
+## License
 The MIT License (MIT)
 
 Copyright (c) 2023-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  

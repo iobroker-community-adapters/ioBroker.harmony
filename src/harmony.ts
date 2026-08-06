@@ -126,15 +126,13 @@ export class HarmonyAdapter extends Adapter {
 
     async processStateChange(hub: string, id: string, state: ioBroker.State): Promise<void> {
         const tmp = id.split('.');
-        let channel = '';
-        let name = '';
-        if (tmp.length === 5) {
-            name = tmp.pop();
-            channel = tmp.pop();
-        } else {
+        if (tmp.length !== 5) {
             this.log.warn('unknown state change');
             return;
         }
+        // <adapter>.<instance>.<hub>.<channel>.<name>
+        const channel = tmp[3];
+        let name = tmp[4];
         switch (channel) {
             case 'activities':
                 switch (name) {
@@ -168,6 +166,11 @@ export class HarmonyAdapter extends Adapter {
     async sendCommand(hub: string, id: string, ms: number): Promise<void> {
         try {
             const obj = await this.getObjectAsync(id);
+            if (!obj) {
+                this.log.warn(`cannot send command, unknown state: ${id}`);
+                await this.setStateAsync(id, { val: 0, ack: true });
+                return;
+            }
             if (!this.hubs[hub].client || this.hubs[hub].client.status !== 3) {
                 this.log.warn('error sending command, client offline');
                 await this.setStateAsync(id, { val: 0, ack: true });
@@ -190,7 +193,7 @@ export class HarmonyAdapter extends Adapter {
                 );
             }
         } catch (err) {
-            this.log.warn(`cannot send command, unknown state: ${err}`);
+            this.log.warn(`cannot send command, unknown state: ${err as Error}`);
             await this.setStateAsync(id, { val: 0, ack: true });
         }
     }
@@ -214,7 +217,10 @@ export class HarmonyAdapter extends Adapter {
         if (value === 0) {
             this.log.debug('[ACTIVITY] Turning activity off');
             await this.hubs[hub].client.requestActivityChange('-1');
-        } else if (Object.prototype.hasOwnProperty.call(this.hubs[hub].activitiesReverse, activityLabel)) {
+        } else if (
+            activityLabel !== undefined &&
+            Object.prototype.hasOwnProperty.call(this.hubs[hub].activitiesReverse, activityLabel)
+        ) {
             this.log.debug(`[ACTIVITY] Switching activity to: ${activityLabel}`);
             await this.hubs[hub].client.requestActivityChange(this.hubs[hub].activitiesReverse[activityLabel]);
         } else {
@@ -247,7 +253,7 @@ export class HarmonyAdapter extends Adapter {
         }
 
         this.log.info(
-            `[MIGRATE] The "Discovery-Subnets" setting has been replaced by a network interface selector and a manual hub list. Converting "${String(legacy.subnet)}"`,
+            `[MIGRATE] The "Discovery-Subnets" setting has been replaced by a network interface selector and a manual hub list. Converting "${result.legacyValue}"`,
         );
         for (const note of result.notes) {
             this.log.info(`[MIGRATE] ${note}`);
@@ -445,7 +451,7 @@ export class HarmonyAdapter extends Adapter {
                 this.log.debug('no activities found on hub');
             }
         } catch (err) {
-            this.log.debug(`hub not initialized: ${err.toString()}`);
+            this.log.debug(`hub not initialized: ${(err as Error)?.message ?? err}`);
             return;
         }
     }
@@ -472,7 +478,7 @@ export class HarmonyAdapter extends Adapter {
                 await this.setBlocked(hub, true);
                 await this.setConnected(hub, true);
                 this.log.info(`[CONNECT] Connected to ${hubObj.friendlyName} (${hubObj.ip})`);
-                this.hubs[hub].client.requestConfig();
+                this.hubs[hub].client?.requestConfig();
             })().catch(err => this.log.warn(`[CONNECT] online handler failed: ${(err as Error)?.message ?? err}`));
         });
 
@@ -519,9 +525,9 @@ export class HarmonyAdapter extends Adapter {
                 try {
                     await this.processConfig(hub, hubObj, config);
                     // after config is processed, request current state
-                    this.hubs[hub].client.requestState();
+                    this.hubs[hub].client?.requestState();
                 } catch (e) {
-                    this.log.error(e);
+                    this.log.error(`[CONFIG] Processing the hub config failed: ${(e as Error)?.message ?? e}`);
                 }
             },
         );
@@ -541,18 +547,20 @@ export class HarmonyAdapter extends Adapter {
             activityStatus: number;
             cmd: string;
             type: string;
+            // The bulky fields are optional because they are deleted before the rest of the
+            // entry is stored as an object's `native`.
             activity: {
                 label: string;
                 id: string;
-                sequences: string;
-                controlGroup: string;
-                fixit: string;
-                rules: string;
+                sequences?: string;
+                controlGroup?: string;
+                fixit?: string;
+                rules?: string;
             }[];
             device: {
                 label: string;
                 id: string;
-                controlGroup: {
+                controlGroup?: {
                     name: string;
                     function: {
                         name: string;
@@ -724,7 +732,7 @@ export class HarmonyAdapter extends Adapter {
                     },
                     native: device,
                 });
-                for (const cg of controlGroup) {
+                for (const cg of controlGroup ?? []) {
                     const groupName = cg.name;
                     for (const command of cg.function) {
                         command.controlGroup = groupName;

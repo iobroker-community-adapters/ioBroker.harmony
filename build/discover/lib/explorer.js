@@ -38,6 +38,8 @@ class Explorer extends node_events_1.EventEmitter {
     constructor(incomingPort = 5222, pingOptions, cleanUpTimeout = 5000) {
         super();
         this.knownHubs = new Map();
+        this.responseCollector = null;
+        this.cleanUpIntervalToken = null;
         this.port = incomingPort;
         if (pingOptions === null || pingOptions === void 0 ? void 0 : pingOptions.interval) {
             this.cleanUpTimeout = Math.max(cleanUpTimeout, pingOptions.interval * 2 + 2500);
@@ -70,10 +72,15 @@ class Explorer extends node_events_1.EventEmitter {
      * Stop the emitting of broadcasts and disassamble all listeners.
      */
     stop() {
+        var _a;
         this.logger('stop()');
         this.ping.stop();
-        this.responseCollector.stop();
-        clearInterval(this.cleanUpIntervalToken);
+        // Both are only set up in start(), so stop() has to cope with never having been started.
+        (_a = this.responseCollector) === null || _a === void 0 ? void 0 : _a.stop();
+        if (this.cleanUpIntervalToken !== null) {
+            clearInterval(this.cleanUpIntervalToken);
+            this.cleanUpIntervalToken = null;
+        }
     }
     /**
      * Handles the response from a hub by deserializing the response
@@ -83,14 +90,15 @@ class Explorer extends node_events_1.EventEmitter {
      */
     handleResponse(data) {
         const hub = deserializeResponse(data);
-        if (this.knownHubs.get(hub.uuid) === undefined) {
+        const known = this.knownHubs.get(hub.uuid);
+        if (known === undefined) {
             this.logger(`discovered new hub ${hub.friendlyName}`);
             this.knownHubs.set(hub.uuid, hub);
             this.emit(ExplorerEvents.ONLINE, hub);
             this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));
         }
         else {
-            this.knownHubs.get(hub.uuid).lastSeen = Date.now();
+            known.lastSeen = Date.now();
         }
     }
     /**

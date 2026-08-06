@@ -74,8 +74,8 @@ export class Explorer extends EventEmitter {
     knownHubs = new Map<string, IHubData>();
     ping: Ping;
 
-    responseCollector: ResponseCollector;
-    cleanUpIntervalToken: NodeJS.Timeout;
+    responseCollector: ResponseCollector | null = null;
+    cleanUpIntervalToken: NodeJS.Timeout | null = null;
     cleanUpTimeout: number;
     private readonly logger: (text: string) => void;
 
@@ -130,8 +130,12 @@ export class Explorer extends EventEmitter {
         this.logger('stop()');
 
         this.ping.stop();
-        this.responseCollector.stop();
-        clearInterval(this.cleanUpIntervalToken);
+        // Both are only set up in start(), so stop() has to cope with never having been started.
+        this.responseCollector?.stop();
+        if (this.cleanUpIntervalToken !== null) {
+            clearInterval(this.cleanUpIntervalToken);
+            this.cleanUpIntervalToken = null;
+        }
     }
 
     /**
@@ -143,13 +147,14 @@ export class Explorer extends EventEmitter {
     handleResponse(data: string): void {
         const hub: any = deserializeResponse(data);
 
-        if (this.knownHubs.get(hub.uuid) === undefined) {
+        const known = this.knownHubs.get(hub.uuid);
+        if (known === undefined) {
             this.logger(`discovered new hub ${hub.friendlyName}`);
             this.knownHubs.set(hub.uuid, hub);
             this.emit(ExplorerEvents.ONLINE, hub);
             this.emit(ExplorerEvents.UPDATE, arrayOfKnownHubs(this.knownHubs));
         } else {
-            this.knownHubs.get(hub.uuid).lastSeen = Date.now();
+            known.lastSeen = Date.now();
         }
     }
 

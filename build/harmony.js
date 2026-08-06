@@ -104,16 +104,13 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
     }
     async processStateChange(hub, id, state) {
         const tmp = id.split('.');
-        let channel = '';
-        let name = '';
-        if (tmp.length === 5) {
-            name = tmp.pop();
-            channel = tmp.pop();
-        }
-        else {
+        if (tmp.length !== 5) {
             this.log.warn('unknown state change');
             return;
         }
+        // <adapter>.<instance>.<hub>.<channel>.<name>
+        const channel = tmp[3];
+        let name = tmp[4];
         switch (channel) {
             case 'activities':
                 switch (name) {
@@ -147,6 +144,11 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
     async sendCommand(hub, id, ms) {
         try {
             const obj = await this.getObjectAsync(id);
+            if (!obj) {
+                this.log.warn(`cannot send command, unknown state: ${id}`);
+                await this.setStateAsync(id, { val: 0, ack: true });
+                return;
+            }
             if (!this.hubs[hub].client || this.hubs[hub].client.status !== 3) {
                 this.log.warn('error sending command, client offline');
                 await this.setStateAsync(id, { val: 0, ack: true });
@@ -190,7 +192,8 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             this.log.debug('[ACTIVITY] Turning activity off');
             await this.hubs[hub].client.requestActivityChange('-1');
         }
-        else if (Object.prototype.hasOwnProperty.call(this.hubs[hub].activitiesReverse, activityLabel)) {
+        else if (activityLabel !== undefined &&
+            Object.prototype.hasOwnProperty.call(this.hubs[hub].activitiesReverse, activityLabel)) {
             this.log.debug(`[ACTIVITY] Switching activity to: ${activityLabel}`);
             await this.hubs[hub].client.requestActivityChange(this.hubs[hub].activitiesReverse[activityLabel]);
         }
@@ -221,7 +224,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         if (!result.changed) {
             return;
         }
-        this.log.info(`[MIGRATE] The "Discovery-Subnets" setting has been replaced by a network interface selector and a manual hub list. Converting "${String(legacy.subnet)}"`);
+        this.log.info(`[MIGRATE] The "Discovery-Subnets" setting has been replaced by a network interface selector and a manual hub list. Converting "${result.legacyValue}"`);
         for (const note of result.notes) {
             this.log.info(`[MIGRATE] ${note}`);
         }
@@ -343,6 +346,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         }
     }
     async initHub(hub) {
+        var _a;
         this.hubs[hub] = {
             client: null,
             connected: false,
@@ -401,7 +405,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             }
         }
         catch (err) {
-            this.log.debug(`hub not initialized: ${err.toString()}`);
+            this.log.debug(`hub not initialized: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`);
             return;
         }
     }
@@ -422,10 +426,11 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
         this.hubs[hub].client = client;
         client.on('online', () => {
             void (async () => {
+                var _a;
                 await this.setBlocked(hub, true);
                 await this.setConnected(hub, true);
                 this.log.info(`[CONNECT] Connected to ${hubObj.friendlyName} (${hubObj.ip})`);
-                this.hubs[hub].client.requestConfig();
+                (_a = this.hubs[hub].client) === null || _a === void 0 ? void 0 : _a.requestConfig();
             })().catch(err => { var _a; return this.log.warn(`[CONNECT] online handler failed: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
         });
         client.on('offline', () => {
@@ -438,13 +443,14 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
             })().catch(err => { var _a; return this.log.warn(`[CONNECT] offline handler failed: ${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
         });
         client.on('config', async (config) => {
+            var _a, _b;
             try {
                 await this.processConfig(hub, hubObj, config);
                 // after config is processed, request current state
-                this.hubs[hub].client.requestState();
+                (_a = this.hubs[hub].client) === null || _a === void 0 ? void 0 : _a.requestState();
             }
             catch (e) {
-                this.log.error(e);
+                this.log.error(`[CONFIG] Processing the hub config failed: ${(_b = e === null || e === void 0 ? void 0 : e.message) !== null && _b !== void 0 ? _b : e}`);
             }
         });
         client.on('state', (activityId, activityStatus) => {
@@ -602,7 +608,7 @@ class HarmonyAdapter extends adapter_core_1.Adapter {
                     },
                     native: device,
                 });
-                for (const cg of controlGroup) {
+                for (const cg of controlGroup !== null && controlGroup !== void 0 ? controlGroup : []) {
                     const groupName = cg.name;
                     for (const command of cg.function) {
                         command.controlGroup = groupName;

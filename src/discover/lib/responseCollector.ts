@@ -8,7 +8,8 @@ export enum ResponseCollectorEvents {
 
 export class ResponseCollector extends EventEmitter {
     port: number;
-    server: net.Server;
+    /** Only exists between start() and stop(). */
+    server: net.Server | null = null;
     private readonly logger: (text: string) => void;
 
     /**
@@ -67,6 +68,7 @@ export class ResponseCollector extends EventEmitter {
 
         if (this.server) {
             this.server.close();
+            this.server = null;
         } else {
             this.logger('not running');
         }

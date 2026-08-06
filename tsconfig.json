@@ -1,11 +1,14 @@
 {
-    "extends": "@tsconfig/node20/tsconfig.json",
+    "extends": "@tsconfig/node22/tsconfig.json",
     "compilerOptions": {
         "target": "es2019",
         "module": "Node16",
         "moduleResolution": "node16",
-        "baseUrl": "./",
+        "rootDir": "./src",
         "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "strict": true,
+        "allowJs": false,
         "checkJs": false,
         "noEmit": false,
         "outDir": "./build",
@@ -14,7 +17,7 @@
         "noImplicitAny": true,
         "skipLibCheck": true,
         "lib": ["es2018", "DOM"],
-        "types": ["@iobroker/types", "node", "mocha", "chai"]
+        "types": ["@iobroker/types", "node", "mocha"]
     },
     "exclude": ["**/node_modules", "**/build"],
     "include": ["src/**/*.ts", "src/**/*.d.ts", "test/**/*.ts", "eslint.config.mjs"]

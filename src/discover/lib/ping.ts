@@ -12,12 +12,13 @@ export class PingOptions {
 }
 
 export class Ping {
-    private socket: dgram.Socket;
+    /** Both only exist between start() and stop(). */
+    private socket: dgram.Socket | undefined;
     private readonly portToAnnounce: number;
 
     private readonly message: string;
     private readonly messageBuffer: Buffer;
-    private intervalToken: NodeJS.Timeout;
+    private intervalToken: NodeJS.Timeout | undefined;
 
     private readonly options: PingOptions;
     private readonly logger: (text: string) => void;
@@ -50,12 +51,15 @@ export class Ping {
     emit(): void {
         this.logger('emit()');
 
-        if (!this.socket) {
+        // Held in a local: inside the callback the compiler cannot know that this.socket is
+        // still the same one, and stop() may well have cleared it by then.
+        const socket = this.socket;
+        if (!socket) {
             return;
         }
 
         (this.options.address as Array<string>).forEach(address =>
-            this.socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
+            socket.send(this.messageBuffer, 0, this.message.length, this.options.port, address, err => {
                 // Per-address failure only: one unreachable target (a hub that is switched
                 // off, a route that is down) must not stop the pings for every other one.
                 if (err) {
