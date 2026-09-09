@@ -1,8 +1,5 @@
 {
   "common": {
-    "docs": {
-      "en": "README.md"
-    },
     "name": "harmony",
     "version": "3.0.0",
     "news": {
